@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Design Cases · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth &amp; Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="cicd-devops.html" class="nav-item"><span class="icon">🔧</span>CI/CD &amp; DevOps</a>
+      <a href="system-design.html" class="nav-item active"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> System Design Cases</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-red">Advanced · Chapter 12</div>
+  <h1>System Design <span class="grad">Cases</span></h1>
+  <p class="page-intro">Walk through 8 real-world system designs the way senior engineers do it — clarify requirements, estimate scale, choose components, handle failure modes, and trade off consistency for availability. These are the exact cases that come up at FAANG interviews.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 120 min read</span>
+    <span class="meta-pill">🎯 Senior → Principal</span>
+    <span class="meta-pill">💼 Interview Critical</span>
+    <span class="meta-pill">🏢 8 Real Systems</span>
+  </div>
+</div>
+
+<h2 id="framework">The DESIGN Framework</h2>
+<p>Before jumping into any system design, follow a structured approach. Interviewers (and architects) evaluate your <em>thinking process</em> more than your answer. Use this framework consistently.</p>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Clarify Requirements (5 min)</h4>
+      <p>Scope the problem. Functional requirements (what the system does) and non-functional requirements (scale, latency, consistency, availability). Ask: how many users? read-heavy or write-heavy? global or single-region?</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>Estimate Scale (5 min)</h4>
+      <p>Back-of-envelope calculations. QPS, storage, bandwidth. These drive your technology choices. 1M DAU × 10 requests/day = ~116 QPS. 1TB/day storage = ~11.5 GB/sec write throughput.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>High-Level Design (10 min)</h4>
+      <p>Draw the boxes: clients, load balancers, web servers, services, databases, caches, queues. Identify the core data flow for the 2–3 most important use cases.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h4>Deep Dive (20 min)</h4>
+      <p>Pick 2–3 components to design in detail. Database schema, API design, sharding strategy, caching layer, consistency model. Go where the interviewer leads.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <h4>Identify Bottlenecks (5 min)</h4>
+      <p>Single points of failure, hot-spot keys, thundering herd, N+1 queries. Propose solutions: replication, sharding, circuit breakers, rate limiting.</p>
+    </div>
+  </div>
+</div>
+
+<div class="callout info">
+  <div class="callout-icon">📏</div>
+  <div class="callout-body">
+    <div class="callout-title">Back-of-Envelope Numbers to Memorize</div>
+    <p>Memory: L1 cache ~1ns, L2 ~10ns, RAM ~100ns, SSD ~100μs, HDD ~10ms, cross-datacenter ~150ms. Storage: 1 char = 1B, 1 photo ~300KB, 1 video min ~50MB. Read/write: MySQL can handle ~5K QPS single node; Redis ~100K QPS; Cassandra ~50K writes/sec per node.</p>
+  </div>
+</div>
+
+<h2 id="url-shortener">Design a URL Shortener (Bit.ly)</h2>
+
+<h3>Requirements</h3>
+<div class="compare-grid">
+  <div class="compare-card pro">
+    <h4>Functional</h4>
+    <ul>
+      <li>Given a long URL, return a 7-char short URL</li>
+      <li>Redirect short URL → long URL</li>
+      <li>Custom aliases (optional)</li>
+      <li>Link expiry (optional)</li>
+      <li>Click analytics</li>
+    </ul>
+  </div>
+  <div class="compare-card con">
+    <h4>Non-Functional</h4>
+    <ul>
+      <li>100M URLs created/day</li>
+      <li>10:1 read:write ratio → 1B redirects/day</li>
+      <li>Redirect P99 &lt; 10ms</li>
+      <li>System should be highly available (99.99%)</li>
+      <li>URLs should not be guessable</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Scale Estimates</h3>
+<p>Write QPS: 100M / 86400 ≈ <strong>1,160 writes/sec</strong>. Read QPS: 1B / 86400 ≈ <strong>11,600 reads/sec</strong>. Storage: 100M/day × 365 × 10yr = 365B URLs. At 500 bytes/URL → <strong>~183 TB</strong>.</p>
+
+<h3>Short URL Generation</h3>
+<div class="tabs">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="switchTab(this,'url-hash')">Hash-Based</button>
+    <button class="tab-btn" onclick="switchTab(this,'url-counter')">Counter-Based</button>
+    <button class="tab-btn" onclick="switchTab(this,'url-b62')">Base62</button>
+  </div>
+  <div class="tab-content active" id="url-hash">
+    <p>MD5/SHA256 the long URL → take first 7 chars of base62 encoding. Problem: collisions when different URLs produce same prefix. Solution: append a counter or user ID to the input before hashing.</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="kw">import</span> hashlib, base64
+
+<span class="kw">def</span> <span class="fn">shorten</span>(long_url: <span class="cls">str</span>, salt: <span class="cls">str</span> = <span class="str">""</span>) -> <span class="cls">str</span>:
+    h = hashlib.md5((long_url + salt).encode()).digest()
+    encoded = base64.urlsafe_b64encode(h).decode()
+    <span class="kw">return</span> encoded[:<span class="num">7</span>]  <span class="cmt"># First 7 chars = 62^7 = 3.5T unique URLs</span></code></pre>
+    </div>
+  </div>
+  <div class="tab-content" id="url-counter">
+    <p>Auto-incrementing ID from a database (e.g. 123456789) converted to base62. Simpler, no collisions, but requires a centralized ID generator. Use Twitter Snowflake or a distributed counter service.</p>
+  </div>
+  <div class="tab-content" id="url-b62">
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">Python</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+      <pre><code><span class="var">CHARS</span> = <span class="str">"0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"</span>
+
+<span class="kw">def</span> <span class="fn">to_base62</span>(n: <span class="cls">int</span>) -> <span class="cls">str</span>:
+    <span class="kw">if</span> n == <span class="num">0</span>: <span class="kw">return</span> <span class="str">"0"</span>
+    result = []
+    <span class="kw">while</span> n:
+        result.append(<span class="var">CHARS</span>[n % <span class="num">62</span>])
+        n //= <span class="num">62</span>
+    <span class="kw">return</span> <span class="str">""</span>.join(reversed(result))
+
+<span class="cmt"># ID 1000000 → "4c92" (4-char), ID 3.5T → 7-char max</span></code></pre>
+    </div>
+  </div>
+</div>
+
+<h3>Architecture</h3>
+<div class="diagram">
+  <pre>
+  Client
+    │
+    ▼
+  CDN / Edge  ──────────────────────────────────────────────────
+    │                                                         │
+    ▼                                                         ▼
+  API Gateway                                          Static Redirects
+    │                                                  (cached at edge)
+    ├── /shorten ──▶  Write Service ──▶  DB (PostgreSQL)
+    │                      │                    │
+    │                  ID Generator         Write-through Cache
+    │                  (Snowflake)
+    │
+    └── /{shortCode} ──▶  Read Service ──▶  Redis Cache
+                                │                │
+                                │           miss → DB
+                                │
+                           Analytics Queue (Kafka)
+                                │
+                           Analytics Service
+                                │
+                           ClickHouse / S3
+  </pre>
+</div>
+
+<div class="callout warning">
+  <div class="callout-icon">⚡</div>
+  <div class="callout-body">
+    <div class="callout-title">Hot Key Problem</div>
+    <p>A viral tweet with a short URL can generate millions of requests/sec to a single key. Solution: <strong>local in-memory cache</strong> in each web server (store top 1000 most-read URLs in process memory). This eliminates Redis traffic entirely for hot URLs.</p>
+  </div>
+</div>
+
+<h2 id="whatsapp">Design WhatsApp (Messaging at Scale)</h2>
+
+<h3>Scale</h3>
+<p>2B users, 100B messages/day, 60% delivered in &lt;1 second. Multi-device delivery, group chats (256 members), read receipts, end-to-end encryption.</p>
+
+<h3>Core Challenge: Message Delivery</h3>
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>Sender → Server</h4>
+      <p>Client maintains a persistent WebSocket connection to a Chat Server. Message is sent over this connection. Server assigns a global sequence ID using Snowflake.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>Server → Recipient</h4>
+      <p>If recipient is online, their Chat Server receives the message via internal Pub/Sub (Kafka topic per user). If offline, message stored in <strong>message store</strong> with TTL of 30 days; push notification sent.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Delivery Receipt Flow</h4>
+      <p>Server sends ACK to sender after storing. Recipient sends "delivered" receipt when message arrives on device. "Read" receipt when user opens the conversation.</p>
+    </div>
+  </div>
+</div>
+
+<h3>Database Design</h3>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Entity</th><th>Storage</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>User profiles</td><td>PostgreSQL</td><td>Strong consistency, relational</td></tr>
+      <tr><td>Messages</td><td>Cassandra</td><td>Write-heavy, time-series, partition by (user_id, month)</td></tr>
+      <tr><td>Undelivered msgs</td><td>Redis (TTL)</td><td>Fast fanout, auto-expire</td></tr>
+      <tr><td>Media (photos/video)</td><td>S3 + CDN</td><td>Blob storage, global edge delivery</td></tr>
+      <tr><td>Group membership</td><td>PostgreSQL</td><td>Relational, joins needed</td></tr>
+      <tr><td>Presence (online/offline)</td><td>Redis</td><td>Ephemeral, sub-second TTL</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Group Messages</h3>
+<p>Naive approach: fan-out to all group members on write (write amplification for 256-member groups). Better: <strong>fan-out on read</strong> — store one copy of the message, each member fetches on request. WhatsApp uses a hybrid: small groups fan-out on write, large groups fan-out on read.</p>
+
+<div class="callout success">
+  <div class="callout-icon">🔐</div>
+  <div class="callout-body">
+    <div class="callout-title">End-to-End Encryption</div>
+    <p>WhatsApp uses the Signal Protocol. Each device has a public/private key pair. Sender encrypts with recipient's public key — the server never sees plaintext. For groups, each message is encrypted once per recipient (no group key to leak).</p>
+  </div>
+</div>
+
+<h2 id="netflix">Design Netflix (Video Streaming)</h2>
+
+<h3>Scale</h3>
+<p>220M subscribers, 15% of global internet traffic, 10M+ streams simultaneously, 36,000 video files per title (different resolutions, codecs, bitrates).</p>
+
+<h3>Upload Pipeline (Write Path)</h3>
+<div class="diagram">
+  <pre>
+  Raw Video
+    │
+    ▼
+  S3 (original)
+    │
+    ▼
+  Transcoding Workers (EC2 fleet)
+    │
+    ├── 1080p H.264
+    ├── 1080p H.265 (30% smaller)
+    ├── 720p, 480p, 360p
+    ├── Audio: AAC, Dolby, 30+ languages
+    └── Subtitles: 60+ languages
+    │
+    ▼
+  CDN Upload
+  (Netflix owns Open Connect — 17,000 servers in ISP racks globally)
+  </pre>
+</div>
+
+<h3>Streaming (Read Path)</h3>
+<p><strong>Adaptive Bitrate Streaming (ABR):</strong> video is split into 2-4 second segments. Client monitors bandwidth and switches quality per segment. Netflix uses a proprietary ABR algorithm trained on 300TB of playback data to predict the right bitrate before bandwidth drops.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">MPEG-DASH manifest (simplified)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">&lt;!-- Video broken into 4-second segments --&gt;</span>
+<span class="kw">&lt;AdaptationSet&gt;</span>
+  <span class="kw">&lt;Representation</span> bandwidth=<span class="str">"800000"</span> width=<span class="str">"640"</span> height=<span class="str">"360"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;SegmentTemplate</span> media=<span class="str">"video_360p_$Number$.mp4"</span> <span class="kw">/&gt;</span>
+  <span class="kw">&lt;/Representation&gt;</span>
+  <span class="kw">&lt;Representation</span> bandwidth=<span class="str">"3000000"</span> width=<span class="str">"1280"</span> height=<span class="str">"720"</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;SegmentTemplate</span> media=<span class="str">"video_720p_$Number$.mp4"</span> <span class="kw">/&gt;</span>
+  <span class="kw">&lt;/Representation&gt;</span>
+<span class="kw">&lt;/AdaptationSet&gt;</span></code></pre>
+</div>
+
+<h3>Recommendation System</h3>
+<p>Netflix saves ~$1B/year in reduced churn via recommendations. The algorithm factors: watch history, ratings, similar users (collaborative filtering), time of day, device type. Netflix runs 250+ A/B tests at any given time to optimize the algorithm.</p>
+
+<h2 id="uber">Design Uber (Ride Sharing)</h2>
+
+<h3>Core Challenges</h3>
+<ul>
+  <li><strong>Location updates:</strong> 14M active drivers sending GPS coordinates every 4 seconds → 3.5M writes/sec at peak</li>
+  <li><strong>Matching:</strong> find nearest available driver to rider in &lt;1 second</li>
+  <li><strong>Surge pricing:</strong> real-time supply/demand calculation by geohash cell</li>
+</ul>
+
+<h3>Geospatial Indexing</h3>
+<p>Uber divides the world into <strong>geohash cells</strong>. A geohash is a string where longer = more specific location. Nearby locations share a common prefix. This allows range queries on a 1D string (B-tree) to find nearby drivers efficiently.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Python - Geohash lookup</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt"># Precision 6 = ~1.2km × 0.6km cell</span>
+<span class="kw">import</span> geohash
+
+<span class="kw">def</span> <span class="fn">find_nearby_drivers</span>(lat, lon, radius_km=<span class="num">2</span>):
+    cell = geohash.encode(lat, lon, precision=<span class="num">6</span>)
+    neighbors = geohash.neighbors(cell)  <span class="cmt"># 8 surrounding cells</span>
+    cells_to_check = [cell] + neighbors
+    <span class="cmt"># Query Redis: SMEMBERS driver:{geohash} for each cell</span>
+    drivers = []
+    <span class="kw">for</span> gh <span class="kw">in</span> cells_to_check:
+        drivers.extend(redis.smembers(<span class="str">f"driver:{gh}"</span>))
+    <span class="kw">return</span> drivers</code></pre>
+</div>
+
+<h3>Architecture</h3>
+<div class="diagram">
+  <pre>
+  Driver App                     Rider App
+    │                               │
+    │ GPS update (every 4s)         │ Request ride
+    ▼                               ▼
+  Location Service            Dispatch Service
+    │                               │
+    ▼                               ▼
+  Redis Geo Index              Matching Engine
+  (geohash → driver set)       (proximity + ETA)
+    │                               │
+    ▼                               │
+  Kafka (location events)          │
+    │                               │
+    ▼                               ▼
+  Supply/Demand Service        Driver assigned
+  (surge pricing)              │
+    │                          ▼
+    ▼                     Notification Service
+  Pricing DB               (push to driver app)
+  </pre>
+</div>
+
+<div class="callout warning">
+  <div class="callout-icon">🌊</div>
+  <div class="callout-body">
+    <div class="callout-title">The Thundering Herd: New Year's Eve</div>
+    <p>At midnight on NYE, millions of users request rides simultaneously. Surge pricing isn't just about profit — it's a load-shedding mechanism. Higher prices reduce demand, giving the matching engine time to catch up. Uber pre-scales infrastructure 10× before large events using historical data.</p>
+  </div>
+</div>
+
+<h2 id="instagram">Design Instagram Feed</h2>
+
+<h3>Scale</h3>
+<p>2B users, 100M photos/day uploaded, 500M daily active users view feed. A single celebrity (200M followers) posting a photo triggers 200M feed updates — this is the <strong>celebrity problem</strong>.</p>
+
+<h3>Feed Generation: Push vs Pull</h3>
+<div class="compare-grid">
+  <div class="compare-card pro">
+    <h4>Push (Fan-out on Write)</h4>
+    <ul>
+      <li>When user posts, write to all followers' feed tables</li>
+      <li>Feed read is instant (pre-computed)</li>
+      <li>Works great for normal users (300 followers)</li>
+      <li>Problem: celebrity with 200M followers = 200M writes</li>
+    </ul>
+  </div>
+  <div class="compare-card con">
+    <h4>Pull (Fan-out on Read)</h4>
+    <ul>
+      <li>On feed request, fetch posts from all followed accounts</li>
+      <li>No write amplification</li>
+      <li>Problem: reading 1000 accounts' latest posts = 1000 DB queries</li>
+      <li>Slow feed load, especially if accounts post frequently</li>
+    </ul>
+  </div>
+</div>
+
+<p><strong>Instagram's solution: Hybrid.</strong> Regular users use push (fan-out on write). Celebrities use pull (fan-out on read). A user following both regular and celebrity accounts gets a merged feed — pre-computed posts from regular accounts merged at read time with recent celebrity posts.</p>
+
+<h3>Feed Ranking</h3>
+<p>Instagram doesn't show posts in reverse-chronological order. It uses a <strong>ranking model</strong> trained on engagement signals: likes, comments, shares, watch time. Features include: recency, relationship strength (do you DM each other?), content type preference.</p>
+
+<h2 id="rate-limiter">Design a Rate Limiter</h2>
+
+<h3>Algorithms</h3>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Algorithm</th><th>How it Works</th><th>Pros</th><th>Cons</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Token Bucket</strong></td><td>Bucket with capacity N, refills at rate R. Request consumes 1 token.</td><td>Allows burst, smooth</td><td>Race conditions distributed</td></tr>
+      <tr><td><strong>Leaking Bucket</strong></td><td>Queue requests, process at fixed rate. Overflow = drop.</td><td>Smooth output rate</td><td>Bursty traffic queues up, latency</td></tr>
+      <tr><td><strong>Fixed Window</strong></td><td>Count per minute window. Reset at window boundary.</td><td>Simple</td><td>2× traffic at window edges</td></tr>
+      <tr><td><strong>Sliding Window Log</strong></td><td>Store timestamp of each request, count in last 60s.</td><td>Accurate</td><td>High memory (store all timestamps)</td></tr>
+      <tr><td><strong>Sliding Window Counter</strong></td><td>Weight current + previous window counter.</td><td>Accurate, memory efficient</td><td>Approximate</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Distributed Rate Limiting with Redis</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Lua Script (atomic in Redis)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Token bucket in Redis (atomic Lua for race-condition safety)</span>
+<span class="kw">local</span> key = KEYS[<span class="num">1</span>]
+<span class="kw">local</span> capacity = tonumber(ARGV[<span class="num">1</span>])  <span class="cmt">-- max tokens</span>
+<span class="kw">local</span> rate = tonumber(ARGV[<span class="num">2</span>])      <span class="cmt">-- tokens per second</span>
+<span class="kw">local</span> now = tonumber(ARGV[<span class="num">3</span>])       <span class="cmt">-- current timestamp (ms)</span>
+
+<span class="kw">local</span> bucket = redis.call(<span class="str">'HMGET'</span>, key, <span class="str">'tokens'</span>, <span class="str">'last_refill'</span>)
+<span class="kw">local</span> tokens = tonumber(bucket[<span class="num">1</span>]) or capacity
+<span class="kw">local</span> last_refill = tonumber(bucket[<span class="num">2</span>]) or now
+
+<span class="cmt">-- Refill tokens based on elapsed time</span>
+<span class="kw">local</span> elapsed = (now - last_refill) / <span class="num">1000</span>
+tokens = math.min(capacity, tokens + elapsed * rate)
+
+<span class="kw">if</span> tokens >= <span class="num">1</span> <span class="kw">then</span>
+  redis.call(<span class="str">'HMSET'</span>, key, <span class="str">'tokens'</span>, tokens - <span class="num">1</span>, <span class="str">'last_refill'</span>, now)
+  redis.call(<span class="str">'EXPIRE'</span>, key, <span class="num">3600</span>)
+  <span class="kw">return</span> <span class="num">1</span>  <span class="cmt">-- allowed</span>
+<span class="kw">else</span>
+  <span class="kw">return</span> <span class="num">0</span>  <span class="cmt">-- rate limited</span>
+<span class="kw">end</span></code></pre>
+</div>
+
+<h3>Multi-Tier Rate Limiting</h3>
+<p>Production systems use multiple tiers: <strong>IP-level</strong> (100 req/min), <strong>user-level</strong> (1000 req/min), <strong>API key level</strong> (custom). Rules stored in Redis, evaluated in order. Stripe uses a combination: free tier gets 25 req/sec, paid gets custom limits per endpoint.</p>
+
+<h2 id="distributed-cache">Design a Distributed Cache</h2>
+
+<h3>Requirements</h3>
+<p>10M operations/sec, P99 latency &lt; 1ms, support for strings/hashes/lists, cache eviction (LRU), cluster of N nodes with consistent hashing.</p>
+
+<h3>Consistent Hashing</h3>
+<p>Problem with naive key % N: adding/removing nodes remaps almost all keys. Consistent hashing maps both keys and nodes onto a ring (0–2³²). A key is served by the first node clockwise on the ring. Adding a node only remaps keys between the new node and its predecessor.</p>
+
+<div class="diagram">
+  <pre>
+  Ring (0 → 2^32)
+
+        Node A (hash=10)
+       ╱
+  ────●──────────────●─────────────●────
+      │              │             │
+   Key "user:1"   Node B (50)   Node C (80)
+   hash=15
+   → served by Node B (next clockwise)
+
+  Add Node D at hash=40:
+  → Keys between 10 and 40 now move to Node D
+  → Only ~25% of keys remapped (not 100%)
+  </pre>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Python - Consistent Hash Ring</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">import</span> hashlib
+<span class="kw">from</span> sortedcontainers <span class="kw">import</span> SortedDict
+
+<span class="kw">class</span> <span class="cls">ConsistentHashRing</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, replicas=<span class="num">150</span>):
+        self.replicas = replicas  <span class="cmt"># virtual nodes per server</span>
+        self.ring = SortedDict()
+
+    <span class="kw">def</span> <span class="fn">add_node</span>(self, node: <span class="cls">str</span>):
+        <span class="kw">for</span> i <span class="kw">in</span> range(self.replicas):
+            h = self._hash(<span class="str">f"{node}:{i}"</span>)
+            self.ring[h] = node
+
+    <span class="kw">def</span> <span class="fn">get_node</span>(self, key: <span class="cls">str</span>) -> <span class="cls">str</span>:
+        h = self._hash(key)
+        idx = self.ring.bisect_left(h) % len(self.ring)
+        <span class="kw">return</span> self.ring.values()[idx]
+
+    <span class="kw">def</span> <span class="fn">_hash</span>(self, val: <span class="cls">str</span>) -> <span class="cls">int</span>:
+        <span class="kw">return</span> int(hashlib.md5(val.encode()).hexdigest(), <span class="num">16</span>)</code></pre>
+</div>
+
+<h3>Eviction Policies</h3>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Policy</th><th>When to Use</th><th>Implementation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>LRU</strong> (Least Recently Used)</td><td>General purpose, temporal locality</td><td>Doubly linked list + hash map. O(1) get and set.</td></tr>
+      <tr><td><strong>LFU</strong> (Least Frequently Used)</td><td>Scan-resistant, long-lived hot keys</td><td>Min-heap by frequency. Better hit rate than LRU for skewed access.</td></tr>
+      <tr><td><strong>TTL-based</strong></td><td>Data with known staleness</td><td>Each key has expiry. Background sweeper removes expired keys.</td></tr>
+      <tr><td><strong>Random</strong></td><td>When all keys are equally important</td><td>O(1), very simple. Surprisingly effective at scale.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="search-autocomplete">Design Search Autocomplete (Google Suggest)</h2>
+
+<h3>Scale</h3>
+<p>10B queries/day on Google Search. Autocomplete fires on every keystroke — average query is 5 keystrokes → 50B autocomplete requests/day. P99 latency must be &lt; 100ms (feels instant).</p>
+
+<h3>Trie Data Structure</h3>
+<p>A <strong>trie</strong> stores strings as paths from root to leaf. Each node is a character. Finding all strings starting with "app" requires one traversal to the "app" node, then a DFS of its subtree. Redis doesn't support tries natively, but Elasticsearch and Typesense do.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Python - Trie with top-K</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">class</span> <span class="cls">TrieNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.children = {}
+        self.top_queries = []  <span class="cmt"># top-10 completions cached at node</span>
+
+<span class="kw">class</span> <span class="cls">AutocompleteTrie</span>:
+    <span class="kw">def</span> <span class="fn">search</span>(self, prefix: <span class="cls">str</span>) -> list:
+        node = self.root
+        <span class="kw">for</span> ch <span class="kw">in</span> prefix:
+            <span class="kw">if</span> ch <span class="kw">not in</span> node.children:
+                <span class="kw">return</span> []
+            node = node.children[ch]
+        <span class="cmt"># Each node pre-caches its top-10 → O(prefix_length) lookup</span>
+        <span class="kw">return</span> node.top_queries</code></pre>
+</div>
+
+<h3>Production Architecture</h3>
+<p>Google pre-computes top queries per prefix offline (MapReduce over query logs). Trie snapshots are pushed to all edge servers. Updates run every 10–30 minutes. Real-time trending queries are handled separately via a streaming pipeline (Kafka + Flink) that injects into the trie without a full rebuild.</p>
+
+<div class="related-sections">
+  <div class="related-title">Related Topics</div>
+  <div class="related-links">
+    <a href="distributed-systems.html#cap" class="related-link">
+      <span class="related-link-title">CAP Theorem</span>
+      <span class="related-link-desc">The tradeoffs behind every design decision</span>
+    </a>
+    <a href="database-engineering.html#sharding" class="related-link">
+      <span class="related-link-title">Database Sharding</span>
+      <span class="related-link-desc">How to scale databases horizontally</span>
+    </a>
+    <a href="caching-guide.html#strategies" class="related-link">
+      <span class="related-link-title">Cache Strategies</span>
+      <span class="related-link-desc">Cache-aside, write-through, CDN patterns</span>
+    </a>
+    <a href="message-queues.html#kafka" class="related-link">
+      <span class="related-link-title">Apache Kafka</span>
+      <span class="related-link-desc">Event streaming for high-throughput pipelines</span>
+    </a>
+  </div>
+</div>
+
+<div class="page-footer-nav">
+  <a href="production-engineering.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🚀 Production Engineering</div>
+  </a>
+  <a href="senior-engineer-roadmap.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">📈 Senior Eng Roadmap</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#framework">DESIGN Framework</a></li>
+    <li><a href="#url-shortener">URL Shortener</a></li>
+    <li><a href="#whatsapp">WhatsApp</a></li>
+    <li><a href="#netflix">Netflix Streaming</a></li>
+    <li><a href="#uber">Uber Ride Sharing</a></li>
+    <li><a href="#instagram">Instagram Feed</a></li>
+    <li><a href="#rate-limiter">Rate Limiter</a></li>
+    <li><a href="#distributed-cache">Distributed Cache</a></li>
+    <li><a href="#search-autocomplete">Search Autocomplete</a></li>
+  </ul>
+</aside>
+</div>
+<div class="focus-mode-bar" id="focusModeBar">
+  <span>Focus mode — press <kbd style="font-family:monospace;background:var(--bg3);padding:1px 6px;border-radius:3px">F</kbd> or click to exit</span>
+  <button class="focus-mode-exit-btn" onclick="toggleReadingMode()">✕ Exit Focus</button>
+</div>
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+<div class="search-modal" id="searchModal" onclick="if(event.target===this)closeSearchModal()">
+  <div class="search-modal-content">
+    <div class="search-modal-input-wrap">
+      <span class="modal-search-icon">🔍</span>
+      <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search all topics..." oninput="handleModalSearch(this.value)">
+      <span class="search-modal-esc" onclick="closeSearchModal()">ESC</span>
+    </div>
+    <div class="search-modal-results" id="searchModalResults"></div>
+  </div>
+</div>
+<div class="shortcuts-help" id="shortcutsHelp" onclick="if(event.target===this)closeShortcutsHelp()">
+  <div class="shortcuts-help-content">
+    <div class="shortcuts-help-title">⌨ Keyboard Shortcuts</div>
+    <div class="shortcut-row"><span class="action">Global Search</span><div class="keys"><span class="key">Ctrl</span><span>+</span><span class="key">K</span></div></div>
+    <div class="shortcut-row"><span class="action">Page Search</span><div class="keys"><span class="key">Ctrl</span><span>+</span><span class="key">Shift</span><span>+</span><span class="key">F</span></div></div>
+    <div class="shortcut-row"><span class="action">Toggle Theme</span><div class="keys"><span class="key">T</span></div></div>
+    <div class="shortcut-row"><span class="action">Focus Mode</span><div class="keys"><span class="key">F</span></div></div>
+    <div class="shortcut-row"><span class="action">Bookmark</span><div class="keys"><span class="key">B</span></div></div>
+    <div class="shortcut-row"><span class="action">This help</span><div class="keys"><span class="key">?</span></div></div>
+  </div>
+</div>
+<div class="page-search-modal" id="pageSearchModal" onclick="if(event.target===this)closePageSearch()">
+  <div class="page-search-content">
+    <div class="page-search-input-wrap">
+      <span class="page-search-icon">🔍</span>
+      <input type="text" class="page-search-input" id="pageSearchInput" placeholder="Search on this page..." oninput="handlePageSearch(this.value)">
+    </div>
+    <div class="page-search-results" id="pageSearchResults"></div>
+  </div>
+</div>
+<div class="color-picker-modal" id="colorPickerModal">
+  <div class="color-picker-content">
+    <div class="color-picker-header"><span>Accent Color</span><button class="color-picker-close" onclick="closeColorPicker()">✕</button></div>
+    <div class="color-swatches" id="colorSwatches"></div>
+  </div>
+</div>
+<div class="bookmark-toast" id="bookmarkToast"></div>
+<div class="permalink-toast" id="permalinkToast">🔗 Link copied!</div>
+<script src="shared.js"></script>
+</body>
+</html>

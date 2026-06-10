@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CI/CD &amp; DevOps · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth &amp; Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="cicd-devops.html" class="nav-item active"><span class="icon">🔧</span>CI/CD &amp; DevOps</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> CI/CD &amp; DevOps</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-yellow">Intermediate · Chapter 11</div>
+  <h1>CI/CD <span class="grad">&amp; DevOps</span></h1>
+  <p class="page-intro">From commit to production in minutes, not weeks. Master Docker containers, Kubernetes orchestration, GitHub Actions pipelines, and the DevOps practices that let teams at Google and Netflix deploy hundreds of times per day.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 90 min read</span>
+    <span class="meta-pill">🎯 Mid-level → Senior</span>
+    <span class="meta-pill">🔧 Docker, K8s, GitHub Actions</span>
+    <span class="meta-pill">🚀 Deploy 100×/day</span>
+  </div>
+</div>
+
+<h2 id="why-devops">Why DevOps? The DORA Metrics</h2>
+<p>DevOps Research and Assessment (DORA) tracks 4 metrics that predict software delivery performance. Elite teams score dramatically better on all four — and those teams have <strong>2× lower change failure rates</strong> and <strong>24× faster recovery times</strong>.</p>
+
+<div class="stat-row">
+  <div class="stat-card"><div class="stat-value">~1h</div><div class="stat-label">Elite lead time (commit → prod)</div></div>
+  <div class="stat-card"><div class="stat-value">~180×</div><div class="stat-label">Elite deploy frequency</div></div>
+  <div class="stat-card"><div class="stat-value">&lt;1h</div><div class="stat-label">Elite mean time to restore</div></div>
+  <div class="stat-card"><div class="stat-value">&lt;5%</div><div class="stat-label">Elite change failure rate</div></div>
+</div>
+
+<div class="callout info">
+  <div class="callout-icon">💡</div>
+  <div class="callout-body">
+    <div class="callout-title">Shift Left</div>
+    <p>"Shift left" means moving quality checks earlier in the pipeline — running linting, tests, and security scans at commit time rather than at deployment time. A bug caught in CI costs 10× less to fix than one caught in staging, and 100× less than one in production.</p>
+  </div>
+</div>
+
+<h2 id="docker">Docker — Containers Fundamentals</h2>
+
+<h3>Why Containers?</h3>
+<p>Before containers: "it works on my machine" was a real problem. Different OS libraries, Python versions, environment variables — every environment was a snowflake. Containers package your app with all its dependencies into an isolated, reproducible unit that runs identically everywhere.</p>
+
+<div class="compare-grid">
+  <div class="compare-card pro">
+    <h4>Containers vs VMs</h4>
+    <ul>
+      <li>Share the host OS kernel (no hypervisor)</li>
+      <li>Start in milliseconds (VMs: minutes)</li>
+      <li>~50MB overhead vs ~1GB for VM</li>
+      <li>Thousands per host vs dozens for VMs</li>
+      <li>Trade-off: weaker isolation than VMs</li>
+    </ul>
+  </div>
+  <div class="compare-card con">
+    <h4>When to Use VMs Instead</h4>
+    <ul>
+      <li>Multi-tenant security isolation required</li>
+      <li>Running a different kernel (Windows on Linux host)</li>
+      <li>Compliance requires hardware-level isolation</li>
+      <li>Long-running processes that don't need fast startup</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Dockerfile Best Practices</h3>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Dockerfile (Node.js — production-ready)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt"># Stage 1: Build</span>
+<span class="kw">FROM</span> <span class="cls">node:20-alpine</span> <span class="kw">AS</span> builder
+<span class="kw">WORKDIR</span> /app
+<span class="cmt"># Copy package files first — leverage layer caching</span>
+<span class="cmt"># These layers only rebuild when package.json changes</span>
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm ci --only=production
+
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> npm run build
+
+<span class="cmt"># Stage 2: Runtime — final image is much smaller</span>
+<span class="kw">FROM</span> <span class="cls">node:20-alpine</span>
+<span class="kw">WORKDIR</span> /app
+
+<span class="cmt"># Run as non-root user (security best practice)</span>
+<span class="kw">RUN</span> addgroup -S appgroup && adduser -S appuser -G appgroup
+<span class="kw">USER</span> appuser
+
+<span class="cmt"># Copy only what we need from builder</span>
+<span class="kw">COPY</span> --from=builder /app/dist ./dist
+<span class="kw">COPY</span> --from=builder /app/node_modules ./node_modules
+
+<span class="kw">EXPOSE</span> <span class="num">3000</span>
+
+<span class="cmt"># Use exec form (not shell form) to handle signals correctly</span>
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"dist/server.js"</span>]</code></pre>
+</div>
+
+<h3>Layer Caching — The Most Important Docker Optimization</h3>
+<p>Docker builds images layer by layer. Each instruction creates a layer. If a layer hasn't changed, Docker reuses the cached version. The golden rule: <strong>put things that change rarely at the top, things that change often at the bottom</strong>.</p>
+
+<div class="callout warning">
+  <div class="callout-icon">🐢</div>
+  <div class="callout-body">
+    <div class="callout-title">Common Mistake: COPY . . Before npm install</div>
+    <p>If you <code>COPY . .</code> first, then <code>RUN npm install</code>, the npm install layer invalidates every time ANY source file changes — even a comment. Always copy package files first, install, then copy source. This saves minutes on every build.</p>
+  </div>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">.dockerignore</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code>node_modules
+dist
+.git
+*.log
+.env
+.env.*
+coverage
+.nyc_output
+*.test.ts
+*.spec.ts
+README.md
+Dockerfile*</code></pre>
+</div>
+
+<h3>Docker Compose for Local Development</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">docker-compose.yml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">version</span>: <span class="str">'3.9'</span>
+<span class="kw">services</span>:
+  <span class="kw">api</span>:
+    <span class="kw">build</span>:
+      <span class="kw">context</span>: .
+      <span class="kw">target</span>: builder  <span class="cmt"># Use builder stage for hot-reload</span>
+    <span class="kw">ports</span>:
+      - <span class="str">"3000:3000"</span>
+    <span class="kw">volumes</span>:
+      - <span class="str">./src:/app/src</span>  <span class="cmt"># Mount source for hot-reload</span>
+    <span class="kw">environment</span>:
+      - <span class="str">NODE_ENV=development</span>
+      - <span class="str">DATABASE_URL=postgres://user:pass@postgres:5432/mydb</span>
+    <span class="kw">depends_on</span>:
+      postgres:
+        <span class="kw">condition</span>: service_healthy  <span class="cmt"># Wait for DB ready</span>
+
+  <span class="kw">postgres</span>:
+    <span class="kw">image</span>: <span class="str">postgres:16-alpine</span>
+    <span class="kw">environment</span>:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    <span class="kw">healthcheck</span>:
+      <span class="kw">test</span>: [<span class="str">"CMD-SHELL"</span>, <span class="str">"pg_isready -U user"</span>]
+      <span class="kw">interval</span>: 5s
+      <span class="kw">retries</span>: 5
+    <span class="kw">volumes</span>:
+      - postgres_data:/var/lib/postgresql/data
+
+  <span class="kw">redis</span>:
+    <span class="kw">image</span>: <span class="str">redis:7-alpine</span>
+    <span class="kw">ports</span>: [<span class="str">"6379:6379"</span>]
+
+<span class="kw">volumes</span>:
+  postgres_data:</code></pre>
+</div>
+
+<h2 id="kubernetes">Kubernetes — Container Orchestration</h2>
+
+<h3>Why Kubernetes?</h3>
+<p>Docker Compose works for local dev. In production you need: automatic restarts when containers crash, rolling deploys with zero downtime, auto-scaling based on CPU/memory, service discovery between services, secrets management. Kubernetes handles all of this.</p>
+
+<h3>Core Concepts</h3>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Concept</th><th>What it is</th><th>Analogy</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Pod</strong></td><td>Smallest deployable unit. 1+ containers sharing network/storage.</td><td>A single process (or tightly coupled group)</td></tr>
+      <tr><td><strong>Deployment</strong></td><td>Manages a set of identical pods. Handles rolling updates, rollbacks.</td><td>A recipe for running N copies of your app</td></tr>
+      <tr><td><strong>Service</strong></td><td>Stable DNS name + load balancer in front of pods. Pods come and go; Service stays.</td><td>A load balancer that auto-updates its backend list</td></tr>
+      <tr><td><strong>ConfigMap</strong></td><td>Non-sensitive config (env vars, config files) injected into pods.</td><td>A .env file mounted into containers</td></tr>
+      <tr><td><strong>Secret</strong></td><td>Sensitive data (passwords, tokens) base64-encoded. Use external secret stores in prod.</td><td>A vault-managed .env file</td></tr>
+      <tr><td><strong>Ingress</strong></td><td>HTTP routing rules. Routes external traffic to Services based on host/path.</td><td>Nginx reverse proxy config</td></tr>
+      <tr><td><strong>HPA</strong></td><td>Horizontal Pod Autoscaler. Scales replicas based on CPU/memory or custom metrics.</td><td>Auto-scaling group in AWS</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Production Deployment</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">deployment.yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">apiVersion</span>: apps/v1
+<span class="kw">kind</span>: Deployment
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: api-server
+  <span class="kw">labels</span>:
+    <span class="kw">app</span>: api-server
+<span class="kw">spec</span>:
+  <span class="kw">replicas</span>: <span class="num">3</span>
+  <span class="kw">selector</span>:
+    <span class="kw">matchLabels</span>:
+      <span class="kw">app</span>: api-server
+  <span class="kw">strategy</span>:
+    <span class="kw">type</span>: RollingUpdate
+    <span class="kw">rollingUpdate</span>:
+      <span class="kw">maxSurge</span>: <span class="num">1</span>        <span class="cmt"># Allow 1 extra pod during deploy</span>
+      <span class="kw">maxUnavailable</span>: <span class="num">0</span>  <span class="cmt"># Never drop below 3 pods (zero-downtime)</span>
+  <span class="kw">template</span>:
+    <span class="kw">metadata</span>:
+      <span class="kw">labels</span>:
+        <span class="kw">app</span>: api-server
+    <span class="kw">spec</span>:
+      <span class="kw">containers</span>:
+        - <span class="kw">name</span>: api
+          <span class="kw">image</span>: myregistry/api-server:1.4.2  <span class="cmt"># Always use specific tags, not :latest</span>
+          <span class="kw">ports</span>:
+            - <span class="kw">containerPort</span>: <span class="num">3000</span>
+          <span class="kw">resources</span>:
+            <span class="kw">requests</span>:          <span class="cmt"># Guaranteed resources (affects scheduling)</span>
+              <span class="kw">cpu</span>: <span class="str">"100m"</span>
+              <span class="kw">memory</span>: <span class="str">"128Mi"</span>
+            <span class="kw">limits</span>:            <span class="cmt"># Hard cap — OOMKilled if exceeded</span>
+              <span class="kw">cpu</span>: <span class="str">"500m"</span>
+              <span class="kw">memory</span>: <span class="str">"512Mi"</span>
+          <span class="kw">readinessProbe</span>:    <span class="cmt"># Traffic only sent when pod is ready</span>
+            <span class="kw">httpGet</span>:
+              <span class="kw">path</span>: /health
+              <span class="kw">port</span>: <span class="num">3000</span>
+            <span class="kw">initialDelaySeconds</span>: <span class="num">5</span>
+            <span class="kw">periodSeconds</span>: <span class="num">10</span>
+          <span class="kw">livenessProbe</span>:     <span class="cmt"># Pod restarted if this fails</span>
+            <span class="kw">httpGet</span>:
+              <span class="kw">path</span>: /health
+              <span class="kw">port</span>: <span class="num">3000</span>
+            <span class="kw">initialDelaySeconds</span>: <span class="num">15</span>
+            <span class="kw">periodSeconds</span>: <span class="num">30</span>
+          <span class="kw">env</span>:
+            - <span class="kw">name</span>: DATABASE_URL
+              <span class="kw">valueFrom</span>:
+                <span class="kw">secretKeyRef</span>:
+                  <span class="kw">name</span>: api-secrets
+                  <span class="kw">key</span>: database-url</code></pre>
+</div>
+
+<h3>Horizontal Pod Autoscaler</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">hpa.yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">apiVersion</span>: autoscaling/v2
+<span class="kw">kind</span>: HorizontalPodAutoscaler
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: api-hpa
+<span class="kw">spec</span>:
+  <span class="kw">scaleTargetRef</span>:
+    <span class="kw">apiVersion</span>: apps/v1
+    <span class="kw">kind</span>: Deployment
+    <span class="kw">name</span>: api-server
+  <span class="kw">minReplicas</span>: <span class="num">3</span>
+  <span class="kw">maxReplicas</span>: <span class="num">20</span>
+  <span class="kw">metrics</span>:
+    - <span class="kw">type</span>: Resource
+      <span class="kw">resource</span>:
+        <span class="kw">name</span>: cpu
+        <span class="kw">target</span>:
+          <span class="kw">type</span>: Utilization
+          <span class="kw">averageUtilization</span>: <span class="num">70</span>  <span class="cmt"># Scale out at 70% CPU</span>
+    - <span class="kw">type</span>: Resource
+      <span class="kw">resource</span>:
+        <span class="kw">name</span>: memory
+        <span class="kw">target</span>:
+          <span class="kw">type</span>: Utilization
+          <span class="kw">averageUtilization</span>: <span class="num">80</span></code></pre>
+</div>
+
+<div class="callout warning">
+  <div class="callout-icon">⚠</div>
+  <div class="callout-body">
+    <div class="callout-title">Never Use :latest in Production</div>
+    <p>Using <code>image: myapp:latest</code> means rolling back is impossible — you don't know what "latest" was before the deploy. Always tag images with the Git commit SHA (<code>myapp:abc1234</code>) or semantic version (<code>myapp:1.4.2</code>). This makes every deploy reproducible and rollbacks instant.</p>
+  </div>
+</div>
+
+<h2 id="cicd-pipelines">CI/CD Pipelines — GitHub Actions</h2>
+
+<h3>Pipeline Stages</h3>
+<div class="diagram">
+  <pre>
+  git push
+     │
+     ▼
+  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
+  │  Lint    │───▶│  Test    │───▶│  Build   │───▶│  Deploy  │
+  │ ESLint   │    │ Unit     │    │ Docker   │    │ Staging  │
+  │ Prettier │    │ Integr.  │    │ build    │    │ → Prod   │
+  │ TypeCheck│    │ Coverage │    │ Push to  │    │ (canary) │
+  └──────────┘    └──────────┘    │ Registry │    └──────────┘
+  ~30s            ~2-5min         └──────────┘         │
+                                  ~3-5min          ~5-10min
+                                                        │
+                                                   Smoke Tests
+                                                   Rollback if fail
+  </pre>
+</div>
+
+<h3>Complete GitHub Actions Workflow</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">.github/workflows/deploy.yml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">name</span>: CI/CD Pipeline
+
+<span class="kw">on</span>:
+  <span class="kw">push</span>:
+    <span class="kw">branches</span>: [main, develop]
+  <span class="kw">pull_request</span>:
+    <span class="kw">branches</span>: [main]
+
+<span class="kw">env</span>:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+<span class="kw">jobs</span>:
+  <span class="cmt"># ── Stage 1: Quality Gates ─────────────────────</span>
+  <span class="kw">lint-and-test</span>:
+    <span class="kw">runs-on</span>: ubuntu-latest
+    <span class="kw">services</span>:
+      <span class="kw">postgres</span>:
+        <span class="kw">image</span>: postgres:16
+        <span class="kw">env</span>:
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        <span class="kw">options</span>: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: actions/checkout@v4
+
+      - <span class="kw">uses</span>: actions/setup-node@v4
+        <span class="kw">with</span>:
+          <span class="kw">node-version</span>: <span class="str">'20'</span>
+          <span class="kw">cache</span>: <span class="str">'npm'</span>  <span class="cmt"># Cache node_modules between runs</span>
+
+      - <span class="kw">run</span>: npm ci
+
+      - <span class="kw">name</span>: Lint
+        <span class="kw">run</span>: npm run lint
+
+      - <span class="kw">name</span>: Type check
+        <span class="kw">run</span>: npm run typecheck
+
+      - <span class="kw">name</span>: Unit tests
+        <span class="kw">run</span>: npm test -- --coverage
+
+      - <span class="kw">name</span>: Integration tests
+        <span class="kw">run</span>: npm run test:integration
+        <span class="kw">env</span>:
+          DATABASE_URL: postgres://postgres:testpass@localhost:5432/testdb
+
+      - <span class="kw">name</span>: Upload coverage
+        <span class="kw">uses</span>: codecov/codecov-action@v4
+
+  <span class="cmt"># ── Stage 2: Build & Push Image ────────────────</span>
+  <span class="kw">build-and-push</span>:
+    <span class="kw">needs</span>: lint-and-test
+    <span class="kw">runs-on</span>: ubuntu-latest
+    <span class="kw">if</span>: github.event_name == 'push'
+    <span class="kw">permissions</span>:
+      contents: read
+      packages: write
+
+    <span class="kw">outputs</span>:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+
+    <span class="kw">steps</span>:
+      - <span class="kw">uses</span>: actions/checkout@v4
+
+      - <span class="kw">name</span>: Log in to registry
+        <span class="kw">uses</span>: docker/login-action@v3
+        <span class="kw">with</span>:
+          <span class="kw">registry</span>: ${{ env.REGISTRY }}
+          <span class="kw">username</span>: ${{ github.actor }}
+          <span class="kw">password</span>: ${{ secrets.GITHUB_TOKEN }}
+
+      - <span class="kw">name</span>: Extract metadata
+        <span class="kw">id</span>: meta
+        <span class="kw">uses</span>: docker/metadata-action@v5
+        <span class="kw">with</span>:
+          <span class="kw">images</span>: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          <span class="kw">tags</span>: |
+            type=sha,prefix=  <span class="cmt"># Tag with git SHA</span>
+            type=ref,event=branch
+
+      - <span class="kw">name</span>: Build and push
+        <span class="kw">id</span>: build
+        <span class="kw">uses</span>: docker/build-push-action@v5
+        <span class="kw">with</span>:
+          <span class="kw">context</span>: .
+          <span class="kw">push</span>: true
+          <span class="kw">tags</span>: ${{ steps.meta.outputs.tags }}
+          <span class="kw">cache-from</span>: type=gha    <span class="cmt"># Use GitHub Actions cache</span>
+          <span class="kw">cache-to</span>: type=gha,mode=max
+
+  <span class="cmt"># ── Stage 3: Deploy to Staging ─────────────────</span>
+  <span class="kw">deploy-staging</span>:
+    <span class="kw">needs</span>: build-and-push
+    <span class="kw">runs-on</span>: ubuntu-latest
+    <span class="kw">environment</span>: staging
+
+    <span class="kw">steps</span>:
+      - <span class="kw">name</span>: Deploy to Kubernetes
+        <span class="kw">uses</span>: azure/k8s-deploy@v4
+        <span class="kw">with</span>:
+          <span class="kw">namespace</span>: staging
+          <span class="kw">manifests</span>: k8s/staging/
+          <span class="kw">images</span>: ${{ needs.build-and-push.outputs.image-tag }}
+
+      - <span class="kw">name</span>: Smoke tests
+        <span class="kw">run</span>: npm run test:smoke -- --env=staging</code></pre>
+</div>
+
+<h3>Branch Strategy</h3>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Branch</th><th>Purpose</th><th>Deploys To</th><th>Protection</th></tr></thead>
+    <tbody>
+      <tr><td><code>main</code></td><td>Production-ready code</td><td>Production</td><td>Require PR + 2 reviews + CI passing</td></tr>
+      <tr><td><code>develop</code></td><td>Integration branch</td><td>Staging</td><td>Require PR + 1 review + CI passing</td></tr>
+      <tr><td><code>feature/*</code></td><td>Feature development</td><td>Preview env</td><td>CI required</td></tr>
+      <tr><td><code>hotfix/*</code></td><td>Emergency production fix</td><td>Production (after review)</td><td>Same as main</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="iac">Infrastructure as Code — Terraform</h2>
+
+<h3>Why IaC?</h3>
+<p>Manually clicking through AWS console leads to drift: your prod environment slowly becomes different from staging, no one knows what's deployed, and recreating it is impossible. Infrastructure as Code means your infrastructure is in git — versioned, reviewed, reproducible.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">main.tf — EKS Cluster (simplified)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">terraform</span> {
+  required_providers {
+    aws = {
+      source  = <span class="str">"hashicorp/aws"</span>
+      version = <span class="str">"~> 5.0"</span>
+    }
+  }
+  <span class="cmt"># Store state in S3, lock in DynamoDB</span>
+  backend <span class="str">"s3"</span> {
+    bucket         = <span class="str">"mycompany-terraform-state"</span>
+    key            = <span class="str">"prod/eks/terraform.tfstate"</span>
+    region         = <span class="str">"us-east-1"</span>
+    dynamodb_table = <span class="str">"terraform-state-lock"</span>
+    encrypt        = <span class="kw">true</span>
+  }
+}
+
+<span class="kw">module</span> <span class="str">"eks"</span> {
+  source  = <span class="str">"terraform-aws-modules/eks/aws"</span>
+  version = <span class="str">"~> 20.0"</span>
+
+  cluster_name    = <span class="str">"prod-cluster"</span>
+  cluster_version = <span class="str">"1.30"</span>
+  vpc_id          = module.vpc.vpc_id
+  subnet_ids      = module.vpc.private_subnets
+
+  eks_managed_node_groups = {
+    general = {
+      desired_size = <span class="num">3</span>
+      min_size     = <span class="num">2</span>
+      max_size     = <span class="num">10</span>
+      instance_types = [<span class="str">"t3.medium"</span>]
+    }
+  }
+}</code></pre>
+</div>
+
+<h3>Terraform Workflow</h3>
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>terraform init</h4>
+      <p>Downloads providers and modules. Initializes the backend (S3). Run once per workspace setup.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>terraform plan</h4>
+      <p>Shows what will change: <code>+</code> create, <code>~</code> modify, <code>-</code> destroy. <strong>Always review this output before applying.</strong> Post the plan as a PR comment in CI.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>terraform apply</h4>
+      <p>Makes the actual changes. In production, only run this from CI/CD after PR approval, never from a developer's laptop. Prevents "it worked fine on my machine" infrastructure drift.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h4>terraform state</h4>
+      <p>Terraform tracks current state in a state file. Store it in S3 with DynamoDB locking so multiple engineers don't corrupt it with concurrent applies.</p>
+    </div>
+  </div>
+</div>
+
+<h2 id="gitops">GitOps — Kubernetes Deployments via Git</h2>
+
+<p>GitOps is a pattern where Git is the <em>single source of truth</em> for both application code and infrastructure state. A GitOps operator (ArgoCD, Flux) watches your Git repo and automatically syncs the cluster to match whatever is in the repo.</p>
+
+<div class="diagram">
+  <pre>
+  Developer
+     │
+     │ git push (app code)
+     ▼
+  GitHub (app repo)           GitHub (config repo)
+     │                              ▲
+     │ CI builds image              │ CI updates image tag
+     ▼                              │ (e.g. deployment.yaml)
+  Container Registry ──────────────┘
+                                    │
+                               ArgoCD watches config repo
+                                    │
+                                    ▼
+                           Kubernetes Cluster
+                           (auto-synced to match git)
+  </pre>
+</div>
+
+<h3>ArgoCD Application</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">argocd-app.yaml</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">apiVersion</span>: argoproj.io/v1alpha1
+<span class="kw">kind</span>: Application
+<span class="kw">metadata</span>:
+  <span class="kw">name</span>: api-server
+  <span class="kw">namespace</span>: argocd
+<span class="kw">spec</span>:
+  <span class="kw">project</span>: default
+  <span class="kw">source</span>:
+    <span class="kw">repoURL</span>: https://github.com/mycompany/k8s-manifests
+    <span class="kw">targetRevision</span>: HEAD
+    <span class="kw">path</span>: apps/api-server/prod
+  <span class="kw">destination</span>:
+    <span class="kw">server</span>: https://kubernetes.default.svc
+    <span class="kw">namespace</span>: production
+  <span class="kw">syncPolicy</span>:
+    <span class="kw">automated</span>:
+      <span class="kw">prune</span>: true     <span class="cmt"># Remove resources deleted from git</span>
+      <span class="kw">selfHeal</span>: true  <span class="cmt"># Revert manual kubectl changes</span></code></pre>
+</div>
+
+<h2 id="secrets">Secrets Management</h2>
+<p>Never store secrets in git. Even in a private repo — anyone with read access can steal credentials, and rotating them after a leak is painful. Use a proper secrets manager and inject at runtime.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Tool</th><th>Best For</th><th>Key Feature</th></tr></thead>
+    <tbody>
+      <tr><td><strong>HashiCorp Vault</strong></td><td>Self-hosted, fine-grained access control</td><td>Dynamic secrets — generates DB creds per-request, auto-rotates</td></tr>
+      <tr><td><strong>AWS Secrets Manager</strong></td><td>AWS-native workloads</td><td>Automatic rotation for RDS, auto-inject to ECS/EKS</td></tr>
+      <tr><td><strong>GitHub Actions Secrets</strong></td><td>CI/CD pipeline secrets</td><td>Encrypted at rest, masked in logs, org-level sharing</td></tr>
+      <tr><td><strong>External Secrets Operator</strong></td><td>Kubernetes + any backend</td><td>Syncs Vault/AWS/GCP secrets into K8s Secrets automatically</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout danger">
+  <div class="callout-icon">🚨</div>
+  <div class="callout-body">
+    <div class="callout-title">Common Secret Leaks</div>
+    <p>Secrets leak through: git history (even after deletion — always rotate!), Docker image ENV layers (visible in <code>docker inspect</code>), log files, error messages, environment dumps. Use <code>--build-arg</code> secrets in Dockerfiles (never <code>ENV DB_PASS=...</code>). Add <code>git-secrets</code> or <code>truffleHog</code> to your pre-commit hooks.</p>
+  </div>
+</div>
+
+<h2 id="devops-checklist">DevOps Production Checklist</h2>
+
+<div class="tabs">
+  <div class="tab-buttons">
+    <button class="tab-btn active" onclick="switchTab(this,'devops-docker')">Docker</button>
+    <button class="tab-btn" onclick="switchTab(this,'devops-k8s')">Kubernetes</button>
+    <button class="tab-btn" onclick="switchTab(this,'devops-cicd')">CI/CD</button>
+    <button class="tab-btn" onclick="switchTab(this,'devops-sec')">Security</button>
+  </div>
+  <div class="tab-content active" id="devops-docker">
+    <ul class="checklist">
+      <li>Multi-stage builds — runtime image contains no build tools</li>
+      <li>Non-root user in container</li>
+      <li>No secrets in ENV instructions or image layers</li>
+      <li>Specific base image tag pinned (not :latest)</li>
+      <li>.dockerignore excludes node_modules, .git, .env</li>
+      <li>Package files copied before source (layer cache optimization)</li>
+      <li>HEALTHCHECK instruction defined</li>
+      <li>CMD uses exec form (JSON array) for signal handling</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="devops-k8s">
+    <ul class="checklist">
+      <li>Resource requests and limits set on all containers</li>
+      <li>Readiness and liveness probes configured</li>
+      <li>Image tag is specific (git SHA), never :latest</li>
+      <li>Secrets stored in Kubernetes Secrets, not ConfigMaps</li>
+      <li>HPA configured for auto-scaling</li>
+      <li>PodDisruptionBudget set (prevents full outage during node drain)</li>
+      <li>Network policies restrict inter-pod communication</li>
+      <li>Namespace resource quotas prevent runaway usage</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="devops-cicd">
+    <ul class="checklist">
+      <li>CI runs on every PR — no merge without passing CI</li>
+      <li>Tests run in parallel where possible</li>
+      <li>Build artifacts (images) tagged with commit SHA</li>
+      <li>Deploy to staging before production</li>
+      <li>Smoke tests run post-deploy</li>
+      <li>Automatic rollback on smoke test failure</li>
+      <li>No manual steps required for production deploy</li>
+      <li>Deployment pipeline history is auditable</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="devops-sec">
+    <ul class="checklist">
+      <li>Container images scanned for CVEs (Trivy, Snyk)</li>
+      <li>Secrets never in git, even in private repos</li>
+      <li>git-secrets or similar pre-commit hook installed</li>
+      <li>Least-privilege IAM roles for CI/CD pipeline</li>
+      <li>Branch protection on main — require reviews + CI</li>
+      <li>Signed commits / OIDC for supply chain integrity</li>
+      <li>Infrastructure changes require PR review (IaC)</li>
+      <li>Audit log for all production deployments</li>
+    </ul>
+  </div>
+</div>
+
+<div class="related-sections">
+  <div class="related-title">Related Topics</div>
+  <div class="related-links">
+    <a href="production-engineering.html#deployments" class="related-link">
+      <span class="related-link-title">Deployment Strategies</span>
+      <span class="related-link-desc">Canary, blue-green, feature flags in depth</span>
+    </a>
+    <a href="observability.html#metrics" class="related-link">
+      <span class="related-link-title">Observability</span>
+      <span class="related-link-desc">Metrics, logs, traces for Kubernetes workloads</span>
+    </a>
+    <a href="authentication-security.html" class="related-link">
+      <span class="related-link-title">Security</span>
+      <span class="related-link-desc">Secrets management, RBAC, attack prevention</span>
+    </a>
+    <a href="microservices.html" class="related-link">
+      <span class="related-link-title">Microservices</span>
+      <span class="related-link-desc">Service mesh, API gateways, decomposition</span>
+    </a>
+  </div>
+</div>
+
+<div class="page-footer-nav">
+  <a href="production-engineering.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🚀 Production Engineering</div>
+  </a>
+  <a href="system-design.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🏗 System Design Cases</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#why-devops">Why DevOps? (DORA)</a></li>
+    <li><a href="#docker">Docker Fundamentals</a></li>
+    <li><a href="#kubernetes">Kubernetes</a></li>
+    <li><a href="#cicd-pipelines">CI/CD Pipelines</a></li>
+    <li><a href="#iac">Infrastructure as Code</a></li>
+    <li><a href="#gitops">GitOps</a></li>
+    <li><a href="#secrets">Secrets Management</a></li>
+    <li><a href="#devops-checklist">Production Checklist</a></li>
+  </ul>
+</aside>
+</div>
+<div class="focus-mode-bar" id="focusModeBar">
+  <span>Focus mode — press <kbd style="font-family:monospace;background:var(--bg3);padding:1px 6px;border-radius:3px">F</kbd> or click to exit</span>
+  <button class="focus-mode-exit-btn" onclick="toggleReadingMode()">✕ Exit Focus</button>
+</div>
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+<div class="search-modal" id="searchModal" onclick="if(event.target===this)closeSearchModal()">
+  <div class="search-modal-content">
+    <div class="search-modal-input-wrap">
+      <span class="modal-search-icon">🔍</span>
+      <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Search all topics..." oninput="handleModalSearch(this.value)">
+      <span class="search-modal-esc" onclick="closeSearchModal()">ESC</span>
+    </div>
+    <div class="search-modal-results" id="searchModalResults"></div>
+  </div>
+</div>
+<div class="shortcuts-help" id="shortcutsHelp" onclick="if(event.target===this)closeShortcutsHelp()">
+  <div class="shortcuts-help-content">
+    <div class="shortcuts-help-title">⌨ Keyboard Shortcuts</div>
+    <div class="shortcut-row"><span class="action">Global Search</span><div class="keys"><span class="key">Ctrl</span><span>+</span><span class="key">K</span></div></div>
+    <div class="shortcut-row"><span class="action">Page Search</span><div class="keys"><span class="key">Ctrl</span><span>+</span><span class="key">Shift</span><span>+</span><span class="key">F</span></div></div>
+    <div class="shortcut-row"><span class="action">Toggle Theme</span><div class="keys"><span class="key">T</span></div></div>
+    <div class="shortcut-row"><span class="action">Focus Mode</span><div class="keys"><span class="key">F</span></div></div>
+    <div class="shortcut-row"><span class="action">Bookmark</span><div class="keys"><span class="key">B</span></div></div>
+    <div class="shortcut-row"><span class="action">This help</span><div class="keys"><span class="key">?</span></div></div>
+  </div>
+</div>
+<div class="page-search-modal" id="pageSearchModal" onclick="if(event.target===this)closePageSearch()">
+  <div class="page-search-content">
+    <div class="page-search-input-wrap">
+      <span class="page-search-icon">🔍</span>
+      <input type="text" class="page-search-input" id="pageSearchInput" placeholder="Search on this page..." oninput="handlePageSearch(this.value)">
+    </div>
+    <div class="page-search-results" id="pageSearchResults"></div>
+  </div>
+</div>
+<div class="color-picker-modal" id="colorPickerModal">
+  <div class="color-picker-content">
+    <div class="color-picker-header"><span>Accent Color</span><button class="color-picker-close" onclick="closeColorPicker()">✕</button></div>
+    <div class="color-swatches" id="colorSwatches"></div>
+  </div>
+</div>
+<div class="bookmark-toast" id="bookmarkToast"></div>
+<div class="permalink-toast" id="permalinkToast">🔗 Link copied!</div>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -76,6 +76,7 @@
   .quiz-card .q-tag.advanced { background: rgba(249,115,22,0.1); color: var(--accent4); border-color: rgba(249,115,22,0.2); }
   .quiz-card .q-tag.essential { background: rgba(234,179,8,0.15); color: #eab308; border-color: rgba(234,179,8,0.3); box-shadow: 0 0 8px rgba(234,179,8,0.1); }
   .quiz-card .q-tag.frontend { background: rgba(236,72,153,0.15); color: #ec4899; border-color: rgba(236,72,153,0.3); box-shadow: 0 0 8px rgba(236,72,153,0.1); }
+  .quiz-card .q-tag.devops { background: rgba(45,212,191,0.15); color: #2dd4bf; border-color: rgba(45,212,191,0.3); box-shadow: 0 0 8px rgba(45,212,191,0.1); }
   .quiz-progress {
     display: flex;
     gap: 4px;
@@ -111,6 +112,46 @@
   }
   .quiz-filter-btn:hover { border-color: var(--accent); color: var(--accent); }
   .quiz-filter-btn.active { background: var(--accent); color: var(--text1); border-color: var(--accent); }
+
+  /* ── Add Card Modal ────────────────────────────── */
+  .add-card-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 1000; display: none; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .add-card-overlay.open { display: flex; }
+  .add-card-modal {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px; width: 90%; max-width: 560px;
+    max-height: 85vh; overflow-y: auto;
+  }
+  .add-card-modal h2 { margin: 0 0 8px; font-size: 20px; }
+  .add-card-modal .modal-sub { color: var(--text3); font-size: 13px; margin-bottom: 20px; }
+  .add-card-modal label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .add-card-modal input, .add-card-modal textarea, .add-card-modal select {
+    width: 100%; padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--bg3);
+    color: var(--text1); font-size: 14px; margin-bottom: 16px;
+    box-sizing: border-box;
+  }
+  .add-card-modal textarea { min-height: 80px; resize: vertical; }
+  .add-card-modal select { cursor: pointer; }
+  .add-card-modal .btn-row { display: flex; gap: 8px; justify-content: flex-end; }
+  .add-card-modal .btn-row .btn { padding: 10px 20px; border-radius: 8px; }
+  .add-card-modal .char-count { text-align: right; font-size: 11px; color: var(--text3); margin-top: -12px; margin-bottom: 12px; }
+  /* Custom card badges */
+  .quiz-card .q-tag.custom { background: rgba(168,85,247,0.15); color: #a855f7; border-color: rgba(168,85,247,0.3); }
+  .custom-card-delete {
+    position: absolute; top: 12px; right: 12px;
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--bg3);
+    color: var(--text3); cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .quiz-card:hover .custom-card-delete { opacity: 1; }
+  .custom-card-delete:hover { background: rgba(239,68,68,0.15); color: #ef4444; border-color: #ef4444; }
+
 </style>
 </head>
 <body>
@@ -154,16 +195,17 @@
   <div class="quiz-header">
     <div class="page-badge badge-purple">🎴 Interactive Learning</div>
     <h1>Backend <span class="grad">Flashcard Quiz</span></h1>
-    <p class="page-intro">Test yourself with 245 backend & frontend engineering interview questions — from beginner fundamentals to Staff-level system design and distributed systems. Click a card to reveal the answer. Track your progress and focus on areas you need to improve.</p>
+    <p class="page-intro">Test yourself with 295 backend, frontend & DevOps engineering interview questions — from beginner fundamentals to Staff-level system design, distributed systems, frontend, and DevOps/SRE. Click a card to reveal the answer. Track your progress and focus on areas you need to improve.</p>
     <div class="quiz-stats">
-      <div class="quiz-stat">      <div class="quiz-stat-value" id="quizTotal">245</div><div class="quiz-stat-label">Total Cards</div></div>
+      <div class="quiz-stat">      <div class="quiz-stat-value" id="quizTotal">295</div><div class="quiz-stat-label">Total Cards</div></div>
       <div class="quiz-stat"><div class="quiz-stat-value" id="quizRevealed">0</div><div class="quiz-stat-label">Revealed</div></div>
-      <div class="quiz-stat"><div class="quiz-stat-value" id="quizRemaining">245</div><div class="quiz-stat-label">To Study</div></div>
+      <div class="quiz-stat"><div class="quiz-stat-value" id="quizRemaining">295</div><div class="quiz-stat-label">To Study</div></div>
     </div>
     <div class="quiz-controls">
       <button class="btn" onclick="shuffleQuiz()">🔀 Shuffle</button>
       <button class="btn" onclick="resetQuiz()">🔄 Reset All</button>
-      <button class="btn primary" id="quizScrollBtn" onclick="scrollToCurrent()" style="display:none">📍 Current Card</button>
+      
+      <button class="btn" onclick="openAddCardModal()">➕ Add Card</button><button class="btn primary" id="quizScrollBtn" onclick="scrollToCurrent()" style="display:none">📍 Current Card</button>
     </div>
     <div class="quiz-filter" id="quizFilter">
       <button class="quiz-filter-btn active" data-filter="all" onclick="filterQuiz('all')">All</button>
@@ -173,11 +215,40 @@
       <button class="quiz-filter-btn" data-filter="advanced" onclick="filterQuiz('advanced')">Advanced</button>
       <button class="quiz-filter-btn" data-filter="essential" onclick="filterQuiz('essential')">⭐ 80/20</button>
       <button class="quiz-filter-btn" data-filter="frontend" onclick="filterQuiz('frontend')">🎨 Frontend</button>
+      <button class="quiz-filter-btn" data-filter="devops" onclick="filterQuiz('devops')">⚙ DevOps</button>
     </div>
   </div>
 
   <div class="quiz-progress" id="quizProgress"></div>
   <div id="quizContainer"></div>
+
+  <!-- Add Card Modal -->
+  <div class="add-card-overlay" id="addCardOverlay" onclick="closeAddCardModal(event)">
+    <div class="add-card-modal" onclick="event.stopPropagation()">
+      <h2>➕ Create Custom Card</h2>
+      <p class="modal-sub">Add your own flashcard. It will be saved in your browser and appear alongside the built-in cards.</p>
+      <label for="cardQuestion">Question</label>
+      <input id="cardQuestion" placeholder="e.g., What is the difference between SQL and NoSQL?" maxlength="200" oninput="updateCharCount()">
+      <div class="char-count"><span id="charCount">0</span>/200</div>
+      <label for="cardAnswer">Answer</label>
+      <textarea id="cardAnswer" placeholder="Your answer..." maxlength="1000"></textarea>
+      <label for="cardLevel">Difficulty Level</label>
+      <select id="cardLevel">
+        <option value="junior">Beginner</option>
+        <option value="senior">Senior</option>
+        <option value="system">System Design</option>
+        <option value="advanced">Advanced</option>
+        <option value="essential">80/20</option>
+        <option value="frontend">Frontend</option>
+        <option value="devops">DevOps</option>
+        <option value="custom">General</option>
+      </select>
+      <div class="btn-row">
+        <button class="btn" onclick="closeAddCardModal()">Cancel</button>
+        <button class="btn primary" onclick="saveCustomCard()">💾 Save Card</button>
+      </div>
+    </div>
+  </div>
 </article>
 </div>
 <script src="shared.js"></script>
@@ -453,6 +524,58 @@ const QUIZ_DATA = [
   { id: 243, level: 'frontend', question: 'What is the Intersection Observer API?', answer: 'Detects elements entering/leaving viewport. new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) loadImage(e.target) }) }, { threshold: 0.1 }). Uses: lazy loading, infinite scroll, scroll animations. More performant than scroll listeners (off main thread).' },
   { id: 244, level: 'frontend', question: 'async vs defer on script tags?', answer: 'Both non-blocking. async: executes as soon as downloaded - order independent. defer: executes after HTML parsing - document order. Use async for third-party scripts (analytics). Use defer for your scripts needing DOM. Rule: defer for yours, async for third-party.' },
   { id: 245, level: 'frontend', question: 'What is the data- attribute?', answer: '<div data-user-id=123>. JS: element.dataset.userId. Valid HTML5, no rendering effect. Use for: simple UI state, identifiers, event delegation. Dont use for: large data, sensitive data, complex state.' },
+  // ── DEVOPS / SRE (IDs 246-295) ─────────────────────────
+  { id: 246, level: 'devops', question: 'Docker vs virtual machine?', answer: 'Docker containers share host kernel, VMs run full guest OS. Containers lighter (MB vs GB), start in seconds, higher density. VMs have stronger isolation. Docker uses namespaces for isolation, cgroups for resource limits. For microservices, containers are preferred.' },
+  { id: 247, level: 'devops', question: 'What is a Dockerfile and best practices?', answer: 'Multi-stage builds (build stage with SDK, runtime with minimal base), slim base (alpine/distroless), combine RUN commands to reduce layers, .dockerignore, COPY --chown for security, pin base image versions, scan for vulnerabilities.' },
+  { id: 248, level: 'devops', question: 'What is Kubernetes and what problems does it solve?', answer: 'Container orchestrator. Solves: scheduling (where to run containers), self-healing (restart failed containers), scaling (HPA), service discovery (DNS), rolling updates (zero-downtime), storage orchestration (PV). K8s is the standard for container orchestration at scale.' },
+  { id: 249, level: 'devops', question: 'What are core Kubernetes objects?', answer: 'Pod: one+ containers sharing network/storage. Service: stable IP for pods. Deployment: declarative pod updates. ConfigMap: non-sensitive config. Secret: sensitive data (base64). PersistentVolume: cluster storage. Namespace: virtual cluster. Ingress: HTTP routing to services.' },
+  { id: 250, level: 'devops', question: 'What are Kubernetes probe types?', answer: 'livenessProbe: is container alive? Fail = K8s restarts. readinessProbe: ready for traffic? Fail = removed from Service. startupProbe: delays other probes for slow-starting containers. Configured via httpGet, tcpSocket, or exec command.' },
+  { id: 251, level: 'devops', question: 'What is Terraform and IaC?', answer: 'Declarative infrastructure in HCL. Declare desired state, Terraform makes it so. Plan/Apply: plan shows changes, apply executes. State file tracks resources (remote in S3 for teams). Providers for AWS, GCP, Azure, K8s. Enables version-controlled, repeatable infrastructure.' },
+  { id: 252, level: 'devops', question: 'Terraform vs Ansible?', answer: 'Terraform: declarative IaC for provisioning (VPCs, EC2, RDS), immutable. Ansible: procedural config management on existing servers (install packages, configure files). Best: Terraform for provisioning, Ansible for configuration on provisioned resources.' },
+  { id: 253, level: 'devops', question: 'What is a CI/CD pipeline?', answer: 'CI: auto build+test on every change. CD: auto deploy after CI. Stages: checkout, lint, unit tests, build artifact, integration tests, staging deploy, smoke tests, production deploy. Manual gate for CDelivery vs automatic for CDeplyment. Tools: GitHub Actions, GitLab CI, Jenkins.' },
+  { id: 254, level: 'devops', question: 'What is GitHub Actions?', answer: 'Workflows run on events (push, PR, schedule). Defined in .github/workflows/*.yml: name, on (trigger), jobs, steps. Supports matrix builds (OS/node versions), caching, artifacts, environments with approval gates. Community actions or shell commands.' },
+  { id: 255, level: 'devops', question: 'Reverse proxy vs forward proxy?', answer: 'Forward proxy: between clients and internet, for filtering/anonymity. Client configures it. Reverse proxy: in front of servers, for load balancing, SSL termination, caching, WAF. Clients dont configure. NGINX, HAProxy are reverse proxies.' },
+  { id: 256, level: 'devops', question: 'What is NGINX and use cases?', answer: 'High-performance web server and reverse proxy. Uses: reverse proxy, load balancer (round-robin, least connections), SSL termination, static file server, rate limiting (limit_req_zone), caching (proxy_cache), API gateway. Handles 1000x more concurrent connections than Apache.' },
+  { id: 257, level: 'devops', question: 'Blue-green vs canary deployments?', answer: 'Blue-Green: two environments, switch traffic. Instant rollback by flipping back. Canary: route 1-5% to new version, monitor, gradually increase. Rollback by reducing to 0. Blue-green simpler/faster rollback. Canary reduces blast radius.' },
+  { id: 258, level: 'devops', question: 'What is Prometheus?', answer: 'Pulls (scrapes) metrics from HTTP /metrics endpoints at intervals (15s). PromQL for queries. Architecture: server (scrape, store, query), Alertmanager (alerts via PagerDuty/Slack), Exporters (node_exporter for machine metrics). Pull model: if Prometheus cant scrape, service is down.' },
+  { id: 259, level: 'devops', question: 'What is Grafana?', answer: 'Visualization and dashboarding tool. Connects to Prometheus as data source. Features: rich dashboards (graphs, tables, heatmaps), alerting with notification channels, annotations for deployments/incidents, template variables for dynamic dashboards, Explore mode for ad-hoc PromQL.' },
+  { id: 260, level: 'devops', question: 'Key K8s monitoring metrics?', answer: 'Cluster: node CPU/memory/disk pressure, pod count, API server latency. Pod: container CPU/memory vs requests/limits, restart count, OOM kills. Controller: desired vs ready pods. Use kube-state-metrics (objects), node_exporter (nodes), cAdvisor (containers). RED: Rate, Errors, Duration.' },
+  { id: 261, level: 'devops', question: 'What is the ELK Stack?', answer: 'Elasticsearch (search/storage), Logstash (ingestion/transformation), Kibana (visualization). Modern: Filebeat (lightweight log shipper) + Elasticsearch + Kibana. Flow: app writes JSON logs, Filebeat tails, sends to ES, Kibana queries. For centralized logging and debugging.' },
+  { id: 262, level: 'devops', question: 'What is an SLO?', answer: 'Target reliability (e.g., 99.9% over 30 days). Define SLIs (P99 < 200ms, error rate < 0.1%), set SLO targets, error budget = (1 - SLO) x time. For 99.9% over 30 days: 43.2 min allowed downtime. When budget exhausted, stop features, focus on reliability.' },
+  { id: 263, level: 'devops', question: 'Four golden signals of monitoring?', answer: '(1) Latency - time to serve. (2) Traffic - demand (req/sec). (3) Errors - explicit (5xx), implicit (wrong result), degraded. (4) Saturation - how full, focus on most constrained resource. Alert when saturation > 80%. Google SRE standard.' },
+  { id: 264, level: 'devops', question: 'What is a Pod Disruption Budget?', answer: 'Limits voluntary disruptions (node maintenance, upgrades). minAvailable: 2 or maxUnavailable: 1 - ensures availability during cluster ops. If eviction violates PDB, it is blocked. Doesnt protect against involuntary disruptions (crashes).' },
+  { id: 265, level: 'devops', question: 'What is HPA in K8s?', answer: 'Scales pod count by resource utilization or custom metrics. Target CPU 70%: desired = current x (current_metric / target_metric). Config: minReplicas, maxReplicas, targetCPUUtilizationPercentage. Cant scale to zero - use KEDA for event-driven scaling.' },
+  { id: 266, level: 'devops', question: 'Ingress vs LoadBalancer Service?', answer: 'LoadBalancer creates cloud LB per service - expensive for many services. Ingress: single entry point routing to multiple services by hostname/path. Supports TLS, path-based routing. NGINX Ingress Controller, AWS ALB Ingress Controller are popular.' },
+  { id: 267, level: 'devops', question: 'What is Helm?', answer: 'K8s package manager. Charts are pre-configured resources. Benefits: reusable, configurable (values.yaml), versioned (helm rollback), dependencies (app depends on postgres), Go templates. Common: nginx-ingress, cert-manager, kube-prometheus-stack.' },
+  { id: 268, level: 'devops', question: 'What is a Service Mesh?', answer: 'Manages service-to-service comms via sidecar proxies. Istio: Envoy sidecar per pod, mTLS automatically, traffic management (canary, circuit breaking), observability (traces, metrics), security (RBAC). Devs write app code without networking concerns. ~50MB RAM per sidecar.' },
+  { id: 269, level: 'devops', question: 'StatefulSet vs Deployment?', answer: 'Deployment: stateless, pods interchangeable, random names. StatefulSet: stateful (DBs, Kafka), stable identity (pod-0), stable storage (PVC per pod), ordered updates. Use StatefulSet for PostgreSQL, Cassandra, Kafka. Deployment for API servers.' },
+  { id: 270, level: 'devops', question: 'What is a DaemonSet?', answer: 'Runs a pod on EVERY node. Auto-scheduled on new nodes. Uses: log collection (fluentd, filebeat), monitoring (node_exporter, Datadog), networking (Calico, Cilium), security. Critical for cluster-wide infrastructure services.' },
+  { id: 271, level: 'devops', question: 'What is a K8s Operator?', answer: 'Extends K8s API with custom resources and controllers automating app management. Example: Prometheus Operator creates Prometheus CR - deploy/config auto. Automates backup/restore, upgrades, scaling, self-healing. Popular: strimzi (Kafka), postgres-operator.' },
+  { id: 272, level: 'devops', question: 'What is the Pod Lifecycle?', answer: 'Pending (scheduling/image pull), Running (started), Succeeded (exited 0), Failed (non-0 exit), Unknown (node unreachable). Init containers run before app for setup (wait for DB, migrate). Pod Ready when all containers ready AND probes pass.' },
+  { id: 273, level: 'devops', question: 'How does the K8s scheduler work?', answer: 'Filtering: eliminate nodes failing requirements (resources, nodeSelector, affinity, taints). Scoring: rank by resource availability, zone spreading, anti-affinity. Highest-scoring node wins. Custom schedulers possible for specific workloads.' },
+  { id: 274, level: 'devops', question: 'What are taints and tolerations?', answer: 'Taints repel pods from nodes. Tolerations allow pods on tainted nodes. Effects: NoSchedule (dont schedule new), PreferNoSchedule (try not to), NoExecute (evict existing). Uses: dedicated nodes (GPU/DB), spot instances, node problem marking.' },
+  { id: 275, level: 'devops', question: 'What is a CNI plugin?', answer: 'Implements pod networking: assign IPs, set up interfaces, enforce policies. Popular: Calico (BGP routing, policies), Flannel (simple overlay), Cilium (ebpf-based, high perf), Weave Net. Cilium popular for ebpf performance and security.' },
+  { id: 276, level: 'devops', question: 'What is a Network Policy?', answer: 'Controls pod-to-pod communication. Default: all-to-all. Example: allow frontend to backend on port 8080. Uses label selectors and ports. Requires CNI supporting policies (Calico, Cilium). Flannel does NOT support policies. Essential for zero-trust.' },
+  { id: 277, level: 'devops', question: 'ConfigMap vs Secret?', answer: 'ConfigMap: non-sensitive config (env vars or files), plaintext. Secret: sensitive data (passwords, keys), base64 (NOT encrypted by default - enable KMS). Both namespace-scoped, ~1MB limit. Production: use SealedSecrets or External Secrets Operator (syncs from Vault/AWS).' },
+  { id: 278, level: 'devops', question: 'What are PV and PVC?', answer: 'PersistentVolume: storage provisioned by admin/StorageClass, has capacity/access modes/reclaim policy. PersistentVolumeClaim: storage request by user. Pods mount PVCs. Decouples storage consumption from provisioning. When PVC requests 10GB, K8s binds or provisions.' },
+  { id: 279, level: 'devops', question: 'What is the K8s control plane?', answer: 'kube-apiserver (frontend, all comms), etcd (cluster state), kube-scheduler (pod-to-node), kube-controller-manager (node/replication/endpoints controllers), cloud-controller-manager (cloud provider). HA: 3-5 control plane nodes.' },
+  { id: 280, level: 'devops', question: 'What runs on a K8s Node?', answer: 'kubelet (manages pods, talks to API), kube-proxy (network rules for Services), container runtime (Docker, containerd), pods (your apps). Node status: Ready (healthy), NotReady (unhealthy), DiskPressure/MemoryPressure.' },
+  { id: 281, level: 'devops', question: 'What is etcd?', answer: 'Distributed KV store, K8s source of truth. Stores cluster state. Only API server talks to etcd. Uses Raft for consistency/HA. Best: 3/5/7 members, regular backups (etcdctl snapshot save), SSD storage, TLS between members and API server.' },
+  { id: 282, level: 'devops', question: 'What is a Container Registry?', answer: 'Stores/distributes Docker images. Options: Docker Hub (public, rate-limited), AWS ECR (IAM), GCP Artifact Registry, GitHub Container Registry, self-hosted (Harbor). Best: scan images (Trivy), immutable tags (git SHA), pull-through cache, cross-region replication.' },
+  { id: 283, level: 'devops', question: 'Docker Compose vs K8s?', answer: 'Compose: multi-container on single host, simple, no orchestration. Good for local dev. K8s: orchestrates across cluster, complex, feature-rich. Good for production, HA, scaling, rolling updates. For production, use managed K8s (EKS/GKE/AKS).' },
+  { id: 284, level: 'devops', question: 'What is Terraform state?', answer: 'Maps config to real resources: resource IDs, attributes, deps. Remote state (S3, Terraform Cloud) enables team collaboration, state locking (DynamoDB), encryption. Never in version control. Workspaces for environment isolation (dev/staging/prod).' },
+  { id: 285, level: 'devops', question: 'terraform plan vs apply?', answer: 'plan: shows create/modify/destroy, read-only. apply: executes on real infrastructure. Can use plan -out=plan.tfplan for exact execution. CI/CD: review plan output, then apply. + create, ~ update, - destroy, -/+ replace.' },
+  { id: 286, level: 'devops', question: 'What are Terraform modules?', answer: 'Reusable configs (like functions). Structure: modules/vpc/, modules/ecs/. Root main.tf calls modules. Best: separate repo, pin versions, terraform-docs for docs, separate state per env, terragrunt for DRY, terraform validate + tflint.' },
+  { id: 287, level: 'devops', question: 'Docker COPY vs ADD?', answer: 'COPY: copies files from build context, simple/predictable. ADD: same PLUS auto-extracts tar archives and supports URLs. Rule: always use COPY unless you need auto-extraction. Avoid ADD with URLs - use curl/wget in RUN for better caching.' },
+  { id: 288, level: 'devops', question: 'What is multi-stage build?', answer: 'Multiple FROM statements in one Dockerfile. Build stage: full SDK for compilation. Runtime stage: minimal base with artifact. Example: golang:alpine builds binary, alpine:latest runs it. Benefits: smaller images, no SDK in production, less attack surface.' },
+  { id: 289, level: 'devops', question: 'Kustomize vs Helm?', answer: 'Kustomize: template-free YAML patching with overlays. Built into kubectl (apply -k). Good for env-specific overrides. Helm: Go templates in charts with values.yaml and deps. Good for distributing complex apps. Helm has richer dependency/version mgmt.' },
+  { id: 290, level: 'devops', question: 'Resource requests vs limits?', answer: 'requests: minimum guaranteed, used for scheduling. limits: maximum allowed (CPU throttles, memory OOM-kills). Best: set requests = limits for Guaranteed QoS. Monitor via VPA for right-sizing. Dont set CPU limits without understanding throttling impact.' },
+  { id: 291, level: 'devops', question: 'K8s QoS classes?', answer: 'Guaranteed: requests = limits for all resources. Burstable: requests < limits or requests w/o limits. BestEffort: no requests/limits. Higher = lower eviction priority. Kubelet evicts BestEffort first, then Burstable, then Guaranteed under pressure.' },
+  { id: 292, level: 'devops', question: 'What is Docker HEALTHCHECK?', answer: 'Command to check container health: --interval=30s --timeout=3s CMD curl -f http://localhost:8080/health. States: starting, healthy, unhealthy. In K8s, use liveness/readiness probes instead. HEALTHCHECK for standalone Docker only.' },
+  { id: 293, level: 'devops', question: 'Docker ARG vs ENV?', answer: 'ARG: build-time only (docker build --build-arg). Not in container. For versions, build deps. ENV: run-time, persists in container. For app config. ARG visible in docker history - dont use for secrets. For build secrets, use BuildKit --secret.' },
+  { id: 294, level: 'devops', question: 'Docker layer caching?', answer: 'Each instruction creates cacheable layer. Order: (1) OS packages (rarely changes). (2) Dependency manifests + install. (3) Source code (changes most). .dockerignore excludes node_modules, .git. BuildKit parallelizes and skips unused stages.' },
+  { id: 295, level: 'devops', question: 'Docker restart policies vs K8s?', answer: 'Docker: no, on-failure (max retries), unless-stopped, always. K8s (Pod restartPolicy): Always (default), OnFailure, Never. Docker = container-level. K8s = pod-level (kubelet). Docker on-failure has max retries. K8s uses exponential backoff (10s-5min).' },
+
 ];
 
 // ─── Quiz Engine ────────────────────────────────────────
@@ -462,7 +585,7 @@ let currentFilter = 'all';
 let filteredIds = [];
 
 function initQuiz() {
-  quizOrder = QUIZ_DATA.map(q => q.id);
+  quizOrder = getQuizDataWithCustom().map(q => q.id);
   quizRevealed = {};
   applyFilter();
 }
@@ -470,7 +593,7 @@ function initQuiz() {
 function applyFilter() {
   filteredIds = currentFilter === 'all'
     ? [...quizOrder]
-    : quizOrder.filter(id => QUIZ_DATA.find(q => q.id === id)?.level === currentFilter);
+    : quizOrder.filter(id => getQuizDataWithCustom().find(q => q.id === id)?.level === currentFilter);
   renderQuiz();
   renderProgress();
   updateStats();
@@ -530,7 +653,7 @@ function renderQuiz() {
   const container = document.getElementById('quizContainer');
   if (!container) return;
   container.innerHTML = filteredIds.map((id, idx) => {
-    const q = QUIZ_DATA.find(d => d.id === id);
+    const q = getQuizDataWithCustom().find(d => d.id === id);
     if (!q) return '';
     const levelLabel = { junior: 'Beginner', senior: 'Senior', system: 'System Design', advanced: 'Advanced' }[q.level] || 'General';
     const levelClass = { junior: 'junior', senior: 'senior', system: 'system', advanced: 'advanced' }[q.level] || '';
@@ -580,13 +703,68 @@ function saveQuizProgress() {
 function loadQuizProgress() {
   try {
     const saved = JSON.parse(localStorage.getItem('quiz_progress'));
-    if (saved && saved.order && saved.order.length === QUIZ_DATA.length) {
+    if (saved && saved.order && saved.order.length === getQuizDataWithCustom().length) {
       quizOrder = saved.order;
       quizRevealed = saved.revealed || {};
       return true;
     }
   } catch {}
   return false;
+}
+
+
+// ─── Custom Cards ─────────────────────────────────────
+function getCustomCards() {
+  try { return JSON.parse(localStorage.getItem('quizCustomCards') || '[]'); }
+  catch { return []; }
+}
+function saveCustomCardsToLS(cards) {
+  localStorage.setItem('quizCustomCards', JSON.stringify(cards));
+}
+function openAddCardModal() {
+  document.getElementById('addCardOverlay').classList.add('open');
+  document.getElementById('cardQuestion').focus();
+  updateCharCount();
+}
+function closeAddCardModal(e) {
+  if (e && e.target !== e.currentTarget && !e) return;
+  document.getElementById('addCardOverlay').classList.remove('open');
+}
+function updateCharCount() {
+  const el = document.getElementById('charCount');
+  if (el) el.textContent = document.getElementById('cardQuestion').value.length;
+}
+function saveCustomCard() {
+  const question = document.getElementById('cardQuestion').value.trim();
+  const answer = document.getElementById('cardAnswer').value.trim();
+  const level = document.getElementById('cardLevel').value;
+  if (!question || !answer) {
+    alert('Please fill in both question and answer.');
+    return;
+  }
+  const cards = getCustomCards();
+  const newId = 'custom_' + Date.now() + '_' + cards.length;
+  cards.push({ id: newId, level: level, question: question, answer: answer });
+  saveCustomCardsToLS(cards);
+  // Clear form and close
+  document.getElementById('cardQuestion').value = '';
+  document.getElementById('cardAnswer').value = '';
+  document.getElementById('cardLevel').value = 'junior';
+  closeAddCardModal();
+  // Reinitialize to include new card
+  initQuiz();
+}
+function deleteCustomCard(id) {
+  if (!confirm('Delete this custom card?')) return;
+  let cards = getCustomCards();
+  cards = cards.filter(c => c.id !== id);
+  saveCustomCardsToLS(cards);
+  initQuiz();
+}
+// Extend quizOrder to include custom cards
+function getQuizDataWithCustom() {
+  const custom = getCustomCards();
+  return [...QUIZ_DATA, ...custom];
 }
 
 // Initialize
