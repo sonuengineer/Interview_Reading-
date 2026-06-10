@@ -228,10 +228,11 @@
       <h2>➕ Create Custom Card</h2>
       <p class="modal-sub">Add your own flashcard. It will be saved in your browser and appear alongside the built-in cards.</p>
       <label for="cardQuestion">Question</label>
-      <input id="cardQuestion" placeholder="e.g., What is the difference between SQL and NoSQL?" maxlength="200" oninput="updateCharCount()">
+      <input id="cardQuestion" placeholder="e.g., What is the difference between SQL and NoSQL?" maxlength="200" oninput="updateCharCount()" onkeydown="if(event.key==='Enter'){event.preventDefault();saveCustomCard()}">
       <div class="char-count"><span id="charCount">0</span>/200</div>
       <label for="cardAnswer">Answer</label>
-      <textarea id="cardAnswer" placeholder="Your answer..." maxlength="1000"></textarea>
+      <textarea id="cardAnswer" placeholder="Your answer..." maxlength="1000" oninput="updateAnswerCharCount()"></textarea>
+      <div class="char-count"><span id="answerCharCount">0</span>/1000</div>
       <label for="cardLevel">Difficulty Level</label>
       <select id="cardLevel">
         <option value="junior">Beginner</option>
@@ -658,6 +659,7 @@ function renderQuiz() {
     const levelLabel = { junior: 'Beginner', senior: 'Senior', system: 'System Design', advanced: 'Advanced' }[q.level] || 'General';
     const levelClass = { junior: 'junior', senior: 'senior', system: 'system', advanced: 'advanced' }[q.level] || '';
     return `<div class="quiz-card card-enter" id="qcard-${q.id}" onclick="toggleCard(${q.id})">
+      ${typeof q.id === "string" ? `<button class="custom-card-delete" onclick="event.stopPropagation();deleteCustomCard('${q.id}')" title="Delete this card">✕</button>` : ''}
       <div class="q-number">Question ${idx + 1} of ${filteredIds.length}</div>
       <div class="q-tags"><span class="q-tag ${levelClass}">${levelLabel}</span></div>
       <div class="q-text">${q.question}</div>
@@ -734,6 +736,10 @@ function updateCharCount() {
   const el = document.getElementById('charCount');
   if (el) el.textContent = document.getElementById('cardQuestion').value.length;
 }
+function updateAnswerCharCount() {
+  const el = document.getElementById('answerCharCount');
+  if (el) el.textContent = document.getElementById('cardAnswer').value.length;
+}
 function saveCustomCard() {
   const question = document.getElementById('cardQuestion').value.trim();
   const answer = document.getElementById('cardAnswer').value.trim();
@@ -751,20 +757,24 @@ function saveCustomCard() {
   document.getElementById('cardAnswer').value = '';
   document.getElementById('cardLevel').value = 'junior';
   closeAddCardModal();
-  // Reinitialize to include new card
-  initQuiz();
+  // Refresh quiz while preserving progress
+  refreshQuiz();
 }
 function deleteCustomCard(id) {
   if (!confirm('Delete this custom card?')) return;
   let cards = getCustomCards();
   cards = cards.filter(c => c.id !== id);
   saveCustomCardsToLS(cards);
-  initQuiz();
+  refreshQuiz();
 }
 // Extend quizOrder to include custom cards
 function getQuizDataWithCustom() {
   const custom = getCustomCards();
   return [...QUIZ_DATA, ...custom];
+}
+function refreshQuiz() {
+  quizOrder = getQuizDataWithCustom().map(q => q.id);
+  applyFilter();
 }
 
 // Initialize
