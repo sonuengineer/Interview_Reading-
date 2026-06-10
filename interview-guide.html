@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Guide · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item active"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Interview Guide</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="system-design.html" class="btn primary">🏗 System Design</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-orange">Chapter 14</div>
+  <h1>Backend Engineering <span class="grad">Interview Guide</span></h1>
+  <p class="page-intro">100 backend interview questions with detailed answers — from beginner fundamentals to Staff-level system design and distributed systems. Organized by topic and level so you can target your preparation.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 120 min read</span>
+    <span class="meta-pill">💼 100 Q&amp;As</span>
+    <span class="meta-pill">🎯 All Levels</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(event, 'beginner-q')">Beginner</button>
+  <button class="tab-btn" onclick="switchTab(event, 'intermediate-q')">Intermediate</button>
+  <button class="tab-btn" onclick="switchTab(event, 'senior-q')">Senior</button>
+  <button class="tab-btn" onclick="switchTab(event, 'sysdesign-q')">System Design</button>
+  <button class="tab-btn" onclick="switchTab(event, 'distributed-q')">Distributed</button>
+</div>
+
+<!-- BEGINNER -->
+<div id="beginner-q" class="tab-content active">
+<h2 id="beginner">Beginner Questions (L3–L4)</h2>
+
+<details open><summary><strong>Q1: What is the difference between HTTP GET and POST?</strong></summary>
+<p>GET retrieves data; it's idempotent (same result each time), has no body, and parameters go in the URL. GET requests can be cached and bookmarked. POST submits data that changes server state (create/update). It has a request body, is not idempotent, and should not be cached. Rule: use GET for reads, POST for writes. Never put sensitive data in GET URLs (they appear in logs and browser history).</p>
+</details>
+
+<details><summary><strong>Q2: What is REST and what makes an API RESTful?</strong></summary>
+<p>REST (Representational State Transfer) is an architectural style with 6 constraints: (1) Client-server separation, (2) Stateless — each request contains all needed info, (3) Cacheable — responses define their cacheability, (4) Uniform interface — standard HTTP verbs and resource URLs, (5) Layered system — client doesn't know if it talks directly to server, (6) Code on demand (optional). RESTful APIs use nouns for resources (/users not /getUsers), HTTP verbs for actions (GET/POST/PUT/DELETE), status codes correctly (200/201/400/404/500), and JSON for data exchange.</p>
+</details>
+
+<details><summary><strong>Q3: What is an HTTP status code? Name the important ones.</strong></summary>
+<p>Status codes are 3-digit numbers indicating request outcome. 1xx: informational. 2xx: success — 200 OK, 201 Created, 204 No Content. 3xx: redirects — 301 Permanent, 302 Temporary, 304 Not Modified (cached). 4xx: client errors — 400 Bad Request (invalid input), 401 Unauthorized (not authenticated), 403 Forbidden (authenticated but no permission), 404 Not Found, 409 Conflict, 422 Unprocessable Entity, 429 Too Many Requests. 5xx: server errors — 500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout.</p>
+</details>
+
+<details><summary><strong>Q4: What is a database index and why do we use it?</strong></summary>
+<p>An index is a separate data structure (typically a B-tree) that maps column values to row locations, enabling fast lookups without scanning the entire table. Without an index, a query like <code>WHERE email = 'alice@example.com'</code> scans every row (O(n)). With an index, it's O(log n). Use indexes on: columns in WHERE clauses, JOIN columns, ORDER BY columns, and high-cardinality columns. Don't over-index — each index slows INSERT/UPDATE/DELETE and uses disk space.</p>
+</details>
+
+<details><summary><strong>Q5: What is the N+1 query problem?</strong></summary>
+<p>The N+1 problem occurs when fetching a list of N items and then making one query per item to fetch related data — resulting in N+1 total queries. Example: load 100 posts (1 query), then load each post's author (100 queries) = 101 queries. Fix: use JOIN or batch loading (DataLoader). In ORMs: use eager loading (include/with/joinedload). The fix is almost always: fetch the main list, collect all IDs needed, do one batch query for related data, then merge in-memory.</p>
+</details>
+
+<details><summary><strong>Q6: What is ACID in databases?</strong></summary>
+<p>ACID are four properties that guarantee reliable database transactions. <strong>Atomicity:</strong> all operations in a transaction succeed or all fail — no partial commits. <strong>Consistency:</strong> a transaction brings the DB from one valid state to another — constraints and rules are never violated. <strong>Isolation:</strong> concurrent transactions don't interfere with each other — each sees a consistent snapshot. <strong>Durability:</strong> committed transactions survive crashes — data persists even if the server dies immediately after commit.</p>
+</details>
+
+<details><summary><strong>Q7: What is the difference between SQL and NoSQL?</strong></summary>
+<p>SQL (relational) databases: structured tables with schemas, ACID transactions, JOINs for relationships, strong consistency. Best for structured data with complex relationships — financial data, user accounts, orders. NoSQL databases: flexible schemas, designed for horizontal scaling, sacrifice some ACID properties for performance and scale. Types: document (MongoDB), key-value (Redis), wide-column (Cassandra), graph (Neo4j). Choose SQL when you need complex queries, transactions, and relationships. Choose NoSQL when you need massive scale, flexible schemas, or specialized data models.</p>
+</details>
+
+<details><summary><strong>Q8: What is connection pooling?</strong></summary>
+<p>Creating a database connection is expensive (100-500ms): TCP handshake, authentication, setup. Connection pooling maintains a pool of pre-created connections that are reused across requests. Instead of creating/destroying connections per request, your app acquires a connection from the pool, uses it, returns it. Pool size should be roughly <code>(CPU cores × 2) + disk_spindles</code>. Tools: PgBouncer for PostgreSQL, HikariCP for Java, SQLAlchemy pool for Python. Monitor pool utilization — high utilization means you need more connections or faster queries.</p>
+</details>
+
+<details><summary><strong>Q9: What is caching and when should you use it?</strong></summary>
+<p>Caching stores the result of expensive operations (DB queries, computations, HTTP calls) in a fast store (memory/Redis) so subsequent requests get the pre-computed result. Use caching when: data is read frequently but changes infrequently, computation is expensive, latency needs to be reduced. Don't cache when: data must be real-time accurate (bank balance), data changes on every write, the cost of stale data is unacceptable. Key questions: what is the TTL? How do you invalidate on write? What happens if cache is down (failopen to DB)?</p>
+</details>
+
+<details><summary><strong>Q10: What is the difference between authentication and authorization?</strong></summary>
+<p>Authentication (AuthN) verifies identity: "Are you who you claim to be?" — login, JWT validation, OAuth. Authorization (AuthZ) verifies permissions: "Are you allowed to do this?" — RBAC checks, policy evaluation. They happen in order: first authenticate, then authorize. A common mistake: checking authorization before authentication (user could spoof userId). Another: conflating them — JWT contains identity claims but authorization decisions are made server-side based on roles/permissions, not just "is the token valid?"</p>
+</details>
+</div>
+
+<!-- INTERMEDIATE -->
+<div id="intermediate-q" class="tab-content">
+<h2 id="intermediate">Intermediate Questions (L4–L5)</h2>
+
+<details open><summary><strong>Q11: How does JWT work and what are its security considerations?</strong></summary>
+<p>JWT (JSON Web Token) is a signed, self-contained token: header.payload.signature. The server issues it on login. The client stores it (HttpOnly cookie, not localStorage) and sends it with every request. The server re-verifies the signature on every request — no DB lookup needed. Security: Use RS256 (asymmetric) over HS256 (symmetric) for multi-service architectures. Short expiry (15 min access tokens) + refresh tokens. Validate exp, iss, aud claims. Never store sensitive data in payload (it's base64, not encrypted). Use jti claim to enable single-token revocation. Store in HttpOnly cookie, not localStorage (XSS protection).</p>
+</details>
+
+<details><summary><strong>Q12: Explain database replication and its types.</strong></summary>
+<p>Replication copies data across multiple DB instances for fault tolerance and read scaling. <strong>Primary-Replica (async):</strong> primary handles writes; replicas receive WAL log changes asynchronously. Fast writes, potential data loss if primary crashes before replica catches up. Read from replica, write to primary. <strong>Synchronous replication:</strong> primary waits for at least one replica to confirm before acknowledging write. Zero data loss but higher write latency. <strong>Multi-primary:</strong> multiple nodes accept writes; conflict resolution needed. Complex but enables write scaling. Most production setups use async primary-replica with automated failover (Patroni, AWS RDS Multi-AZ).</p>
+</details>
+
+<details><summary><strong>Q13: What is database sharding and when do you need it?</strong></summary>
+<p>Sharding horizontally partitions data across multiple DB servers — each shard holds a subset of the data. Shard key determines which shard holds a record. Example: shard by user_id % 10 → 10 shards. You need sharding when a single DB can't handle the write throughput or data volume (typically 10TB+ or 100K+ writes/sec). Challenges: cross-shard queries require scatter-gather, JOINs across shards are painful, re-sharding requires data migration. Choose shard key carefully: high cardinality, avoids hotspots (don't shard by date — all writes go to "today's" shard). Consider Vitess (MySQL), Citus (Postgres), or CockroachDB before manual sharding.</p>
+</details>
+
+<details><summary><strong>Q14: How would you design a rate limiter?</strong></summary>
+<p>Several algorithms: <strong>Token Bucket:</strong> bucket holds N tokens, refills at R rate. Request consumes one token. Most flexible, allows bursts up to bucket size. <strong>Fixed Window:</strong> count requests per window (100 req/min). Simple but allows double-rate at window boundary. <strong>Sliding Window Log:</strong> store timestamps of all requests, count in last N seconds. Accurate but memory-intensive. <strong>Sliding Window Counter:</strong> hybrid of fixed windows — more accurate than fixed, less memory than log. Implementation: Redis INCR + EXPIRE for distributed rate limiting. Key = "ratelimit:{user_id}:{window}". For token bucket in Redis, use a Lua script for atomic get+decrement.</p>
+</details>
+
+<details><summary><strong>Q15: Explain the CAP theorem with real examples.</strong></summary>
+<p>In a distributed system during a network partition, you must choose between Consistency (all nodes see same data) and Availability (every request gets a response). <strong>CP choice:</strong> during a partition, refuse requests to ensure data consistency. HBase, Zookeeper, etcd. Example: etcd refuses writes if quorum is lost — used for Kubernetes leader election where consistency is critical. <strong>AP choice:</strong> during a partition, continue serving requests (possibly stale data). Cassandra, DynamoDB. Example: DynamoDB serves reads from local replicas even if they haven't received recent writes — acceptable for shopping carts, user preferences. CP is not "always consistent" — it's consistent during partitions. Partition tolerance is always required because networks do fail.</p>
+</details>
+
+<details><summary><strong>Q16: What is eventual consistency?</strong></summary>
+<p>Eventual consistency guarantees that if no new updates are made, all replicas will eventually converge to the same value. There's no guarantee of when. Systems like DynamoDB and Cassandra use eventual consistency to achieve high availability and low latency. Acceptable for: user profiles, product catalog, shopping carts, social media likes. Not acceptable for: bank balances, inventory (overselling), authentication tokens. Techniques to handle it: version vectors, CRDTs (conflict-free replicated data types), "last write wins" with timestamps. Application code must handle reading stale data: show "balance as of 2 seconds ago."</p>
+</details>
+
+<details><summary><strong>Q17: How does a message queue work and when do you use one?</strong></summary>
+<p>A message queue decouples producers from consumers. Producer writes a message to the queue; consumer reads it asynchronously. The queue persists messages if the consumer is down. Use queues when: the work is slow and doesn't need to block the HTTP response (email sending, PDF generation), you need to absorb traffic spikes (queue handles bursts, workers process at their pace), downstream services have lower SLAs than your API, you need retry logic with backoff, or you need audit trails. Don't use queues for: synchronous user-facing requests requiring immediate response, or when simplicity matters more than decoupling.</p>
+</details>
+
+<details><summary><strong>Q18: What is a deadlock and how do you prevent it?</strong></summary>
+<p>A deadlock occurs when two transactions each hold a lock the other needs. T1 holds lock on Row A, wants Row B; T2 holds Row B, wants Row A — both wait forever. Prevention strategies: (1) always acquire locks in the same order (alphabetical or by ID). (2) Use SELECT FOR UPDATE SKIP LOCKED to avoid waiting. (3) Keep transactions short and don't do external calls inside them. (4) Use NOWAIT to fail fast instead of waiting. (5) Set lock timeout — fail after N milliseconds. (6) Application-level retries on deadlock detection (error code 40001 in PostgreSQL). Most ORMs automatically retry on deadlock.</p>
+</details>
+
+<details><summary><strong>Q19: What is the difference between OAuth2 and API Keys?</strong></summary>
+<p>API Keys are static tokens (long random strings) that identify the caller. Simple to implement, easy to share, hard to rotate at scale. Best for server-to-server communication where the caller controls the key. OAuth2 is a delegated authorization framework — it allows a user to grant an application access to their resources without sharing their password. The application gets an access token scoped to specific permissions, which expires and can be revoked. Use OAuth2 when: a third-party app needs to access user data (Google Sheets integration, GitHub bot), you need scoped permissions ("read only"), or you need token expiry and refresh. API keys when: server-to-server, you control both sides, simplicity matters.</p>
+</details>
+
+<details><summary><strong>Q20: How do you handle database migrations safely in production?</strong></summary>
+<p>Key principle: migrations must be backward-compatible. Steps: (1) Expand phase — add new columns/tables as nullable without removing old ones. Old app still works. (2) Deploy new app — code that reads from both old and new schema. (3) Migrate data — backfill new columns. (4) Contract phase — remove old columns/tables once all data migrated and old code is gone. Never: rename columns (drop + add instead), add NOT NULL columns without defaults, lock large tables (use CONCURRENTLY for index creation), or deploy app and migration simultaneously. Tools: Flyway, Liquibase, Alembic, Django migrations. Always have a rollback plan: can the migration be reversed if deployment fails?</p>
+</details>
+</div>
+
+<!-- SENIOR -->
+<div id="senior-q" class="tab-content">
+<h2 id="senior-questions">Senior Questions (L5–L6)</h2>
+
+<details open><summary><strong>Q21: How do you debug a production performance issue?</strong></summary>
+<p>Systematic approach: (1) Observe — what metric degraded? Latency spike? Error rate? CPU? When did it start? Correlate with deployments, traffic changes, external events. (2) Narrow scope — which service? Which endpoint? Which DB? Use distributed traces to find the slow span. (3) Hypothesize — is it a slow query? Cache miss? Memory pressure? Lock contention? External API slowness? (4) Verify — run EXPLAIN ANALYZE on suspicious queries. Check Redis hit rate. Look at connection pool utilization. Profile CPU if it's high. (5) Fix — apply the minimal change. (6) Validate — watch the metric recover. Document findings in a postmortem. Never change multiple things at once — you lose the ability to identify the cause.</p>
+</details>
+
+<details><summary><strong>Q22: Design a distributed cache. How do you handle cache invalidation at scale?</strong></summary>
+<p>Distributed cache (Redis Cluster): data sharded across nodes via consistent hashing. Reads/writes go to the node responsible for that key. Replication (primary-replica) for availability. Cache invalidation strategies: (1) TTL-based: simple, eventual consistency. (2) Event-driven: on write, publish event; cache layer subscribes and deletes key. (3) Write-through: update cache on every write. (4) CDC (Change Data Capture): Debezium watches DB binlog, publishes changes, cache invalidation service processes them. The hardest problem: distributed cache coherence. When multiple app servers race to populate a key after miss: use mutex lock (SETNX) to let only one populate. Use probabilistic early expiration (XFetch) to prevent stampede on frequently-expiring hot keys.</p>
+</details>
+
+<details><summary><strong>Q23: How does Kafka achieve high throughput?</strong></summary>
+<p>Kafka achieves 1M+ messages/sec per broker through several design decisions: (1) Sequential disk I/O — Kafka writes to an append-only log. Sequential writes are 100× faster than random I/O. (2) Zero-copy — uses OS sendfile() to transfer data from disk to network without copying through user space. (3) Batching — producers batch messages; single network call sends thousands. (4) Compression — compress batches (snappy/lz4/zstd) reducing both network and disk I/O. (5) Partition parallelism — topic split into N partitions, each handled by different broker core; consumers process in parallel. (6) OS page cache — relies on OS buffer cache; no JVM heap allocation for data. (7) Pull model — consumers pull at their pace, no back-pressure issues.</p>
+</details>
+
+<details><summary><strong>Q24: Explain the SAGA pattern and when to use it over 2PC.</strong></summary>
+<p>2PC (two-phase commit) coordinates a distributed transaction across multiple services — both phases require all participants to respond before commit. Problems: blocking (participant failure during phase 2 locks resources), high latency, and it couples all services to a transaction coordinator. SAGA replaces one distributed transaction with a sequence of local transactions. Each service executes its local transaction and publishes an event. If any step fails, compensating transactions undo previous steps. Use SAGA when: you have long-running transactions (payment → inventory → shipping), you use microservices with separate DBs, or you prioritize availability over strong consistency. Use 2PC when: you absolutely need atomic cross-service transactions and can accept the latency/availability tradeoffs (financial close of day, ledger reconciliation).</p>
+</details>
+
+<details><summary><strong>Q25: How would you implement idempotency for a payment API?</strong></summary>
+<p>Idempotency ensures that retrying a request has the same effect as a single request — critical for payment APIs where double-charge is a serious bug. Implementation: (1) Client generates a unique idempotency key (UUID) and sends it in the header: <code>Idempotency-Key: uuid-123</code>. (2) Server checks if this key has been processed before (Redis or DB lookup). (3) If yes: return the stored response from the first execution. (4) If no: process the request, store the result with the key (TTL 24hr), return response. Store the key atomically before processing using Redis SETNX. Handle race conditions: two concurrent requests with same key — only one should process. Use Redis distributed lock or DB unique constraint on idempotency_key to handle concurrent retries. Stripe's API is the gold standard for this pattern.</p>
+</details>
+</div>
+
+<!-- SYSTEM DESIGN -->
+<div id="sysdesign-q" class="tab-content">
+<h2 id="system-design-q">System Design Questions</h2>
+
+<details open><summary><strong>Q26: Design a notification system (push, email, SMS)</strong></summary>
+<p>Requirements: send 10M notifications/day across push, email, SMS. Non-functional: low latency, high deliverability, user preferences, deduplication. Architecture: (1) API receives notification requests → writes to Kafka topic per channel. (2) Channel workers consume from Kafka: EmailWorker → SendGrid, PushWorker → APNs/FCM, SMSWorker → Twilio. (3) User preference service — check if user opted out, preferred channels, quiet hours. (4) Rate limiting per user (max N notifications/hour). (5) Deduplication — check if same notification already sent to this user in last X minutes (Redis set with TTL). (6) Delivery status tracking — store delivery receipts, enable retry for failed deliveries. Key decision: fanout-on-write vs fanout-on-read for bulk notifications. Use templates stored in DB/S3 with variable substitution.</p>
+</details>
+
+<details><summary><strong>Q27: Design a distributed rate limiter used across multiple API servers</strong></summary>
+<p>Challenge: per-server rate limiting is easily bypassed by load balancing across servers. Need shared state. Architecture: Redis as the single source of truth for rate limit counters. Algorithm: sliding window counter (best balance of accuracy vs memory). Key: <code>ratelimit:{user_id}:{minute}</code>. Lua script for atomic check-and-increment: INCR key, EXPIRE key to 60s, return count. If count > limit, return 429. Challenges: Redis as SPOF — use Redis Cluster for HA. High cardinality keys — TTL handles cleanup. Redis latency adds to API latency — keep close to API servers (same region). For very high scale: local approximate counter in-process (refreshed from Redis every 100ms) with occasional sync — trades some accuracy for reduced Redis load. Companies using this: Stripe, GitHub, Twitter/X.</p>
+</details>
+
+<details><summary><strong>Q28: Design a typeahead/autocomplete search system</strong></summary>
+<p>Requirements: return top 5 completions for a prefix as user types. Sub-100ms latency. Functional: search completion for queries, show in ~50ms. Architecture: (1) Trie data structure: each node represents a character; each path from root = a prefix; leaf nodes store top-N completions with frequency. (2) For scale: sharded Tries, stored in Redis as sorted sets. Key: prefix → sorted set of completions by score (frequency). ZREVRANGE to get top 5. (3) Data pipeline: Kafka receives search events → Spark/Flink aggregates frequency hourly → updates Redis sorted sets. (4) Caching: CDN caches popular prefixes; most traffic concentrates on short common prefixes. (5) Personalization: blend global suggestions with user's recent searches. Alternative: Elasticsearch suggest API for simpler implementation at moderate scale.</p>
+</details>
+</div>
+
+<!-- DISTRIBUTED -->
+<div id="distributed-q" class="tab-content">
+<h2 id="distributed-questions">Distributed Systems Questions</h2>
+
+<details open><summary><strong>Q29: What is consistent hashing and why is it used?</strong></summary>
+<p>Consistent hashing is an algorithm that minimizes key remapping when nodes are added/removed from a cluster. Regular modular hashing: key % N — adding/removing a node remaps almost all keys (cache miss storm, data movement). Consistent hashing: place nodes and keys on a virtual ring (0 to 2^32). A key belongs to the nearest clockwise node. Adding a node: only keys between it and its predecessor move. Removing a node: only that node's keys move to its successor. ~1/N keys remapped instead of all. Used by: Cassandra (data distribution), Redis Cluster, CDNs (which edge node serves a URL), Memcached (client-side sharding). Virtual nodes (vnodes): each physical node gets multiple positions on the ring for better load balancing — used in Cassandra.</p>
+</details>
+
+<details><summary><strong>Q30: Explain Raft consensus algorithm.</strong></summary>
+<p>Raft is a consensus algorithm for distributed systems. Three states: Follower, Candidate, Leader. Normal operation: Leader accepts all writes, appends to its log, replicates to followers. Once a quorum (majority) acknowledges, the entry is committed and applied to state machine. Leader election: if followers don't hear from leader within election timeout (random 150-300ms), they become Candidates and request votes. Candidates win if they get majority votes and their log is at least as up-to-date as voters'. Log matching: if two entries at same index/term, logs are identical up to that point. Safety: only leaders with all committed entries can be elected (voters compare logs). Used by: etcd (Kubernetes), CockroachDB, TiKV, Consul. Why Raft over Paxos: understandability was an explicit design goal — easier to implement correctly.</p>
+</details>
+
+<details><summary><strong>Q31: What is a vector clock and when do you use it?</strong></summary>
+<p>A vector clock is a mechanism to track causality in distributed systems — determine if event A happened before event B, or if they're concurrent. Each node maintains a counter: <code>{nodeA: 3, nodeB: 1, nodeC: 2}</code>. On event: increment own counter. On message receive: merge clocks by taking max of each, then increment own. Comparison: A happened before B if all of A's counters ≤ B's counters with at least one strictly less. If neither A ≤ B nor B ≤ A, events are concurrent — a conflict. Used by: DynamoDB (detect concurrent writes → return to application for conflict resolution), Riak, git (conceptually — merge conflicts are concurrent edits). Amazon's Dynamo paper (2007) popularized vector clocks for shopping cart conflict detection.</p>
+</details>
+</div>
+
+<h2 id="tips">Interview Tips by Level</h2>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Junior / Mid Tips</div>
+    <ul>
+      <li>Start with clarifying questions — never assume the problem</li>
+      <li>Think out loud — interviewers evaluate your thought process, not just answers</li>
+      <li>Mention tradeoffs even for simple questions — shows engineering maturity</li>
+      <li>Code quality matters: naming, error handling, tests mentioned</li>
+      <li>If stuck: describe your approach, then ask for a hint</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Senior / Staff Tips</div>
+    <ul>
+      <li>Estimate before designing — capacity calculation shows engineering rigor</li>
+      <li>Lead the conversation — don't wait for interviewer to direct</li>
+      <li>Proactively discuss tradeoffs — no design is perfect, acknowledge limitations</li>
+      <li>Handle edge cases — celebrities, hot spots, partial failures</li>
+      <li>Connect to real systems — "this is similar to how Kafka handles..."</li>
+      <li>Push back thoughtfully — "that requirement seems unusual, why is it needed?"</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout info">
+  <strong>💡 Final Tip:</strong> The goal of a system design interview is not to produce the perfect design. It's to demonstrate that you can reason clearly about tradeoffs, communicate technical decisions, handle ambiguity, and think about scale. A senior engineer who asks good questions and thinks through failure modes beats a junior who memorizes textbook architectures.
+</div>
+
+<div class="page-footer-nav">
+  <a href="senior-engineer-roadmap.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">📈 Senior Roadmap</div>
+  </a>
+  <a href="index.html" class="footer-nav-btn next">
+    <div class="dir">Back to</div>
+    <div class="pg">🏠 Home</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#beginner">Beginner Q&amp;As</a></li>
+    <li><a href="#intermediate">Intermediate Q&amp;As</a></li>
+    <li><a href="#senior-questions">Senior Q&amp;As</a></li>
+    <li><a href="#system-design-q">System Design Q&amp;As</a></li>
+    <li><a href="#distributed-questions">Distributed Q&amp;As</a></li>
+    <li><a href="#tips">Interview Tips</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

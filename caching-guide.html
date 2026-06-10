@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caching Guide · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search topics...">
+    </div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item active"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Caching Guide</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-purple">Chapter 5</div>
+  <h1>Caching <span class="grad">Masterclass</span></h1>
+  <p class="page-intro">Caching is the single highest-leverage optimization in backend engineering. A well-designed cache layer can reduce database load by 90%, cut latency from 200ms to 2ms, and save millions in infrastructure costs.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 65 min read</span>
+    <span class="meta-pill">🎯 Beginner → Staff</span>
+    <span class="meta-pill">💾 Redis deep dive</span>
+  </div>
+</div>
+
+<h2 id="why-cache">Why Caching?</h2>
+<p>Databases are designed for durability and correctness, not speed. A PostgreSQL query might take 50ms; the same data served from Redis takes 0.1ms — 500× faster.</p>
+
+<div class="fiveW">
+  <div class="fiveW-card"><div class="fiveW-label">WHY</div><div class="fiveW-title">Why cache exists</div><div class="fiveW-text">Repeated database queries for the same data waste CPU and I/O. Cache eliminates redundant work. Twitter serves ~18B reads/day — impossible without caching</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHAT</div><div class="fiveW-title">What to cache</div><div class="fiveW-text">Read-heavy, infrequently changing data: user profiles, product listings, session data, computed aggregates, HTML fragments</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHERE</div><div class="fiveW-title">Cache layers</div><div class="fiveW-text">CDN (static assets) → Edge cache → Application cache (Redis/Memcached) → DB query cache → CPU L1/L2/L3</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHO</div><div class="fiveW-title">Who manages it</div><div class="fiveW-text">Application engineers define cache keys/TTLs; SREs manage Redis cluster; DBAs advise on what's safe to cache</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHEN</div><div class="fiveW-title">When to cache</div><div class="fiveW-text">When DB queries are slow AND data doesn't change on every write. Not suitable for real-time financial balances or auth tokens that need instant invalidation</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">HOW</div><div class="fiveW-title">How it works</div><div class="fiveW-text">On read: check cache → hit: return cached. miss: query DB → store in cache → return. Key = deterministic string based on query parameters</div></div>
+</div>
+
+<h2 id="strategies">Cache Strategies</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Strategy</th><th>Read Path</th><th>Write Path</th><th>Best For</th><th>Drawback</th></tr></thead>
+<tbody>
+<tr><td><strong>Cache-Aside</strong> (Lazy Loading)</td><td>App checks cache, on miss loads DB + populates cache</td><td>App writes to DB, invalidates cache key</td><td>Most general use cases</td><td>First request always misses (cold start)</td></tr>
+<tr><td><strong>Write-Through</strong></td><td>Always reads from cache</td><td>App writes to cache AND DB synchronously</td><td>Read-heavy with low write latency requirement</td><td>Cache has stale keys for unread data</td></tr>
+<tr><td><strong>Write-Behind</strong> (Write-Back)</td><td>Reads from cache</td><td>Writes to cache only; async flush to DB</td><td>Write-heavy workloads, session stores</td><td>Data loss if cache fails before flush</td></tr>
+<tr><td><strong>Write-Around</strong></td><td>Cache miss → DB (data not cached on write)</td><td>Writes directly to DB, bypasses cache</td><td>One-time write bulk data (logs, analytics)</td><td>High cache miss rate for new data</td></tr>
+<tr><td><strong>Read-Through</strong></td><td>Cache fetches from DB on miss (cache does the work)</td><td>App writes to DB</td><td>When cache handles DB logic (e.g. Ehcache)</td><td>Cache library must know how to load data</td></tr>
+</tbody>
+</table>
+</div>
+
+<pre><code><span class="cmt"># Cache-Aside pattern (most common) — Python + Redis</span>
+<span class="kw">import</span> redis
+<span class="kw">import</span> json
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+redis_client = redis.Redis(host=<span class="str">'localhost'</span>, port=<span class="num">6379</span>, decode_responses=<span class="kw">True</span>)
+
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: int) -> dict:
+    cache_key = <span class="str">f"user:{user_id}"</span>
+
+    <span class="cmt"># 1. Check cache first</span>
+    cached = redis_client.get(cache_key)
+    <span class="kw">if</span> cached:
+        <span class="kw">return</span> json.loads(cached)  <span class="cmt"># cache HIT — 0.1ms</span>
+
+    <span class="cmt"># 2. Cache miss — query database</span>
+    user = <span class="kw">await</span> db.fetchrow(<span class="str">"SELECT * FROM users WHERE id=$1"</span>, user_id)
+    <span class="kw">if not</span> user:
+        <span class="kw">return None</span>
+
+    <span class="cmt"># 3. Populate cache with TTL</span>
+    redis_client.setex(
+        cache_key,
+        <span class="num">3600</span>,                    <span class="cmt"># TTL: 1 hour</span>
+        json.dumps(dict(user))
+    )
+    <span class="kw">return</span> dict(user)
+
+<span class="kw">async def</span> <span class="fn">update_user</span>(user_id: int, data: dict):
+    <span class="kw">await</span> db.execute(<span class="str">"UPDATE users SET ... WHERE id=$1"</span>, user_id)
+    redis_client.delete(<span class="str">f"user:{user_id}"</span>)  <span class="cmt"># Invalidate cache on write</span></code></pre>
+
+<h2 id="redis">Redis Deep Dive</h2>
+<p>Redis is not just a cache — it's a data structure server. Understanding its data types unlocks powerful patterns.</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Redis Data Structures</div>
+    <ul>
+      <li><strong>String:</strong> cache values, counters, distributed locks</li>
+      <li><strong>Hash:</strong> user profiles, object fields (memory-efficient)</li>
+      <li><strong>List:</strong> queues, activity feeds, recent items</li>
+      <li><strong>Set:</strong> unique visitors, tags, relationships</li>
+      <li><strong>Sorted Set:</strong> leaderboards, rate limiting, time-series</li>
+      <li><strong>HyperLogLog:</strong> approximate unique counts (12KB for any cardinality)</li>
+      <li><strong>Stream:</strong> event log, message queue (Kafka-lite)</li>
+      <li><strong>Bitmap:</strong> feature flags, daily active user tracking</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Redis vs Memcached</div>
+    <div class="table-wrap" style="margin:0">
+    <table>
+    <thead><tr><th>Feature</th><th>Redis</th><th>Memcached</th></tr></thead>
+    <tbody>
+    <tr><td>Data types</td><td>Rich (8+ types)</td><td>String only</td></tr>
+    <tr><td>Persistence</td><td>RDB + AOF</td><td>None</td></tr>
+    <tr><td>Replication</td><td>Primary-Replica</td><td>None built-in</td></tr>
+    <tr><td>Clustering</td><td>Redis Cluster</td><td>Client-side</td></tr>
+    <tr><td>Pub/Sub</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Lua scripting</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Multi-thread</td><td>Single (I/O threads)</td><td>Multi-threaded</td></tr>
+    </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<pre><code><span class="cmt"># Redis: Leaderboard with Sorted Set (used by games, Twitter trending)</span>
+<span class="kw">import</span> redis
+r = redis.Redis()
+
+<span class="cmt"># Add/update scores</span>
+r.zadd(<span class="str">'leaderboard:weekly'</span>, {<span class="str">'user:1001'</span>: <span class="num">9850</span>, <span class="str">'user:1002'</span>: <span class="num">12300</span>})
+r.zincrby(<span class="str">'leaderboard:weekly'</span>, <span class="num">500</span>, <span class="str">'user:1001'</span>)  <span class="cmt"># += 500 points</span>
+
+<span class="cmt"># Get top 10 with scores</span>
+top10 = r.zrevrange(<span class="str">'leaderboard:weekly'</span>, <span class="num">0</span>, <span class="num">9</span>, withscores=<span class="kw">True</span>)
+
+<span class="cmt"># Get user's rank (0-indexed)</span>
+rank = r.zrevrank(<span class="str">'leaderboard:weekly'</span>, <span class="str">'user:1001'</span>)
+
+<span class="cmt"># Redis: Distributed Lock (for preventing race conditions)</span>
+<span class="kw">import</span> uuid
+lock_key = <span class="str">"lock:payment:order:123"</span>
+lock_id = str(uuid.uuid4())
+
+<span class="cmt"># SET key value NX PX (only set if not exists, with expiry)</span>
+acquired = r.set(lock_key, lock_id, nx=<span class="kw">True</span>, px=<span class="num">30000</span>)  <span class="cmt"># 30s TTL</span>
+<span class="kw">if</span> acquired:
+    <span class="kw">try</span>:
+        <span class="cmt"># Do critical section work</span>
+        process_payment()
+    <span class="kw">finally</span>:
+        <span class="cmt"># Only release if we still own the lock (Lua for atomicity)</span>
+        lua_script = <span class="str">"""
+        if redis.call("get", KEYS[1]) == ARGV[1] then
+            return redis.call("del", KEYS[1])
+        else return 0 end
+        """</span>
+        r.eval(lua_script, <span class="num">1</span>, lock_key, lock_id)</code></pre>
+
+<h2 id="invalidation">Cache Invalidation — The Hardest Problem</h2>
+<blockquote style="border-left:3px solid var(--accent3);padding-left:16px;margin:16px 0;color:var(--text2)">
+  "There are only two hard things in Computer Science: cache invalidation and naming things." — Phil Karlton
+</blockquote>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Invalidation Strategies</div>
+    <ul>
+      <li><strong>TTL-based:</strong> let keys expire automatically. Simple but can serve stale data</li>
+      <li><strong>Event-based:</strong> delete/update cache on every write. Consistent but adds write complexity</li>
+      <li><strong>Write-through:</strong> update cache on write. Always fresh but more writes</li>
+      <li><strong>Versioned keys:</strong> <code>user:1001:v3</code> — new version on every update, old keys expire naturally</li>
+      <li><strong>CDC (Change Data Capture):</strong> Debezium watches DB binlog → publishes events → cache layer listens and invalidates. Used by Airbnb</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Cache Key Design</div>
+    <p>Good cache keys are deterministic, readable, and namespace-isolated.</p>
+    <pre style="margin:8px 0;padding:12px;background:var(--code-bg);border-radius:6px;font-size:13px"><code><span class="cmt"># Pattern: service:entity:id:version</span>
+<span class="str">"users:profile:1001"</span>
+<span class="str">"products:detail:SKU-123"</span>
+<span class="str">"search:results:hash(query)"</span>
+<span class="str">"session:user:1001:token"</span>
+
+<span class="cmt"># For complex queries, hash the params:</span>
+<span class="kw">import</span> hashlib, json
+<span class="kw">def</span> <span class="fn">cache_key</span>(prefix, params):
+    h = hashlib.md5(
+        json.dumps(params, sort_keys=<span class="kw">True</span>).encode()
+    ).hexdigest()[:8]
+    <span class="kw">return</span> <span class="str">f"{prefix}:{h}"</span></code></pre>
+  </div>
+</div>
+
+<h2 id="failure-modes">Cache Failure Modes</h2>
+<p>Three failure modes that can take down your entire backend. Know them deeply — they appear in every system design interview.</p>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num" style="background:var(--accent4)">1</div>
+    <div class="step-body">
+      <strong>Cache Stampede (Thundering Herd)</strong> — A popular key expires. Thousands of requests simultaneously find a miss and all hammer the DB at once. <em>Fix:</em> Use probabilistic early expiration (XFetch), mutex locks on cache miss, or background refresh.
+      <pre style="margin:8px 0"><code><span class="cmt"># Fix: mutex lock on cache miss</span>
+lock = redis.set(<span class="str">f"lock:{key}"</span>, <span class="num">1</span>, nx=<span class="kw">True</span>, ex=<span class="num">10</span>)
+<span class="kw">if</span> lock:  <span class="cmt"># we got the lock — fetch from DB</span>
+    value = fetch_from_db(key)
+    redis.setex(key, <span class="num">3600</span>, value)
+    redis.delete(<span class="str">f"lock:{key}"</span>)
+<span class="kw">else</span>:  <span class="cmt"># wait and retry</span>
+    time.sleep(<span class="num">0.05</span>)
+    value = redis.get(key)  <span class="cmt"># should be populated now</span></code></pre>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num" style="background:var(--accent4)">2</div>
+    <div class="step-body">
+      <strong>Cache Avalanche</strong> — Many cache keys expire at the same time (e.g., all set with the same TTL at startup). Mass DB overload. <em>Fix:</em> Add random jitter to TTLs so expiry is spread out.
+      <pre style="margin:8px 0"><code><span class="kw">import</span> random
+base_ttl = <span class="num">3600</span>
+jitter = random.randint(<span class="num">0</span>, <span class="num">300</span>)  <span class="cmt"># ±0-5 minute variation</span>
+redis.setex(key, base_ttl + jitter, value)</code></pre>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num" style="background:var(--accent4)">3</div>
+    <div class="step-body">
+      <strong>Cache Penetration</strong> — Requests for keys that don't exist in cache OR database (e.g., <code>GET /user/999999</code>). Cache never helps; DB is hammered. <em>Fix:</em> Cache null results with a short TTL, or use a Bloom Filter to reject clearly invalid keys.
+      <pre style="margin:8px 0"><code><span class="cmt"># Cache null results to prevent penetration</span>
+user = fetch_from_db(user_id)
+<span class="kw">if</span> user <span class="kw">is None</span>:
+    redis.setex(<span class="str">f"user:{user_id}"</span>, <span class="num">60</span>, <span class="str">"NULL"</span>)  <span class="cmt"># short TTL for nulls</span>
+<span class="kw">else</span>:
+    redis.setex(<span class="str">f"user:{user_id}"</span>, <span class="num">3600</span>, json.dumps(user))</code></pre>
+    </div>
+  </div>
+</div>
+
+<div class="page-footer-nav">
+  <a href="backend-performance.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">📈 Performance Engineering</div>
+  </a>
+  <a href="authentication-security.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🔐 Auth & Security</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#why-cache">Why Caching?</a></li>
+    <li><a href="#strategies">Cache Strategies</a></li>
+    <li><a href="#redis">Redis Deep Dive</a></li>
+    <li><a href="#invalidation">Cache Invalidation</a></li>
+    <li><a href="#failure-modes">Failure Modes</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

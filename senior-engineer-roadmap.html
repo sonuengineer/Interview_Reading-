@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Senior Engineer Roadmap · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item active"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Senior Engineer Roadmap</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-purple">Chapter 13</div>
+  <h1>Senior Engineer <span class="grad">Roadmap</span></h1>
+  <p class="page-intro">From Junior to Principal — a clear progression of skills, responsibilities, and mindset shifts at each level. Know where you are, where you're going, and what it takes to get there at top tech companies.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 50 min read</span>
+    <span class="meta-pill">🎯 All Levels</span>
+    <span class="meta-pill">📈 Career progression</span>
+  </div>
+</div>
+
+<h2 id="levels">Engineering Levels Overview</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Level</th><th>FAANG Equiv</th><th>YoE (typical)</th><th>Scope</th><th>Key Differentiator</th></tr></thead>
+<tbody>
+<tr><td><strong>Junior (L3/SWE I)</strong></td><td>Google L3, Meta E3</td><td>0–2 yrs</td><td>Task/feature</td><td>Executes defined work with guidance</td></tr>
+<tr><td><strong>Mid (L4/SWE II)</strong></td><td>Google L4, Meta E4</td><td>2–5 yrs</td><td>Feature/project</td><td>Works independently, owns features end-to-end</td></tr>
+<tr><td><strong>Senior (L5/SWE III)</strong></td><td>Google L5, Meta E5</td><td>5–8 yrs</td><td>Project/team</td><td>Leads projects, mentors, drives technical quality</td></tr>
+<tr><td><strong>Lead / Staff (L6)</strong></td><td>Google L6, Meta E6</td><td>8–12 yrs</td><td>Team/org</td><td>Sets technical direction for team, cross-team influence</td></tr>
+<tr><td><strong>Principal (L7)</strong></td><td>Google L7, Meta E7</td><td>12+ yrs</td><td>Org/company</td><td>Defines strategy for entire org, company-wide impact</td></tr>
+<tr><td><strong>Distinguished/Fellow</strong></td><td>Google Fellow, Meta E9</td><td>15+ yrs</td><td>Industry</td><td>Industry-defining work. Very few exist</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="junior">Junior Backend Engineer</h2>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">What You Own</div>
+    <ul>
+      <li>Individual features and bug fixes assigned by team</li>
+      <li>Unit and integration tests for your code</li>
+      <li>PR descriptions and code documentation</li>
+    </ul>
+    <div style="margin-top:12px;font-weight:600;color:var(--accent2)">Core Skills to Build</div>
+    <ul>
+      <li>REST APIs: design, implement, test</li>
+      <li>SQL: basic queries, joins, indexes</li>
+      <li>Git workflow: branches, PRs, rebasing</li>
+      <li>Docker basics: build, run, Dockerfile</li>
+      <li>Debugging: logs, breakpoints, stack traces</li>
+      <li>Testing: unit tests, mocking, test coverage</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">What Makes You Stand Out</div>
+    <ul>
+      <li>Ask good questions before writing code (clarify requirements)</li>
+      <li>Write code others can maintain (readable > clever)</li>
+      <li>Over-communicate status and blockers</li>
+      <li>Learn from code review — don't just fix, understand why</li>
+      <li>Ship features fully: happy path + error cases + tests + docs</li>
+      <li>Study your team's codebase — read it like a book</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="senior">Senior Backend Engineer</h2>
+<p>The biggest mindset shift: from "how do I implement this?" to "should we build this, and if so, how should it be designed?"</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Technical Expectations</div>
+    <ul>
+      <li>Design systems that handle 10× the current load</li>
+      <li>Identify and fix production performance issues independently</li>
+      <li>Write comprehensive technical design documents (RFCs)</li>
+      <li>Own the operability of your systems (dashboards, alerts, runbooks)</li>
+      <li>Deep expertise in 2-3 areas: DB performance, distributed systems, etc.</li>
+      <li>Proactively identify and pay down technical debt</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Leadership Expectations</div>
+    <ul>
+      <li>Mentor 1-2 junior engineers — their growth is your responsibility</li>
+      <li>Lead code reviews that teach, not just approve/reject</li>
+      <li>Drive projects from ambiguous requirement to shipped feature</li>
+      <li>Provide feedback on architecture decisions proactively</li>
+      <li>Build cross-team relationships to unblock work</li>
+      <li>Take on-call ownership — write postmortems, fix root causes</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="staff">Staff Engineer</h2>
+<p>Staff engineers are force multipliers. Their scope is the team or multiple teams. They work on the highest-leverage problems — the ones that unlock everyone else.</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">What Staff Engineers Do</div>
+    <ul>
+      <li>Define multi-year technical strategy for a domain</li>
+      <li>Write company-wide standards and best practices</li>
+      <li>Identify the 10× opportunities others miss</li>
+      <li>Reduce coordination costs through better abstractions and platforms</li>
+      <li>Drive critical cross-team initiatives (migration, re-architecture)</li>
+      <li>Represent engineering in product and executive discussions</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">The Staff Mindset</div>
+    <ul>
+      <li>Zoom out: is this the right problem to solve?</li>
+      <li>Think in systems: second-order effects of decisions</li>
+      <li>Build leverage: solve the problem once for many teams</li>
+      <li>Say no strategically: protect the team's focus</li>
+      <li>Write to persuade: proposals, RFCs, strategy docs</li>
+      <li>Grow senior engineers: sponsor, not just mentor</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="learning-path">6-Month Learning Paths</h2>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(event, 'junior-path')">Junior → Mid</button>
+  <button class="tab-btn" onclick="switchTab(event, 'mid-path')">Mid → Senior</button>
+  <button class="tab-btn" onclick="switchTab(event, 'senior-path')">Senior → Staff</button>
+</div>
+
+<div id="junior-path" class="tab-content active">
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Month 1-2: Database Mastery</strong> — Learn SQL deeply (window functions, CTEs, EXPLAIN). Understand indexes. Study your production DB's slow query log</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Month 2-3: API Design</strong> — Build a complete REST API with auth, pagination, rate limiting. Study Stripe's API docs as a gold standard</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Month 3-4: Caching & Performance</strong> — Add Redis to a project. Load test with k6. Profile a slow endpoint. Reduce latency by 50%</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Month 4-5: Systems Thinking</strong> — Read "Designing Data-Intensive Applications" (Kleppmann). Understand CAP theorem. Study one distributed system deeply (Kafka or Postgres replication)</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Month 5-6: Ownership</strong> — Volunteer to be on-call. Write a postmortem. Own a feature end-to-end: requirements → design → code → monitoring → iteration</div></div>
+</div>
+</div>
+
+<div id="mid-path" class="tab-content">
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Month 1-2: System Design</strong> — Practice 1 system design per week. Start with URL shortener, then chat, then Netflix. Get feedback from seniors</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Month 2-3: Deep Area Expertise</strong> — Pick one area (DB internals, Kafka, k8s, gRPC) and become the team expert. Give a talk or write a blog post</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Month 3-4: Lead a Project</strong> — Take ownership of a medium-scope project. Write the tech spec. Break it into milestones. Coordinate with 1-2 other engineers</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Month 4-5: Production Excellence</strong> — Build dashboards for your team's services. Write runbooks. Reduce alert noise. Be the person who improves reliability</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Month 5-6: Mentoring</strong> — Mentor a junior. Code review with teaching mindset. Write internal documentation. Make yourself multiplier, not bottleneck</div></div>
+</div>
+</div>
+
+<div id="senior-path" class="tab-content">
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Month 1-2: Scope Expansion</strong> — Look for the highest-leverage problem in your org. What's slowing multiple teams? What tech debt is compounding? Write a proposal</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Month 2-3: Cross-Team Influence</strong> — Join a working group or RFC process. Contribute to engineering standards. Build relationships outside your team</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Month 3-4: Strategic Writing</strong> — Write a multi-year technical strategy doc. Practice "disagree and commit" and "think in systems" writing. Get feedback from a Staff engineer</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Month 4-5: Drive a Migration</strong> — Lead a company-wide initiative: framework migration, platform uplift, or API redesign. Build consensus, manage stakeholders, deliver results</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Month 5-6: Build Your Platform Thinking</strong> — Study Google SRE book, Amazon Builder's Library, Netflix Tech Blog. Think about your domain as a platform others build on</div></div>
+</div>
+</div>
+
+<div class="callout info">
+  <div class="callout-icon">🗺</div>
+  <div class="callout-body">
+    <div class="callout-title">Visual Roadmaps</div>
+    <p>For a visual, step-by-step guide through your learning journey, check out <a href="https://roadmap.sh/" target="_blank" rel="noopener">roadmap.sh</a> — a community-driven platform with role-based roadmaps for backend, frontend, DevOps, system design, and more. Pair it with this handbook for the complete picture.</p>
+  </div>
+</div>
+
+<div class="page-footer-nav">
+  <a href="system-design.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🏗 System Design</div>
+  </a>
+  <a href="interview-guide.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">💼 Interview Guide</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#levels">Level Overview</a></li>
+    <li><a href="#junior">Junior Engineer</a></li>
+    <li><a href="#senior">Senior Engineer</a></li>
+    <li><a href="#staff">Staff Engineer</a></li>
+    <li><a href="#learning-path">6-Month Learning Paths</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

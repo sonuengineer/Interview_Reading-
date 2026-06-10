@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Engineering Handbook</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #21262d;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text2: #8b949e;
+    --text3: #6e7681;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #d29922;
+    --accent4: #f85149;
+    --accent5: #bc8cff;
+    --accent6: #39d353;
+  --code-bg: #161b22;
+  --sidebar-w: 280px;
+  --font-size-base: 16px;
+  --line-height-base: 1.7;
+}
+  [data-theme="light"] {
+    --bg: #ffffff;
+    --bg2: #f6f8fa;
+    --bg3: #eaeef2;
+    --border: #d0d7de;
+    --text: #24292f;
+    --text2: #57606a;
+    --text3: #6e7781;
+    --accent: #0969da;
+    --accent2: #1a7f37;
+    --accent3: #9a6700;
+    --accent4: #cf222e;
+    --accent5: #8250df;
+    --code-bg: #f6f8fa;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: var(--font-size-base); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: var(--line-height-base);
+    display: flex;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    overflow-y: auto;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .sidebar-header {
+    padding: 20px 16px 16px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: var(--bg2);
+    z-index: 10;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent5));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .logo-text { font-weight: 700; font-size: 14px; line-height: 1.3; }
+  .logo-sub { font-size: 11px; color: var(--text2); font-weight: 400; }
+  .search-box {
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 8px 12px 8px 32px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus { border-color: var(--accent); }
+  .search-box input::placeholder { color: var(--text3); }
+  .search-icon { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 13px; }
+  .nav-section { padding: 8px 0; }
+  .nav-section-title {
+    padding: 6px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text3);
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    font-size: 13px;
+    color: var(--text2);
+    cursor: pointer;
+    border-radius: 0;
+    transition: all 0.15s;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: rgba(88,166,255,0.1); color: var(--accent); border-left-color: var(--accent); }
+  .nav-item .icon { width: 16px; text-align: center; flex-shrink: 0; }
+  .nav-item.notes-nav-item {
+    color: var(--accent5);
+    border-left-color: var(--accent5);
+  }
+  .nav-item.notes-nav-item:hover { background: rgba(188,140,255,0.1); }
+  .nav-chapter { cursor: pointer; user-select: none; }
+  .nav-chapter .chevron { margin-left: auto; transition: transform 0.2s; font-size: 10px; }
+  .nav-chapter.open .chevron { transform: rotate(90deg); }
+  .nav-sub { display: none; }
+  .nav-chapter.open + .nav-sub { display: block; }
+  .nav-sub .nav-item { padding-left: 36px; font-size: 12px; }
+  /* TOPBAR */
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: var(--sidebar-w);
+    right: 0;
+    height: 56px;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    z-index: 99;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    gap: 16px;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .topbar-right { display: flex; align-items: center; gap: 12px; }
+  .breadcrumb { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+  .breadcrumb span { color: var(--text3); }
+  .btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  .btn:hover { background: var(--border); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { opacity: 0.9; }
+  .hamburger { display: none; background: none; border: none; color: var(--text); font-size: 20px; cursor: pointer; }
+
+  /* Font Size Controls */
+  .font-size-group {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .font-size-btn {
+    padding: 4px 8px;
+    background: var(--bg3);
+    border: none;
+    color: var(--text2);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1;
+  }
+  .font-size-btn:hover { background: var(--border); color: var(--text); }
+  .font-size-btn.active { background: var(--accent); color: #fff; }
+  .font-size-btn:not(:last-child) {
+    border-right: 1px solid var(--border);
+  }
+
+  /* Reading Mode */
+  .reading-mode-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .reading-mode-btn:hover { background: var(--border); color: var(--text); }
+  .reading-mode-btn.active {
+    background: rgba(188,140,255,0.15);
+    border-color: var(--accent5);
+    color: var(--accent5);
+  }
+  .reading-mode .topbar { display: none; }
+  .reading-mode .sidebar { display: none; }
+  .reading-mode .toc-sidebar { display: none; }
+  .reading-mode .hamburger { display: none !important; }
+  .reading-mode .main { margin-top: 0; margin-left: 0; }
+  .reading-mode .content {
+    max-width: 760px;
+    padding: 48px 32px 80px;
+    margin: 0 auto;
+  }
+  .reading-mode .overlay { display: none !important; }
+  .reading-mode .progress-bar { display: none; }
+  /* MAIN */
+  .main {
+    margin-left: var(--sidebar-w);
+    margin-top: 56px;
+    flex: 1;
+    display: flex;
+    min-height: calc(100vh - 56px);
+  }
+  .content {
+    flex: 1;
+    max-width: 860px;
+    padding: 48px 48px 80px;
+    min-width: 0;
+  }
+  /* TOC */
+  .toc-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    padding: 40px 24px;
+    position: sticky;
+    top: 56px;
+    height: calc(100vh - 56px);
+    overflow-y: auto;
+    border-left: 1px solid var(--border);
+  }
+  .toc-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 12px; }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 4px; }
+  .toc-list a { font-size: 12px; color: var(--text2); text-decoration: none; display: block; padding: 3px 8px; border-radius: 4px; border-left: 2px solid transparent; transition: all 0.15s; }
+  .toc-list a:hover { color: var(--accent); }
+  .toc-list a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,0.06); }
+  .toc-list .toc-h3 { padding-left: 20px; font-size: 11px; }
+  /* TYPOGRAPHY */
+  .page-hero {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+  .badge-blue { background: rgba(88,166,255,0.15); color: var(--accent); }
+  .badge-green { background: rgba(63,185,80,0.15); color: var(--accent2); }
+  .badge-yellow { background: rgba(210,153,34,0.15); color: var(--accent3); }
+  .badge-red { background: rgba(248,81,73,0.15); color: var(--accent4); }
+  .badge-purple { background: rgba(188,140,255,0.15); color: var(--accent5); }
+  h1 { font-size: 36px; font-weight: 800; line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 16px; }
+  h1 .grad { background: linear-gradient(135deg, var(--accent), var(--accent5)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .page-intro { font-size: 17px; color: var(--text2); line-height: 1.7; max-width: 680px; }
+  .meta-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .meta-pill { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); background: var(--bg3); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; }
+  h2 { font-size: 24px; font-weight: 700; margin: 48px 0 16px; padding-top: 8px; color: var(--text); }
+  h2::before { content: ''; display: block; height: 1px; background: var(--border); margin-bottom: 24px; }
+  h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; color: var(--text); }
+  h4 { font-size: 15px; font-weight: 600; margin: 24px 0 10px; color: var(--text); }
+  p { margin-bottom: 16px; color: var(--text); font-size: 15px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  strong { color: var(--text); font-weight: 600; }
+  /* CALLOUTS */
+  .callout {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 24px 0;
+    border-left: 3px solid;
+    display: flex;
+    gap: 12px;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; line-height: 1.4; }
+  .callout-body { flex: 1; }
+  .callout-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .callout-body p { margin: 0; font-size: 14px; }
+  .callout.info { background: rgba(88,166,255,0.08); border-color: var(--accent); }
+  .callout.info .callout-title { color: var(--accent); }
+  .callout.success { background: rgba(63,185,80,0.08); border-color: var(--accent2); }
+  .callout.success .callout-title { color: var(--accent2); }
+  .callout.warning { background: rgba(210,153,34,0.08); border-color: var(--accent3); }
+  .callout.warning .callout-title { color: var(--accent3); }
+  .callout.danger { background: rgba(248,81,73,0.08); border-color: var(--accent4); }
+  .callout.danger .callout-title { color: var(--accent4); }
+  /* CODE */
+  .code-block {
+    position: relative;
+    margin: 20px 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang { font-size: 12px; color: var(--text2); font-family: 'SF Mono', 'Fira Code', monospace; }
+  .copy-btn {
+    font-size: 12px;
+    color: var(--text3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .copy-btn:hover { color: var(--text); border-color: var(--text3); }
+  .copy-btn.copied { color: var(--accent2); border-color: var(--accent2); }
+  pre {
+    background: var(--code-bg);
+    padding: 20px;
+    overflow-x: auto;
+    margin: 0;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  p code, li code {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12.5px;
+    color: var(--accent5);
+  }
+  /* SYNTAX */
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .num { color: #79c0ff; }
+  .cmt { color: #6e7681; font-style: italic; }
+  .cls { color: #ffa657; }
+  .var { color: #e6edf3; }
+  .op { color: #ff7b72; }
+  .dec { color: #7ee787; }
+  /* TABLES */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); }
+  td { padding: 10px 14px; border: 1px solid var(--border); vertical-align: top; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  [data-theme="light"] tr:hover td { background: rgba(0,0,0,0.02); }
+  /* CARDS */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+    color: var(--text);
+  }
+  .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  /* STEPS */
+  .steps { margin: 24px 0; }
+  .step { display: flex; gap: 16px; margin-bottom: 24px; }
+  .step-num { width: 28px; height: 28px; border-radius: 50%; background: rgba(88,166,255,0.15); border: 2px solid var(--accent); color: var(--accent); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .step-body h4 { margin: 0 0 6px; font-size: 15px; }
+  .step-body p { margin: 0; font-size: 14px; color: var(--text2); }
+  /* TABS */
+  .tabs { margin: 24px 0; }
+  .tab-buttons { display: flex; gap: 0; border-bottom: 1px solid var(--border); }
+  .tab-btn { padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--text2); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-content { display: none; padding: 20px 0; }
+  .tab-content.active { display: block; }
+  /* COMPARISON */
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0; }
+  .compare-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .compare-card h4 { margin-bottom: 10px; font-size: 14px; }
+  .compare-card.pro { border-top: 2px solid var(--accent2); }
+  .compare-card.con { border-top: 2px solid var(--accent4); }
+  .pro h4 { color: var(--accent2); }
+  .con h4 { color: var(--accent4); }
+  .compare-card ul { padding-left: 16px; font-size: 13px; color: var(--text2); }
+  .compare-card ul li { margin-bottom: 4px; }
+  /* DIAGRAM */
+  .diagram {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 24px 0;
+    font-family: 'SF Mono', monospace;
+    font-size: 12px;
+    color: var(--text2);
+    overflow-x: auto;
+    line-height: 1.8;
+  }
+  .diagram .highlight { color: var(--accent); font-weight: 600; }
+  .diagram .arrow { color: var(--accent3); }
+  /* HERO STATS */
+  .stat-row { display: flex; gap: 24px; flex-wrap: wrap; margin: 24px 0; }
+  .stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; flex: 1; min-width: 120px; }
+  .stat-value { font-size: 28px; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  /* COMPANY TAGS */
+  .company-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .company-tag { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border); }
+  .tag-google { color: #4285f4; border-color: #4285f4; background: rgba(66,133,244,0.1); }
+  .tag-meta { color: #0467df; border-color: #0467df; background: rgba(4,103,223,0.1); }
+  .tag-netflix { color: #e50914; border-color: #e50914; background: rgba(229,9,20,0.1); }
+  .tag-amazon { color: #ff9900; border-color: #ff9900; background: rgba(255,153,0,0.1); }
+  .tag-uber { color: #000000; border-color: #555; background: rgba(255,255,255,0.1); }
+  .tag-stripe { color: #635bff; border-color: #635bff; background: rgba(99,91,255,0.1); }
+  /* LISTS */
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  li { margin-bottom: 6px; font-size: 15px; color: var(--text); }
+  li p { margin: 0; }
+  /* DECISION TREE */
+  .decision-tree { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin: 24px 0; }
+  .dt-node { padding: 10px 16px; border-radius: 6px; background: var(--bg3); border: 1px solid var(--border); font-size: 13px; display: inline-block; margin-bottom: 4px; }
+  .dt-yes { color: var(--accent2); }
+  .dt-no { color: var(--accent4); }
+  .dt-branch { margin-left: 24px; border-left: 2px solid var(--border); padding-left: 16px; margin-top: 4px; }
+  /* SEARCH RESULTS */
+  .search-results {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    display: none;
+  }
+  .search-result-item { padding: 10px 14px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 13px; }
+  .search-result-item:last-child { border-bottom: none; }
+  .search-result-item:hover { background: var(--bg3); }
+  .search-result-title { font-weight: 500; color: var(--text); }
+  .search-result-desc { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  /* FOOTER NAV */
+  .page-footer-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--border); }
+  .footer-nav-btn { padding: 12px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 13px; transition: all 0.15s; flex: 1; max-width: 220px; }
+  .footer-nav-btn:hover { border-color: var(--accent); }
+  .footer-nav-btn .dir { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .footer-nav-btn .pg { font-weight: 500; }
+  .footer-nav-btn.prev .dir::before { content: '← '; }
+  .footer-nav-btn.next { text-align: right; }
+  .footer-nav-btn.next .dir::after { content: ' →'; }
+  /* RESPONSIVE */
+  /* ─── Back to Top ─────────────────────────────────── */
+  .back-to-top {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .back-to-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+  }
+  .back-to-top:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: translateY(-3px);
+  }
+  .search-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 80px 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .search-modal.open { opacity: 1; pointer-events: all; }
+  .search-modal-content {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 640px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+  }
+  .search-modal-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-modal-input-wrap .modal-search-icon { font-size: 16px; color: var(--text3); flex-shrink: 0; }
+  .search-modal-input {
+    flex: 1;
+    border: none;
+    background: none;
+    color: var(--text);
+    font-size: 16px;
+    outline: none;
+    font-family: inherit;
+  }
+  .search-modal-input::placeholder { color: var(--text3); }
+  .search-modal-esc {
+    font-size: 11px;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+    flex-shrink: 0;
+  }
+  .search-modal-results { overflow-y: auto; padding: 8px 0; }
+  .search-modal-result {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: background 0.1s;
+    text-decoration: none;
+    color: var(--text);
+  }
+  .search-modal-result:hover { background: var(--bg3); }
+  .search-modal-result .result-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .search-modal-result .result-info { flex: 1; min-width: 0; }
+  .search-modal-result .result-title { font-size: 14px; font-weight: 500; }
+  .search-modal-result .result-desc { font-size: 12px; color: var(--text2); margin-top: 2px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .search-modal-result .result-chapter { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .search-modal-empty { padding: 32px 18px; text-align: center; color: var(--text3); font-size: 13px; }
+  .shortcuts-help {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    padding: 16px;
+  }
+  .shortcuts-help.open { opacity: 1; pointer-events: all; }
+  .shortcuts-help-content {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+  }
+  .shortcuts-help-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+  .shortcut-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .shortcut-row:last-child { border-bottom: none; }
+  .shortcut-row .key {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+  .shortcut-row .keys { display: flex; gap: 4px; align-items: center; }
+  .shortcut-row .action { color: var(--text2); }
+  .chapter-checkmark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text3);
+    margin-right: 6px;
+    font-size: 9px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    background: none;
+    color: transparent;
+    line-height: 1;
+  }
+  .chapter-checkmark.done { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+  .chapter-checkmark:hover { border-color: var(--accent2); }
+  .progress-counter { font-size: 11px; color: var(--text3); padding: 2px 16px 0; margin-bottom: 4px; }
+  .position-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    z-index: 999;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .position-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* ─── Permalink ─────────────────────────────────── */
+  .permalink { display: inline-block; opacity: 0; margin-left: 6px; font-size: 0.7em; color: var(--accent); text-decoration: none; font-weight: 400; transition: opacity 0.15s; vertical-align: middle; }
+  h2:hover .permalink, h3:hover .permalink, h4:hover .permalink { opacity: 1; }
+  .permalink:hover { text-decoration: none; opacity: 1 !important; color: var(--accent5); }
+  .permalink-toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(10px); background: var(--bg2); border: 1px solid var(--accent); border-radius: 8px; padding: 8px 16px; font-size: 12px; color: var(--text); z-index: 999; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; }
+  .permalink-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* ─── Copy Badge ───────────────────────────────── */
+  .copy-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; background: var(--accent2); color: #fff; font-size: 10px; margin-left: 8px; flex-shrink: 0; }
+  /* ─── Color Picker ─────────────────────────────── */
+  .color-picker-modal { position: fixed; bottom: 80px; right: 32px; z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .color-picker-modal.open { opacity: 1; pointer-events: all; }
+  .color-picker-content { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; width: 260px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); overflow: hidden; }
+  .color-picker-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text); }
+  .color-picker-close { background: none; border: none; color: var(--text3); font-size: 18px; cursor: pointer; padding: 0 4px; }
+  .color-picker-close:hover { color: var(--text); }
+  .color-swatches { display: flex; flex-wrap: wrap; gap: 8px; padding: 14px; }
+  .color-swatch { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; background: var(--swatch); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .color-swatch:hover { transform: scale(1.15); }
+  .color-swatch.active { border-color: var(--text); box-shadow: 0 0 0 2px var(--swatch); }
+  .color-swatch .swatch-inner { width: 12px; height: 12px; border-radius: 50%; background: var(--bg2); opacity: 0.3; }
+  .color-swatch.active .swatch-inner { opacity: 0; }
+  /* ─── Reading Dashboard ─────────────────────────── */
+  .reading-dashboard { padding: 10px 16px; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+  .rd-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text3); margin-bottom: 10px; }
+  .rd-stats { display: flex; gap: 6px; }
+  .rd-stat { flex: 1; text-align: center; background: var(--bg3); border-radius: 6px; padding: 6px 4px; }
+  .rd-val { display: block; font-size: 14px; font-weight: 700; color: var(--accent); line-height: 1.3; }
+  .rd-lbl { display: block; font-size: 9px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.3px; }
+  /* ─── Page Search ───────────────────────────────── */
+  .page-search-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2000; display: flex; align-items: flex-start; justify-content: center; padding: 80px 16px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .page-search-modal.open { opacity: 1; pointer-events: all; }
+  .page-search-content { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 560px; max-height: 60vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 16px 48px rgba(0,0,0,0.4); }
+  .page-search-input-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .page-search-icon { font-size: 14px; color: var(--text3); flex-shrink: 0; }
+  .page-search-input { flex: 1; border: none; background: none; color: var(--text); font-size: 14px; outline: none; font-family: inherit; }
+  .page-search-input::placeholder { color: var(--text3); }
+  .page-search-results { overflow-y: auto; padding: 8px 0; }
+  .page-search-result { padding: 8px 16px; cursor: pointer; font-size: 13px; color: var(--text2); transition: background 0.1s; line-height: 1.5; }
+  .page-search-result:hover { background: var(--bg3); color: var(--text); }
+  .page-search-empty { padding: 24px 16px; text-align: center; color: var(--text3); font-size: 13px; }
+  /* ─── Related Sections ──────────────────────────── */
+  .related-sections { margin: 32px 0 40px; padding: 16px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; border-left: 3px solid var(--accent5); }
+  .related-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent5); margin-bottom: 10px; }
+  .related-links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .related-link { flex: 1; min-width: 180px; display: flex; flex-direction: column; padding: 8px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; text-decoration: none; transition: all 0.15s; }
+  .related-link:hover { border-color: var(--accent); background: rgba(88,166,255,0.05); text-decoration: none; }
+  .related-link-title { font-size: 12px; font-weight: 600; color: var(--text); }
+  .related-link-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  /* ─── Tag Filters ───────────────────────────────── */
+  .tag-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+  .tag-filter-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg3); color: var(--text2); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .tag-filter-btn:hover { background: var(--border); color: var(--text); }
+  .tag-filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .tag-filter-btn .tag-count { opacity: 0.6; margin-left: 3px; font-size: 10px; }
+  /* ─── Print ─────────────────────────────────────── */
+  @media print { body { background: #fff; color: #000; display: block; } .sidebar, .topbar, .toc-sidebar, .overlay, .progress-bar, .back-to-top, .search-modal, .shortcuts-help, .bookmark-btn, .reading-mode-btn, .font-size-group, .bookmark-toast, .bookmark-resume-toast, .position-toast, .permalink-toast, .color-picker-modal, .page-search-modal, #readingDashboard, .related-sections, .notes-section, .chapter-checkmark, .tag-filters { display: none !important; } .main { margin: 0; display: block; } .content { max-width: 100%; padding: 0.5in; margin: 0; } .code-block { break-inside: avoid; border: 1px solid #ddd; } pre { background: #f5f5f5; } h2::before { background: #ddd; } a { color: #000; text-decoration: underline; } .page-footer-nav { display: none; } .meta-pills .meta-pill { background: #f0f0f0; border-color: #ddd; } }
+  /* ─── Reading Time Badge ────────────────────────── */
+  .reading-time-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text3);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 7px;
+    margin-left: 10px;
+    vertical-align: middle;
+    line-height: 1.5;
+    letter-spacing: 0;
+    text-transform: none;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  h2 .reading-time-badge { font-size: 11px; padding: 1px 8px; }
+  h3 .reading-time-badge { font-size: 10px; padding: 0 6px; }
+  .toc-read-time {
+    float: right;
+    font-size: 10px;
+    color: var(--text3);
+    background: var(--bg3);
+    border-radius: 3px;
+    padding: 0 5px;
+    line-height: 1.6;
+    margin-top: 1px;
+  }
+  /* ─── Bookmark Button ───────────────────────────── */
+  .bookmark-btn {
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text2);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .bookmark-btn:hover { background: var(--border); color: var(--text); }
+  .bookmark-btn.bookmarked {
+    background: rgba(210,153,34,0.15);
+    border-color: var(--accent3);
+    color: var(--accent3);
+  }
+  /* ─── Bookmark Toast ────────────────────────────── */
+  .bookmark-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text2);
+    z-index: 999;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .bookmark-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
+  .bookmark-toast button {
+    margin-left: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg3);
+    color: var(--text);
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .bookmark-toast button:hover { background: var(--border); }
+  /* ─── Bookmark Resume Toast ──────────────────────── */
+  .bookmark-resume-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--bg2);
+    border: 1px solid var(--accent3);
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 999;
+    opacity: 0;
+    transition: all 0.3s;
+    pointer-events: none;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  .bookmark-resume-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: all; }
+  .bookmark-resume-toast button {
+    padding: 4px 12px;
+    border-radius: 5px;
+    border: none;
+    background: var(--accent3);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .bookmark-resume-toast button:hover { opacity: 0.9; }
+  /* QUIZ */
+  .quiz-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .quiz-card:hover { border-color: var(--accent); }
+  .quiz-card .quiz-question { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .quiz-card .quiz-hint { font-size: 12px; color: var(--text3); }
+  .quiz-card .quiz-answer {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text2);
+  }
+  .quiz-card .quiz-answer.show { display: block; }
+  .quiz-card.revealed .quiz-hint { display: none; }
+  .quiz-progress {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .quiz-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .quiz-dot.revealed { background: var(--accent2); border-color: var(--accent2); }
+  .quiz-dot.incorrect { background: var(--accent4); border-color: var(--accent4); }
+  @media (max-width: 1200px) { .toc-sidebar { display: none; } }
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .topbar { left: 0; }
+    .main { margin-left: 0; }
+    .hamburger { display: block; }
+    .content { padding: 24px 16px 48px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 26px; }
+  }
+  /* OVERLAY */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 99; }
+  .overlay.open { display: block; }
+  /* PROGRESS BAR */
+  .progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent5)); z-index: 1000; transition: width 0.1s; }
+  /* PAGE SECTIONS */
+  .section { margin-bottom: 8px; }
+  /* 5W1H SECTION */
+  .fiveW { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin: 24px 0; }
+  .fiveW-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .fiveW-label { font-size: 22px; font-weight: 800; color: var(--accent); margin-bottom: 4px; }
+  .fiveW-title { font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; letter-spacing: 0.5px; }
+  .fiveW-text { font-size: 13px; color: var(--text2); }
+  /* CHECKLIST */
+  .checklist { list-style: none; padding: 0; }
+  .checklist li { padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+  .checklist li::before { content: '☐'; color: var(--text3); flex-shrink: 0; margin-top: 1px; }
+  .checklist li:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div>
+        <div class="logo-text">Backend Handbook</div>
+        <div class="logo-sub">v2.0 · 2025 Edition</div>
+      </div>
+    </a>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="sidebarSearch" placeholder="Search topics..." oninput="handleSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)">
+      <div class="search-results" id="searchResults"></div>
+    </div>
+  </div>
+  <nav style="padding: 8px 0; flex:1; overflow-y:auto;">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item active"><span class="icon">🏠</span>Home</a>
+      <a href="#roadmap" class="nav-item"><span class="icon">🗺</span>Learning Roadmap</a>
+      <a href="#companies" class="nav-item"><span class="icon">🏢</span>How Companies Use This</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">⚡</span>Backend Fundamentals<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="backend-fundamentals.html#request-lifecycle" class="nav-item">Request Lifecycle</a>
+        <a href="backend-fundamentals.html#client-server" class="nav-item">Client-Server Architecture</a>
+        <a href="backend-fundamentals.html#layers" class="nav-item">Application Layers</a>
+        <a href="backend-fundamentals.html#concurrency" class="nav-item">Concurrency</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">🔌</span>API Design<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="api-design.html#rest" class="nav-item">REST APIs</a>
+        <a href="api-design.html#graphql" class="nav-item">GraphQL</a>
+        <a href="api-design.html#grpc" class="nav-item">gRPC</a>
+        <a href="api-design.html#versioning" class="nav-item">Versioning</a>
+        <a href="api-design.html#pagination" class="nav-item">Pagination</a>
+        <a href="api-design.html#rate-limiting" class="nav-item">Rate Limiting</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">🗄</span>Database Engineering<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="database-engineering.html#sql" class="nav-item">SQL & Relational DBs</a>
+        <a href="database-engineering.html#nosql" class="nav-item">NoSQL</a>
+        <a href="database-engineering.html#indexes" class="nav-item">Indexes</a>
+        <a href="database-engineering.html#transactions" class="nav-item">Transactions & ACID</a>
+        <a href="database-engineering.html#replication" class="nav-item">Replication</a>
+        <a href="database-engineering.html#sharding" class="nav-item">Sharding</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">⚡</span>Performance<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="backend-performance.html#latency" class="nav-item">Latency & Throughput</a>
+        <a href="backend-performance.html#profiling" class="nav-item">Profiling</a>
+        <a href="backend-performance.html#load-testing" class="nav-item">Load Testing</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">💾</span>Caching<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="caching-guide.html#redis" class="nav-item">Redis Deep Dive</a>
+        <a href="caching-guide.html#strategies" class="nav-item">Cache Strategies</a>
+        <a href="caching-guide.html#pitfalls" class="nav-item">Cache Pitfalls</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">🔐</span>Auth & Security<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="authentication-security.html#jwt" class="nav-item">JWT</a>
+        <a href="authentication-security.html#oauth" class="nav-item">OAuth 2.0</a>
+        <a href="authentication-security.html#rbac" class="nav-item">RBAC / ABAC</a>
+        <a href="authentication-security.html#attacks" class="nav-item">Attack Prevention</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">📬</span>Message Queues<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="message-queues.html#kafka" class="nav-item">Apache Kafka</a>
+        <a href="message-queues.html#rabbitmq" class="nav-item">RabbitMQ</a>
+        <a href="message-queues.html#patterns" class="nav-item">Messaging Patterns</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">🌐</span>Distributed Systems<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="distributed-systems.html#cap" class="nav-item">CAP Theorem</a>
+        <a href="distributed-systems.html#consensus" class="nav-item">Consensus</a>
+        <a href="distributed-systems.html#patterns" class="nav-item">Resilience Patterns</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">🧩</span>Microservices<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="microservices.html#design" class="nav-item">Service Design</a>
+        <a href="microservices.html#communication" class="nav-item">Communication</a>
+        <a href="microservices.html#patterns" class="nav-item">Patterns</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">📊</span>Observability<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="observability.html#metrics" class="nav-item">Metrics</a>
+        <a href="observability.html#logging" class="nav-item">Logging</a>
+        <a href="observability.html#tracing" class="nav-item">Distributed Tracing</a>
+      </div>
+      <div class="nav-item nav-chapter" onclick="toggleChapter(this)">
+        <span class="icon">🚀</span>Production Engineering<span class="chevron">▶</span>
+      </div>
+      <div class="nav-sub">
+        <a href="production-engineering.html#deployments" class="nav-item">Deployment Strategies</a>
+        <a href="production-engineering.html#incidents" class="nav-item">Incident Management</a>
+        <a href="production-engineering.html#dr" class="nav-item">Disaster Recovery</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Advanced</div>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design Cases</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Eng Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="#cheatsheets" class="nav-item"><span class="icon">📋</span>Cheat Sheets</a>
+      <a href="#checklists" class="nav-item"><span class="icon">✅</span>Checklists</a>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb">
+      <span>Backend Handbook</span> / Home
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page (Ctrl+Shift+F)">🔍</button>
+    <button class="btn" onclick="toggleTheme()">
+      <span id="themeIcon">☀</span> <span id="themeText">Light</span>
+    </button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+  <article class="content">
+
+    <!-- HERO -->
+    <div class="page-hero">
+      <div class="page-badge badge-blue">📚 Complete Reference · 2025</div>
+      <h1>The <span class="grad">Backend Engineering</span> Handbook</h1>
+      <p class="page-intro">
+        A comprehensive, production-grade engineering handbook covering everything from request lifecycles to distributed systems — used as a reference by engineers at the world's most scalable companies.
+      </p>
+      <div class="meta-pills">
+        <span class="meta-pill">⏱ 40+ hours of reading</span>
+        <span class="meta-pill">📄 15 chapters</span>
+        <span class="meta-pill">💻 200+ code examples</span>
+        <span class="meta-pill">🏢 Real-world case studies</span>
+        <span class="meta-pill">🎯 Beginner → Principal</span>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-value">15</div><div class="stat-label">Deep Chapters</div></div>
+      <div class="stat-card"><div class="stat-value">200+</div><div class="stat-label">Code Examples</div></div>
+      <div class="stat-card"><div class="stat-value">100</div><div class="stat-label">Interview Q&As</div></div>
+      <div class="stat-card"><div class="stat-value">8</div><div class="stat-label">System Designs</div></div>
+    </div>
+
+    <h2 id="roadmap">📍 Learning Roadmap</h2>
+    <p>This handbook is structured as a progressive learning path. Follow it in order or jump to any chapter based on your current level.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h4>Backend Fundamentals</h4>
+          <p>Master request lifecycles, HTTP, client-server architecture, application layers, threading, and concurrency models. This is the bedrock everything else builds on.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h4>API Design Mastery</h4>
+          <p>REST, GraphQL, gRPC — understand when to use each, versioning strategies, pagination, idempotency, and security. Learn how Stripe designs APIs developers love.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h4>Database Engineering</h4>
+          <p>SQL mastery, NoSQL tradeoffs, indexes, ACID transactions, replication, partitioning, sharding. Learn how Instagram handles 1B+ users with PostgreSQL.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h4>Performance Engineering</h4>
+          <p>P50/P95/P99 latency, CPU/memory profiling, garbage collection tuning, load testing. Learn how Netflix targets sub-100ms response times globally.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h4>Caching & Message Queues</h4>
+          <p>Redis deep dive, Kafka fundamentals, cache invalidation strategies, consumer groups, dead letter queues. How Uber processes millions of location updates per second.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h4>Distributed Systems</h4>
+          <p>CAP theorem, consensus algorithms, eventual consistency, SAGA pattern, CQRS, circuit breakers. The hardest problems you'll face as a senior engineer.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <h4>Production Excellence</h4>
+          <p>Observability (metrics, logs, traces), deployment strategies (canary, blue-green), incident management, SLAs, postmortems. How to run production without fear.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <h4>System Design & Senior Eng</h4>
+          <p>Design WhatsApp, Netflix, Uber from scratch. Learn the career progression from Junior to Principal. Master the thinking patterns of Staff engineers.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHAPTERS -->
+    <h2>📖 All Chapters</h2>
+    <div class="tag-filters" id="tagFilters">
+      <button class="tag-filter-btn active" data-tag="all" onclick="filterCards('all')">All <span class="tag-count">14</span></button>
+      <button class="tag-filter-btn" data-tag="beginner" onclick="filterCards('beginner')">Beginner <span class="tag-count">4</span></button>
+      <button class="tag-filter-btn" data-tag="intermediate" onclick="filterCards('intermediate')">Intermediate <span class="tag-count">6</span></button>
+      <button class="tag-filter-btn" data-tag="advanced" onclick="filterCards('advanced')">Advanced <span class="tag-count">4</span></button>
+      <button class="tag-filter-btn" data-tag="interview" onclick="filterCards('interview')">Interview <span class="tag-count">3</span></button>
+      <button class="tag-filter-btn" data-tag="performance" onclick="filterCards('performance')">Performance <span class="tag-count">3</span></button>
+    </div>
+    <div class="card-grid">
+      <a href="backend-fundamentals.html" class="card" data-tags="beginner">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Backend Fundamentals</div>
+        <div class="card-desc">Request lifecycle, HTTP, application layers, concurrency, thread pools, memory management</div>
+      </a>
+      <a href="api-design.html" class="card" data-tags="beginner,interview">
+        <div class="card-icon">🔌</div>
+        <div class="card-title">API Design</div>
+        <div class="card-desc">REST, GraphQL, gRPC, versioning, rate limiting, idempotency, OpenAPI</div>
+      </a>
+      <a href="database-engineering.html" class="card" data-tags="beginner,performance">
+        <div class="card-icon">🗄</div>
+        <div class="card-title">Database Engineering</div>
+        <div class="card-desc">SQL, indexes, ACID, replication, sharding, query optimization, N+1 problem</div>
+      </a>
+      <a href="backend-performance.html" class="card" data-tags="intermediate,performance">
+        <div class="card-icon">📈</div>
+        <div class="card-title">Performance Engineering</div>
+        <div class="card-desc">Latency, throughput, P99 percentiles, profiling, GC tuning, load testing</div>
+      </a>
+      <a href="caching-guide.html" class="card" data-tags="intermediate,performance">
+        <div class="card-icon">💾</div>
+        <div class="card-title">Caching Masterclass</div>
+        <div class="card-desc">Redis, CDN, cache strategies, stampede prevention, invalidation</div>
+      </a>
+      <a href="authentication-security.html" class="card" data-tags="intermediate,advanced">
+        <div class="card-icon">🔐</div>
+        <div class="card-title">Auth & Security</div>
+        <div class="card-desc">JWT, OAuth2, RBAC, CSRF, XSS, SQL injection, secrets management</div>
+      </a>
+      <a href="message-queues.html" class="card" data-tags="intermediate">
+        <div class="card-icon">📬</div>
+        <div class="card-title">Message Queues</div>
+        <div class="card-desc">Kafka, RabbitMQ, SQS, exactly-once semantics, consumer groups</div>
+      </a>
+      <a href="distributed-systems.html" class="card" data-tags="advanced,interview">
+        <div class="card-icon">🌐</div>
+        <div class="card-title">Distributed Systems</div>
+        <div class="card-desc">CAP theorem, consensus, circuit breakers, SAGA, CQRS, event sourcing</div>
+      </a>
+      <a href="microservices.html" class="card" data-tags="advanced">
+        <div class="card-icon">🧩</div>
+        <div class="card-title">Microservices</div>
+        <div class="card-desc">Service design, API gateways, service mesh, decomposition patterns</div>
+      </a>
+      <a href="observability.html" class="card" data-tags="intermediate,advanced">
+        <div class="card-icon">📊</div>
+        <div class="card-title">Observability</div>
+        <div class="card-desc">Metrics, logs, traces, Prometheus, Grafana, OpenTelemetry, Jaeger</div>
+      </a>
+      <a href="production-engineering.html" class="card" data-tags="advanced,interview">
+        <div class="card-icon">🚀</div>
+        <div class="card-title">Production Engineering</div>
+        <div class="card-desc">Deployments, feature flags, health checks, incidents, DR, postmortems</div>
+      </a>
+      <a href="system-design.html" class="card" data-tags="advanced,interview">
+        <div class="card-icon">🏗</div>
+        <div class="card-title">System Design</div>
+        <div class="card-desc">WhatsApp, Netflix, Uber, Instagram, YouTube, Twitter, payments</div>
+      </a>
+      <a href="senior-engineer-roadmap.html" class="card" data-tags="advanced">
+        <div class="card-icon">📈</div>
+        <div class="card-title">Senior Eng Roadmap</div>
+        <div class="card-desc">Junior → Staff → Principal career progression, skills, expectations</div>
+      </a>
+      <a href="interview-guide.html" class="card" data-tags="intermediate,interview">
+        <div class="card-icon">💼</div>
+        <div class="card-title">Interview Guide</div>
+        <div class="card-desc">100 Q&As covering all levels, system design walkthroughs, tips</div>
+      </a>
+    </div>
+
+    <!-- 5W1H -->
+    <h2>🧠 The 5W1H Framework</h2>
+    <p>Every major topic in this handbook is explained using the 5W1H framework — a structured way to develop complete, deep understanding of engineering concepts.</p>
+
+    <div class="fiveW">
+      <div class="fiveW-card">
+        <div class="fiveW-label">WHY</div>
+        <div class="fiveW-title">Why it exists</div>
+        <div class="fiveW-text">Historical context, the problem it solves, why alternatives exist, why it fails</div>
+      </div>
+      <div class="fiveW-card">
+        <div class="fiveW-label">WHAT</div>
+        <div class="fiveW-title">What it is</div>
+        <div class="fiveW-text">Core concepts, definitions, advantages, disadvantages, tradeoffs</div>
+      </div>
+      <div class="fiveW-card">
+        <div class="fiveW-label">WHERE</div>
+        <div class="fiveW-title">Where it applies</div>
+        <div class="fiveW-text">In which layer, at what scale, what symptoms, what metrics to watch</div>
+      </div>
+      <div class="fiveW-card">
+        <div class="fiveW-label">WHO</div>
+        <div class="fiveW-title">Who is responsible</div>
+        <div class="fiveW-text">Role responsibilities at each level, ownership, mentoring</div>
+      </div>
+      <div class="fiveW-card">
+        <div class="fiveW-label">WHEN</div>
+        <div class="fiveW-title">When to use it</div>
+        <div class="fiveW-text">Decision criteria, triggering conditions, decision trees</div>
+      </div>
+      <div class="fiveW-card">
+        <div class="fiveW-label">HOW</div>
+        <div class="fiveW-title">How to implement</div>
+        <div class="fiveW-text">Step-by-step guides, code examples, best practices</div>
+      </div>
+    </div>
+
+    <!-- COMPANIES -->
+    <h2 id="companies">🏢 Real-World Engineering at Scale</h2>
+    <p>This handbook draws on publicly available engineering blogs, postmortems, and architecture papers from the world's most sophisticated engineering organizations.</p>
+    <div class="company-list">
+      <span class="company-tag tag-google">Google</span>
+      <span class="company-tag tag-meta">Meta</span>
+      <span class="company-tag tag-netflix">Netflix</span>
+      <span class="company-tag tag-amazon">Amazon</span>
+      <span class="company-tag tag-uber">Uber</span>
+      <span class="company-tag tag-stripe">Stripe</span>
+      <span class="company-tag" style="color:#ff6600;border-color:#ff6600;background:rgba(255,102,0,0.1)">Airbnb</span>
+      <span class="company-tag" style="color:#0077b5;border-color:#0077b5;background:rgba(0,119,181,0.1)">LinkedIn</span>
+    </div>
+
+    <div class="callout info">
+      <div class="callout-icon">💡</div>
+      <div class="callout-body">
+        <div class="callout-title">How to Use This Handbook</div>
+        <p>If you're a <strong>Junior Engineer</strong>: start with Backend Fundamentals → APIs → Databases. If you're a <strong>Senior Engineer</strong>: focus on Distributed Systems → System Design → Observability. If you're <strong>interviewing</strong>: jump straight to the Interview Guide and System Design chapters.</p>
+      </div>
+    </div>
+
+    <!-- QUICK REF -->
+    <h2 id="cheatsheets">📋 Quick Reference Cheat Sheets</h2>
+    <p>Each chapter has an attached cheat sheet. Here are the most commonly referenced ones.</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab(this, 'tab-api')">API Design</button>
+        <button class="tab-btn" onclick="switchTab(this, 'tab-db')">Databases</button>
+        <button class="tab-btn" onclick="switchTab(this, 'tab-cache')">Caching</button>
+        <button class="tab-btn" onclick="switchTab(this, 'tab-dist')">Distributed</button>
+      </div>
+
+      <div class="tab-content active" id="tab-api">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Method</th><th>Use Case</th><th>Idempotent</th><th>Body</th></tr></thead>
+            <tbody>
+              <tr><td><code>GET</code></td><td>Read a resource</td><td>✅ Yes</td><td>No</td></tr>
+              <tr><td><code>POST</code></td><td>Create a resource</td><td>❌ No</td><td>Yes</td></tr>
+              <tr><td><code>PUT</code></td><td>Replace entire resource</td><td>✅ Yes</td><td>Yes</td></tr>
+              <tr><td><code>PATCH</code></td><td>Partial update</td><td>❌ No</td><td>Yes</td></tr>
+              <tr><td><code>DELETE</code></td><td>Remove a resource</td><td>✅ Yes</td><td>Optional</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">HTTP Status Codes</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+          <pre><code><span class="cmt"># 2xx Success</span>
+200 OK           → Request succeeded
+201 Created      → Resource created (POST)
+204 No Content   → Success, no body (DELETE)
+
+<span class="cmt"># 3xx Redirect</span>
+301 Moved Permanently
+302 Found (temp redirect)
+304 Not Modified → Use cached version
+
+<span class="cmt"># 4xx Client Errors</span>
+400 Bad Request     → Invalid input
+401 Unauthorized    → Not authenticated
+403 Forbidden       → Authenticated but no permission
+404 Not Found       → Resource doesn't exist
+409 Conflict        → State conflict (duplicate)
+422 Unprocessable   → Validation failed
+429 Too Many Req    → Rate limited
+
+<span class="cmt"># 5xx Server Errors</span>
+500 Internal Error  → Unexpected server error
+502 Bad Gateway     → Upstream server failure
+503 Unavailable     → Server overloaded/down
+504 Gateway Timeout → Upstream timeout</code></pre>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-db">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Database</th><th>Type</th><th>Best For</th><th>Avoid When</th></tr></thead>
+            <tbody>
+              <tr><td>PostgreSQL</td><td>SQL</td><td>ACID, complex queries, JSON</td><td>Massive write throughput</td></tr>
+              <tr><td>MySQL</td><td>SQL</td><td>Read-heavy apps, mature tooling</td><td>Complex analytics</td></tr>
+              <tr><td>MongoDB</td><td>Document</td><td>Flexible schema, rapid iteration</td><td>Joins, strong consistency</td></tr>
+              <tr><td>Redis</td><td>Key-Value</td><td>Cache, sessions, pub/sub</td><td>Primary data store</td></tr>
+              <tr><td>Cassandra</td><td>Wide-Col</td><td>Massive writes, time-series</td><td>Ad-hoc queries</td></tr>
+              <tr><td>Elasticsearch</td><td>Search</td><td>Full-text search, analytics</td><td>Primary transactional DB</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-cache">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Strategy</th><th>Flow</th><th>Pros</th><th>Cons</th></tr></thead>
+            <tbody>
+              <tr><td>Cache-Aside</td><td>App reads cache → miss → reads DB → writes cache</td><td>Resilient, lazy loading</td><td>Cache miss latency, stale data</td></tr>
+              <tr><td>Write-Through</td><td>App writes cache + DB simultaneously</td><td>Cache always fresh</td><td>Write latency, cache churn</td></tr>
+              <tr><td>Write-Behind</td><td>App writes cache → async DB write</td><td>Low write latency</td><td>Data loss risk</td></tr>
+              <tr><td>Read-Through</td><td>Cache handles DB reads transparently</td><td>Simpler app code</td><td>Cold start penalty</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-dist">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pattern</th><th>Problem Solved</th><th>Trade-off</th></tr></thead>
+            <tbody>
+              <tr><td>Circuit Breaker</td><td>Cascading failures</td><td>Complexity, false positives</td></tr>
+              <tr><td>Saga</td><td>Distributed transactions</td><td>Eventual consistency, complex</td></tr>
+              <tr><td>CQRS</td><td>Read/write optimization</td><td>Dual model complexity</td></tr>
+              <tr><td>Event Sourcing</td><td>Audit trail, time travel</td><td>Query complexity, storage</td></tr>
+              <tr><td>Bulkhead</td><td>Resource isolation</td><td>Under-utilization</td></tr>
+              <tr><td>Sidecar</td><td>Cross-cutting concerns</td><td>Latency overhead</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROD READINESS -->
+    <h2 id="checklists">✅ Production Readiness Checklist</h2>
+    <p>Before shipping any service to production, run through this checklist. Inspired by checklists used at Google and Amazon.</p>
+
+    <div class="tabs">
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab(this, 'cl-api')">API</button>
+        <button class="tab-btn" onclick="switchTab(this, 'cl-ops')">Operations</button>
+        <button class="tab-btn" onclick="switchTab(this, 'cl-sec')">Security</button>
+        <button class="tab-btn" onclick="switchTab(this, 'cl-perf')">Performance</button>
+      </div>
+
+      <div class="tab-content active" id="cl-api">
+        <ul class="checklist">
+          <li>API endpoints follow consistent naming conventions (/api/v1/resources)</li>
+          <li>All endpoints return appropriate HTTP status codes</li>
+          <li>Error responses follow a consistent format with error codes</li>
+          <li>Rate limiting is implemented with proper 429 responses</li>
+          <li>API versioning strategy is defined and documented</li>
+          <li>All endpoints have input validation and sanitization</li>
+          <li>OpenAPI/Swagger documentation is generated and up-to-date</li>
+          <li>Idempotency keys implemented for mutating operations</li>
+          <li>Pagination implemented for list endpoints (cursor or offset)</li>
+          <li>Content-Type headers are validated and enforced</li>
+        </ul>
+      </div>
+
+      <div class="tab-content" id="cl-ops">
+        <ul class="checklist">
+          <li>Health check endpoint (/health or /ready) is implemented</li>
+          <li>Graceful shutdown handles in-flight requests</li>
+          <li>Structured logging (JSON) is in place</li>
+          <li>Request IDs are propagated across services</li>
+          <li>Metrics are exposed (Prometheus /metrics endpoint)</li>
+          <li>Alerts are configured for error rate, latency, saturation</li>
+          <li>Runbook / playbook is written for common incidents</li>
+          <li>Deployment rollback procedure is tested</li>
+          <li>Feature flags allow safe feature rollout</li>
+          <li>Database migrations are backward compatible</li>
+        </ul>
+      </div>
+
+      <div class="tab-content" id="cl-sec">
+        <ul class="checklist">
+          <li>Authentication is required on all non-public endpoints</li>
+          <li>Authorization checks (RBAC/ABAC) are in place</li>
+          <li>Secrets are stored in a secrets manager (Vault, AWS SSM)</li>
+          <li>HTTPS/TLS enforced everywhere, no plaintext</li>
+          <li>SQL queries use parameterized statements</li>
+          <li>CORS is configured for correct allowed origins</li>
+          <li>Dependencies have no known high-severity CVEs</li>
+          <li>Sensitive data is not logged (PII, passwords, tokens)</li>
+          <li>API keys / tokens have minimum required permissions</li>
+          <li>DDoS protection and WAF are in place</li>
+        </ul>
+      </div>
+
+      <div class="tab-content" id="cl-perf">
+        <ul class="checklist">
+          <li>P99 latency target is defined and tested against</li>
+          <li>Database queries are analyzed with EXPLAIN</li>
+          <li>N+1 query problems are identified and resolved</li>
+          <li>Connection pools are appropriately sized</li>
+          <li>Caching layer is implemented for hot data</li>
+          <li>Load test has been run at 2x expected peak traffic</li>
+          <li>Memory leak testing has been performed</li>
+          <li>Graceful degradation is implemented under load</li>
+          <li>Timeouts are set for all external dependencies</li>
+          <li>Async processing used for non-critical operations</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- WORKFLOW -->
+    <h2>🔄 The Engineering Workflow</h2>
+    <p>Every feature at a FAANG-level company follows a structured workflow from requirements to scaling. Here's the complete picture:</p>
+
+    <div class="diagram">
+      <pre>
+  REQUIREMENTS          DESIGN               DEVELOPMENT
+  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+  │ User Stories│ ───▶ │ Tech Design │ ───▶ │ TDD / Code  │
+  │ Acceptance  │      │ API Spec    │      │ Code Review │
+  │ Criteria    │      │ DB Schema   │      │ Pair Prog.  │
+  └─────────────┘      └─────────────┘      └─────────────┘
+         │                    │                    │
+         ▼                    ▼                    ▼
+  TESTING               DEPLOYMENT           MONITORING
+  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+  │ Unit Tests  │ ───▶ │ Canary 1%   │ ───▶ │ Dashboards  │
+  │ Integration │      │ Canary 10%  │      │ Alerts      │
+  │ Load Tests  │      │ Full Deploy │      │ On-call     │
+  └─────────────┘      └─────────────┘      └─────────────┘
+                                                    │
+  SCALING               OPTIMIZATION        INCIDENT
+  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
+  │ Horizontal  │ ◀─── │ Profiling   │ ◀─── │ Detection   │
+  │ Vertical    │      │ DB Tuning   │      │ Mitigation  │
+  │ Sharding    │      │ Caching     │      │ Postmortem  │
+  └─────────────┘      └─────────────┘      └─────────────┘
+      </pre>
+    </div>
+
+    <div class="callout success">
+      <div class="callout-icon">🚀</div>
+      <div class="callout-body">
+        <div class="callout-title">Ready to Start?</div>
+        <p>Begin with <a href="backend-fundamentals.html">Backend Fundamentals</a> if you're newer to backend engineering, or jump to <a href="system-design.html">System Design</a> if you're preparing for senior-level interviews.</p>
+      </div>
+    </div>
+
+    <div class="page-footer-nav">
+      <div></div>
+      <a href="backend-fundamentals.html" class="footer-nav-btn next">
+        <div class="dir">Next Chapter</div>
+        <div class="pg">⚡ Backend Fundamentals</div>
+      </a>
+    </div>
+
+  </article>
+
+  <aside class="toc-sidebar">
+    <div class="toc-title">On this page</div>
+    <ul class="toc-list">
+      <li><a href="#roadmap">Learning Roadmap</a></li>
+      <li><a href="#roadmap">All Chapters</a></li>
+      <li><a href="#roadmap">5W1H Framework</a></li>
+      <li><a href="#companies">Real-World Engineering</a></li>
+      <li><a href="#cheatsheets">Cheat Sheets</a></li>
+      <li><a href="#checklists">Checklists</a></li>
+    </ul>
+  </aside>
+</div>
+
+<script>
+// ─── PWA ──────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+// ─── Font Size ────────────────────────────────────────
+function setFontSize(size) {
+  const sizes = { small: '14px', medium: '16px', large: '19px' };
+  if (!sizes[size]) return;
+  document.documentElement.style.setProperty('--font-size-base', sizes[size]);
+  localStorage.setItem('pref_fontSize', size);
+  document.querySelectorAll('.font-size-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.size === size);
+  });
+}
+function loadFontSizePref() {
+  const saved = localStorage.getItem('pref_fontSize') || 'medium';
+  setFontSize(saved);
+}
+
+// ─── Reading Mode ─────────────────────────────────────
+function toggleReadingMode() {
+  const isActive = document.body.classList.toggle('reading-mode');
+  localStorage.setItem('pref_readingMode', isActive ? '1' : '0');
+  const btn = document.getElementById('readingModeBtn');
+  if (btn) btn.classList.toggle('active', isActive);
+}
+function loadReadingModePref() {
+  if (localStorage.getItem('pref_readingMode') === '1') {
+    document.body.classList.add('reading-mode');
+    const btn = document.getElementById('readingModeBtn');
+    if (btn) btn.classList.add('active');
+  }
+}
+loadFontSizePref();
+loadReadingModePref();
+
+// ─── Tag Filter ────────────────────────────────────────
+function filterCards(tag) {
+  document.querySelectorAll('.tag-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.tag === tag));
+  document.querySelectorAll('.card[data-tags]').forEach(card => {
+    if (tag === 'all') { card.style.display = ''; return; }
+    card.style.display = card.dataset.tags.includes(tag) ? '' : 'none';
+  });
+}
+
+// ─── Init Theme + Accent ───────────────────────────────
+(function() {
+  const saved = localStorage.getItem('pref_theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    const icon = document.getElementById('themeIcon');
+    const text = document.getElementById('themeText');
+    if (icon) icon.textContent = saved === 'dark' ? '🌙' : '☀';
+    if (text) text.textContent = saved === 'dark' ? 'Dark' : 'Light';
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('pref_theme')) {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        const icon = document.getElementById('themeIcon');
+        const text = document.getElementById('themeText');
+        if (icon) icon.textContent = e.matches ? '🌙' : '☀';
+        if (text) text.textContent = e.matches ? 'Dark' : 'Light';
+      }
+    });
+  }
+  const accentIdx = localStorage.getItem('pref_accent');
+  if (accentIdx !== null) {
+    const colors = [{n:'Blue',a:'#58a6ff',a5:'#bc8cff'},{n:'Green',a:'#3fb950',a5:'#56d364'},{n:'Purple',a:'#bc8cff',a5:'#d2a8ff'},{n:'Orange',a:'#d29922',a5:'#f0883e'},{n:'Pink',a:'#f85149',a5:'#ff7b72'},{n:'Teal',a:'#39d353',a5:'#7ee787'},{n:'Cyan',a:'#58a6ff',a5:'#79c0ff'}];
+    const c = colors[parseInt(accentIdx)];
+    if (c) { document.documentElement.style.setProperty('--accent', c.a); document.documentElement.style.setProperty('--accent5', c.a5); }
+  }
+})();
+
+// ─── Reading Time ─────────────────────────────────----
+function calculateReadingTimes() {
+  const content = document.querySelector('.content');
+  if (!content) return;
+  const headings = content.querySelectorAll('h2[id], h3[id]');
+  if (!headings.length) return;
+  const sections = [];
+  headings.forEach((h, i) => {
+    const nextH = headings[i + 1];
+    let wordCount = 0;
+    let el = h.nextElementSibling;
+    while (el && el !== nextH) {
+      const text = el.textContent || '';
+      wordCount += text.trim().split(/\s+/).filter(Boolean).length;
+      el = el.nextElementSibling;
+    }
+    const readTime = Math.max(1, Math.round(wordCount / 200));
+    sections.push({ id: h.id, time: readTime, heading: h });
+    if (!h.querySelector('.reading-time-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'reading-time-badge';
+      badge.textContent = readTime + ' min';
+      h.appendChild(badge);
+    }
+  });
+  const tocLinks = document.querySelectorAll('.toc-list a');
+  tocLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+    const id = href.slice(1);
+    const section = sections.find(s => s.id === id);
+    if (!section) return;
+    let timeSpan = link.querySelector('.toc-read-time');
+    if (!timeSpan) {
+      timeSpan = document.createElement('span');
+      timeSpan.className = 'toc-read-time';
+      link.appendChild(timeSpan);
+    }
+    timeSpan.textContent = section.time + 'm';
+  });
+}
+
+// ─── Bookmark ─────────────────────────────────────────
+function getPageKey() {
+  return window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+}
+function getBookmarkKey() { return 'bookmark_' + getPageKey(); }
+function setBookmark() {
+  const headings = document.querySelectorAll('.content h2[id], .content h3[id]');
+  if (!headings.length) {
+    localStorage.setItem(getBookmarkKey(), JSON.stringify({ sectionId: null, sectionName: 'Top of page', scrollY: window.scrollY }));
+    showBookmarkToast('🔖 Bookmarked: Top of page');
+    return;
+  }
+  let nearest = { id: null, name: 'Top of page', y: 0 };
+  headings.forEach(h => {
+    const rect = h.getBoundingClientRect();
+    const absY = rect.top + window.scrollY;
+    if (absY <= window.scrollY + 100 && absY >= nearest.y) {
+      nearest = { id: h.id, name: h.textContent.replace(/\d+\s*min$/, '').trim(), y: absY };
+    }
+  });
+  const bookmark = { sectionId: nearest.id, sectionName: nearest.name, scrollY: window.scrollY };
+  localStorage.setItem(getBookmarkKey(), JSON.stringify(bookmark));
+  showBookmarkToast('🔖 Bookmarked: ' + nearest.name);
+  const btn = document.getElementById('bookmarkBtn');
+  if (btn) {
+    btn.classList.add('bookmarked');
+    btn.title = 'Bookmarked: ' + nearest.name + ' — Click to update';
+  }
+}
+function loadBookmark() {
+  const data = localStorage.getItem(getBookmarkKey());
+  if (!data) return;
+  try {
+    const bookmark = JSON.parse(data);
+    if (!bookmark || !bookmark.sectionName) return;
+    const btn = document.getElementById('bookmarkBtn');
+    if (btn) {
+      btn.classList.add('bookmarked');
+      btn.title = 'Bookmarked: ' + bookmark.sectionName + ' — Click to update';
+    }
+    setTimeout(() => {
+      const toast = document.createElement('div');
+      toast.className = 'bookmark-resume-toast';
+      toast.innerHTML = '<span>🔖 <strong>Resume from:</strong> ' + bookmark.sectionName + '</span><button onclick="resumeFromBookmark()">Go</button>';
+      document.body.appendChild(toast);
+      requestAnimationFrame(() => {
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, 6000);
+      });
+    }, 200);
+  } catch {}
+}
+function resumeFromBookmark() {
+  const data = localStorage.getItem(getBookmarkKey());
+  if (!data) return;
+  try {
+    const bookmark = JSON.parse(data);
+    if (bookmark.sectionId) {
+      const el = document.getElementById(bookmark.sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.style.transition = 'background 0.5s';
+        el.style.background = 'rgba(188,140,255,0.12)';
+        el.style.borderRadius = '4px';
+        setTimeout(() => { el.style.background = 'transparent'; }, 1500);
+      }
+    } else if (bookmark.scrollY) {
+      window.scrollTo({ top: bookmark.scrollY, behavior: 'smooth' });
+    }
+  } catch {}
+}
+function showBookmarkToast(msg) {
+  const existing = document.querySelector('.bookmark-toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = 'bookmark-toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => {
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 500); }, 3000);
+  });
+}
+calculateReadingTimes();
+loadBookmark();
+
+function goToNotes() {
+  const section = document.getElementById('notesSection');
+  if (!section) return;
+  const body = document.getElementById('notesBody');
+  const chevron = document.getElementById('notesChevron');
+  if (body && !body.classList.contains('open')) {
+    body.classList.add('open');
+    if (chevron) chevron.classList.add('open');
+    localStorage.setItem('notesSection_open', '1');
+  }
+  section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => {
+    const ta = document.getElementById('notesTextarea');
+    if (ta) ta.focus();
+  }, 400);
+}
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+function toggleChapter(el) {
+  el.classList.toggle('open');
+}
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('pref_theme', newTheme);
+  document.getElementById('themeIcon').textContent = isDark ? '🌙' : '☀';
+  document.getElementById('themeText').textContent = isDark ? 'Dark' : 'Light';
+}
+
+// ─── Color Picker ───────────────────────────────────────
+const ACCENT_COLORS = [{n:'Blue',a:'#58a6ff',a5:'#bc8cff'},{n:'Green',a:'#3fb950',a5:'#56d364'},{n:'Purple',a:'#bc8cff',a5:'#d2a8ff'},{n:'Orange',a:'#d29922',a5:'#f0883e'},{n:'Pink',a:'#f85149',a5:'#ff7b72'},{n:'Teal',a:'#39d353',a5:'#7ee787'},{n:'Cyan',a:'#58a6ff',a5:'#79c0ff'}];
+function openColorPicker() {
+  const existing = document.getElementById('colorPickerModal');
+  if (existing) { existing.classList.toggle('open'); return; }
+  const modal = document.createElement('div');
+  modal.id = 'colorPickerModal';
+  modal.className = 'color-picker-modal';
+  modal.innerHTML = '<div class="color-picker-content" onclick="event.stopPropagation()"><div class="color-picker-header"><span>🎨 Accent Color</span><button class="color-picker-close" onclick="closeColorPicker()">&times;</button></div><div class="color-swatches">'+ACCENT_COLORS.map((c,i)=>'<button class="color-swatch" data-index="'+i+'" style="--swatch:'+c.a+'" onclick="setAccentColor('+i+')" title="'+c.n+'"><span class="swatch-inner"></span></button>').join('')+'</div><div style="padding:8px 16px 12px;font-size:11px;color:var(--text3)">Click a color to apply. Persists across pages.<button onclick="resetAccentColor()" style="margin-left:8px;padding:2px 8px;border:1px solid var(--border);background:var(--bg3);border-radius:4px;color:var(--text2);font-size:11px;cursor:pointer">Reset</button></div></div>';
+  modal.onclick = () => closeColorPicker();
+  document.body.appendChild(modal);
+  requestAnimationFrame(() => modal.classList.add('open'));
+}
+function closeColorPicker() { const m = document.getElementById('colorPickerModal'); if (m) m.classList.remove('open'); }
+function setAccentColor(i) {
+  const c = ACCENT_COLORS[i]; if (!c) return;
+  document.documentElement.style.setProperty('--accent', c.a);
+  document.documentElement.style.setProperty('--accent5', c.a5);
+  localStorage.setItem('pref_accent', i.toString());
+  document.querySelectorAll('.color-swatch').forEach(s => s.classList.toggle('active', parseInt(s.dataset.index) === i));
+}
+function resetAccentColor() {
+  document.documentElement.style.removeProperty('--accent');
+  document.documentElement.style.removeProperty('--accent5');
+  localStorage.removeItem('pref_accent');
+  closeColorPicker();
+}
+
+// ─── Page Search ────────────────────────────────────────
+function openPageSearch() {
+  const existing = document.getElementById('pageSearchModal');
+  if (existing) { existing.classList.add('open'); setTimeout(()=>document.getElementById('pageSearchInput')?.focus(),100); return; }
+  const modal = document.createElement('div');
+  modal.id = 'pageSearchModal';
+  modal.className = 'page-search-modal';
+  modal.innerHTML = '<div class="page-search-content" onclick="event.stopPropagation()"><div class="page-search-input-wrap"><span class="page-search-icon">🔍</span><input class="page-search-input" id="pageSearchInput" placeholder="Search this page..." autofocus></div><div class="page-search-results" id="pageSearchResults"><div class="page-search-empty">Start typing to search on this page</div></div></div>';
+  modal.onclick = () => { const m = document.getElementById('pageSearchModal'); if (m) m.classList.remove('open'); };
+  document.body.appendChild(modal);
+  requestAnimationFrame(() => { modal.classList.add('open'); setTimeout(()=>document.getElementById('pageSearchInput')?.focus(),100); });
+}
+function filterPageSearch(val) {
+  const results = document.getElementById('pageSearchResults');
+  if (!results) return;
+  const q = val.toLowerCase().trim();
+  if (!q) { results.innerHTML = '<div class="page-search-empty">Start typing to search on this page</div>'; return; }
+  const content = document.querySelector('.content');
+  if (!content) return;
+  const nodes = [];
+  const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  while (node = walker.nextNode()) {
+    const text = node.textContent.trim();
+    if (text && text.toLowerCase().includes(q)) nodes.push({ node, text: text.substring(0, 200) });
+  }
+  if (!nodes.length) { results.innerHTML = '<div class="page-search-empty">No matches found</div>'; return; }
+  results.innerHTML = nodes.map((item, i) => {
+    const idx = item.text.toLowerCase().indexOf(q);
+    return '<div class="page-search-result" onclick="goToPageSearchResult('+i+')">...<span class="page-search-match">'+item.text.substring(0,idx)+'<strong style="color:var(--accent)">'+item.text.substring(idx,idx+q.length)+'</strong>'+item.text.substring(idx+q.length)+'...</span></div>';
+  }).join('');
+  window._pageSearchNodes = nodes;
+}
+function goToPageSearchResult(i) {
+  const nodes = window._pageSearchNodes;
+  if (!nodes || !nodes[i]) return;
+  const el = nodes[i].node.parentElement;
+  if (el) { el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.transition='background 0.5s'; el.style.background='rgba(188,140,255,0.15)'; el.style.borderRadius='4px'; setTimeout(()=>{el.style.background='transparent';},1500); }
+  const m = document.getElementById('pageSearchModal'); if (m) m.classList.remove('open');
+}
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.id === 'pageSearchInput') filterPageSearch(e.target.value);
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('pageSearchModal')?.classList.contains('open')) {
+    document.getElementById('pageSearchModal').classList.remove('open');
+  }
+});
+
+// ─── Permalinks ─────────────────────────────────────────
+function addPermalinks() {
+  document.querySelectorAll('.content h2[id], .content h3[id], .content h4[id]').forEach(h => {
+    if (h.querySelector('.permalink')) return;
+    const link = document.createElement('a');
+    link.className = 'permalink';
+    link.href = '#'+h.id;
+    link.textContent = '#';
+    link.title = 'Link to this section';
+    link.onclick = function(e) { e.preventDefault(); navigator.clipboard.writeText(window.location.href.split('#')[0]+'#'+h.id); };
+    h.appendChild(link);
+  });
+}
+addPermalinks();
+
+// ─── Copy Badge Enhancement ─────────────────────────────
+(function() {
+  const CK = 'copied_code_blocks';
+  function getCopied() { try { return JSON.parse(localStorage.getItem(CK)) || {}; } catch { return {}; }}
+  function markCopied(id) { const d = getCopied(); d[id] = true; localStorage.setItem(CK, JSON.stringify(d)); }
+  const orig = window.copyCode;
+  window.copyCode = function(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    if (!pre) return;
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      btn.textContent = '✓ Copied!';
+      btn.classList.add('copied');
+      const header = btn.closest('.code-header');
+      if (header) {
+        let badge = header.querySelector('.copy-badge');
+        if (!badge) { badge = document.createElement('span'); badge.className = 'copy-badge'; header.querySelector('.code-lang').after(badge); }
+        badge.textContent = '✓';
+      }
+      const lang = (btn.closest('.code-block').querySelector('.code-lang')?.textContent||'code').trim();
+      markCopied(lang+'_'+pre.innerText.length);
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  };
+})();
+function switchTab(btn, tabId) {
+  const container = btn.closest('.tabs');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+const searchData = [
+  { title: 'Request Lifecycle', desc: 'How HTTP requests flow through a backend system', url: 'backend-fundamentals.html#request-lifecycle' },
+  { title: 'REST API Design', desc: 'HTTP methods, status codes, resource naming', url: 'api-design.html#rest' },
+  { title: 'GraphQL', desc: 'Query language, mutations, subscriptions', url: 'api-design.html#graphql' },
+  { title: 'gRPC', desc: 'Protocol Buffers, streaming, bidirectional comms', url: 'api-design.html#grpc' },
+  { title: 'Database Indexes', desc: 'B-tree, hash indexes, query optimization', url: 'database-engineering.html#indexes' },
+  { title: 'CAP Theorem', desc: 'Consistency, Availability, Partition Tolerance', url: 'distributed-systems.html#cap' },
+  { title: 'Redis Caching', desc: 'Cache strategies, eviction, data structures', url: 'caching-guide.html#redis' },
+  { title: 'JWT Authentication', desc: 'JSON Web Tokens, refresh tokens, security', url: 'authentication-security.html#jwt' },
+  { title: 'Kafka', desc: 'Topics, partitions, consumer groups, ordering', url: 'message-queues.html#kafka' },
+  { title: 'Circuit Breaker', desc: 'Resilience pattern for cascading failure prevention', url: 'distributed-systems.html#patterns' },
+  { title: 'Distributed Tracing', desc: 'OpenTelemetry, Jaeger, trace IDs', url: 'observability.html#tracing' },
+  { title: 'Blue-Green Deployment', desc: 'Zero-downtime deployment strategy', url: 'production-engineering.html#deployments' },
+  { title: 'System Design: WhatsApp', desc: 'Design a chat system at scale', url: 'system-design.html' },
+  { title: 'N+1 Query Problem', desc: 'Database query anti-pattern and fixes', url: 'database-engineering.html#sql' },
+  { title: 'Rate Limiting', desc: 'Token bucket, sliding window algorithms', url: 'api-design.html#rate-limiting' },
+];
+function handleSearch(val) {
+  const results = document.getElementById('searchResults');
+  if (!val.trim()) { results.style.display = 'none'; return; }
+  const filtered = searchData.filter(d => d.title.toLowerCase().includes(val.toLowerCase()) || d.desc.toLowerCase().includes(val.toLowerCase()));
+  if (!filtered.length) { results.style.display = 'none'; return; }
+  results.innerHTML = filtered.map(d => `<div class="search-result-item" onclick="window.location='${d.url}'"><div class="search-result-title">${d.title}</div><div class="search-result-desc">${d.desc}</div></div>`).join('');
+  results.style.display = 'block';
+}
+function closeSearch() { document.getElementById('searchResults').style.display = 'none'; }
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('progressBar');
+  if (!bar) return;
+  const winH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = winH > 0 ? (window.scrollY / winH) * 100 : 0;
+  bar.style.width = pct + '%';
+  const btt = document.querySelector('.back-to-top');
+  if (btt) btt.classList.toggle('visible', window.scrollY > 500);
+});
+
+// ─── Back to Top ─────────────────────────────────────
+(function(){
+  const btn = document.createElement('button');
+  btn.className = 'back-to-top';
+  btn.innerHTML = '↑';
+  btn.title = 'Back to top';
+  btn.onclick = () => window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.body.appendChild(btn);
+})();
+
+// ─── Reading Position ─────────────────────────────────
+(function(){
+  const pageKey = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+  const saved = localStorage.getItem('scroll_' + pageKey);
+  if (saved) {
+    const toast = document.createElement('div');
+    toast.className = 'position-toast';
+    toast.textContent = '↕ Resuming where you left off';
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        window.scrollTo(0, parseInt(saved));
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      }, 50);
+    });
+  }
+  let timer;
+  window.addEventListener('scroll', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => localStorage.setItem('scroll_' + pageKey, window.scrollY.toString()), 500);
+  }, { passive: true });
+})();
+
+// ─── Search Index ─────────────────────────────────────
+const SEARCH_INDEX = [
+  { title: 'Home', desc: 'Backend Engineering Handbook — complete reference guide', chapter: 'Home', icon: '🏠', url: 'index.html', keywords: 'home, handbook, backend, engineering' },
+  { title: 'Backend Fundamentals', desc: 'Request lifecycle, HTTP, client-server, concurrency, threading', chapter: 'Chapter 1', icon: '⚡', url: 'backend-fundamentals.html', keywords: 'request lifecycle, client server, concurrency, http, load balancer' },
+  { title: 'API Design', desc: 'REST, GraphQL, gRPC, versioning, pagination, rate limiting', chapter: 'Chapter 2', icon: '🔌', url: 'api-design.html', keywords: 'rest, graphql, grpc, pagination, rate limiting, versioning' },
+  { title: 'Database Engineering', desc: 'SQL, NoSQL, indexes, ACID, replication, sharding', chapter: 'Chapter 3', icon: '🗄', url: 'database-engineering.html', keywords: 'sql, nosql, index, acid, transaction, replication, sharding' },
+  { title: 'Performance Engineering', desc: 'Latency, throughput, P50/P95/P99, profiling, GC tuning', chapter: 'Chapter 4', icon: '📈', url: 'backend-performance.html', keywords: 'latency, throughput, percentiles, profiling, gc tuning, load testing' },
+  { title: 'Caching Masterclass', desc: 'Redis, cache strategies, invalidation, stampede prevention', chapter: 'Chapter 5', icon: '💾', url: 'caching-guide.html', keywords: 'cache, redis, memcached, cache-aside, invalidation, stampede' },
+  { title: 'Auth & Security', desc: 'JWT, OAuth2, RBAC, OWASP Top 10, SQL injection, XSS', chapter: 'Chapter 6', icon: '🔐', url: 'authentication-security.html', keywords: 'jwt, oauth, rbac, owasp, sql injection, xss, csrf' },
+  { title: 'Message Queues', desc: 'Kafka, RabbitMQ, SQS, consumer groups, dead letter queues', chapter: 'Chapter 7', icon: '📬', url: 'message-queues.html', keywords: 'kafka, rabbitmq, sqs, message queue, consumer, dlq' },
+  { title: 'Distributed Systems', desc: 'CAP theorem, Raft, SAGA, CQRS, event sourcing, circuit breaker', chapter: 'Chapter 8', icon: '🌐', url: 'distributed-systems.html', keywords: 'cap theorem, raft, consensus, saga, cqrs, circuit breaker' },
+  { title: 'Microservices', desc: 'Monolith vs microservices, API gateway, service mesh, design', chapter: 'Chapter 9', icon: '🧩', url: 'microservices.html', keywords: 'microservices, api gateway, service mesh, istio, decomposition' },
+  { title: 'Observability', desc: 'Metrics, logs, traces, Prometheus, Grafana, OpenTelemetry', chapter: 'Chapter 10', icon: '📊', url: 'observability.html', keywords: 'observability, metrics, logs, traces, prometheus, grafana, jaeger' },
+  { title: 'Production Engineering', desc: 'Deployments, feature flags, health checks, incidents, DR', chapter: 'Chapter 11', icon: '🚀', url: 'production-engineering.html', keywords: 'deployment, blue-green, canary, feature flag, incident, disaster recovery' },
+  { title: 'System Design', desc: 'Design WhatsApp, Netflix, Uber, Instagram, YouTube', chapter: 'Chapter 12', icon: '🏗', url: 'system-design.html', keywords: 'system design, whatsapp, netflix, uber, scalability' },
+  { title: 'Senior Engineer Roadmap', desc: 'Junior to Principal career progression, skills, learning paths', chapter: 'Chapter 13', icon: '📈', url: 'senior-engineer-roadmap.html', keywords: 'senior, staff, principal, career, roadmap, learning' },
+  { title: 'Interview Guide', desc: '100 backend interview Q&As — beginner to Staff-level', chapter: 'Chapter 14', icon: '💼', url: 'interview-guide.html', keywords: 'interview, questions, answers, system design, preparation' },
+];
+
+// ─── Search Dialog ────────────────────────────────────
+function openSearch() {
+  const m = document.getElementById('globalSearchModal');
+  if (m) { m.classList.add('open'); document.getElementById('globalSearchInput')?.focus(); return; }
+  const modal = document.createElement('div');
+  modal.id = 'globalSearchModal';
+  modal.className = 'search-modal';
+  modal.innerHTML = '<div class="search-modal-content" onclick="event.stopPropagation()"><div class="search-modal-input-wrap"><span class="modal-search-icon">🔍</span><input class="search-modal-input" id="globalSearchInput" placeholder="Search all chapters..." autofocus><span class="search-modal-esc">Esc</span></div><div class="search-modal-results" id="globalSearchResults"><div class="search-modal-empty">Start typing to search across all chapters</div></div></div>';
+  modal.onclick = () => document.getElementById('globalSearchModal')?.classList.remove('open');
+  document.body.appendChild(modal);
+  requestAnimationFrame(() => { modal.classList.add('open'); document.getElementById('globalSearchInput')?.focus(); });
+}
+function filterSearch(val) {
+  const results = document.getElementById('globalSearchResults');
+  if (!results) return;
+  const q = val.toLowerCase().trim();
+  if (!q) { results.innerHTML = '<div class="search-modal-empty">Start typing to search across all chapters</div>'; return; }
+  const filtered = SEARCH_INDEX.filter(i => i.title.toLowerCase().includes(q) || i.desc.toLowerCase().includes(q) || i.keywords.includes(q));
+  if (!filtered.length) { results.innerHTML = '<div class="search-modal-empty">No results found</div>'; return; }
+  results.innerHTML = filtered.map(i => '<a class="search-modal-result" href="'+i.url+'" onclick="document.getElementById(\'globalSearchModal\')?.classList.remove(\'open\')"><span class="result-icon">'+i.icon+'</span><div class="result-info"><div class="result-title">'+i.title+'</div><div class="result-desc">'+i.desc+'</div><div class="result-chapter">'+i.chapter+'</div></div></a>').join('');
+}
+
+// ─── Shortcuts Help ───────────────────────────────────
+function openShortcutsHelp() {
+  const m = document.getElementById('shortcutsHelp');
+  if (m) { m.classList.add('open'); return; }
+  const modal = document.createElement('div');
+  modal.id = 'shortcutsHelp';
+  modal.className = 'shortcuts-help';
+  modal.innerHTML = '<div class="shortcuts-help-content" onclick="event.stopPropagation()"><div class="shortcuts-help-title">⌨️ Keyboard Shortcuts</div><div class="shortcut-row"><span class="action">Search all chapters</span><span class="keys"><span class="key">Ctrl</span><span class="key">K</span></span></div><div class="shortcut-row"><span class="action">Toggle sidebar</span><span class="keys"><span class="key">B</span></span></div><div class="shortcut-row"><span class="action">Previous chapter</span><span class="keys"><span class="key">[</span></span></div><div class="shortcut-row"><span class="action">Next chapter</span><span class="keys"><span class="key">]</span></span></div><div class="shortcut-row"><span class="action">Toggle dark/light</span><span class="keys"><span class="key">T</span></span></div><div class="shortcut-row"><span class="action">Toggle reading mode</span><span class="keys"><span class="key">R</span></span></div><div class="shortcut-row"><span class="action">Show this help</span><span class="keys"><span class="key">?</span></span></div><div class="shortcut-row"><span class="action">Close overlay</span><span class="keys"><span class="key">Esc</span></span></div></div>';
+  modal.onclick = () => modal.classList.remove('open');
+  document.body.appendChild(modal);
+  requestAnimationFrame(() => modal.classList.add('open'));
+}
+
+// ─── Keyboard Shortcuts ───────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') { e.target.blur(); }
+    return;
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); return; }
+  if (e.key === 'Escape') {
+    const sm = document.getElementById('globalSearchModal'); if (sm) sm.classList.remove('open');
+    const sh = document.getElementById('shortcutsHelp'); if (sh) sh.classList.remove('open');
+  }
+  if (document.body.classList.contains('reading-mode')) return;
+  if (e.key === '?') { e.preventDefault(); openShortcutsHelp(); }
+  else if (e.key === 'b' || e.key === 'B') { toggleSidebar(); }
+  else if (e.key === '[') { const p = document.querySelector('.footer-nav-btn.prev'); if (p) { e.preventDefault(); p.click(); } }
+  else if (e.key === ']') { const n = document.querySelector('.footer-nav-btn.next'); if (n) { e.preventDefault(); n.click(); } }
+  else if (e.key === 't' || e.key === 'T') { toggleTheme(); }
+});
+
+// ─── Chapter Completion ───────────────────────────────
+(function() {
+  const CK = 'completed_chapters';
+  function getC() { try { return JSON.parse(localStorage.getItem(CK)) || {}; } catch { return {}; }}
+  function saveC(d) { localStorage.setItem(CK, JSON.stringify(d)); updateCounter(); }
+  function toggleC(k) { const d = getC(); if (d[k]) delete d[k]; else d[k] = true; saveC(d); updateChecks(); }
+  function updateChecks() {
+    const d = getC();
+    document.querySelectorAll('.chapter-checkmark').forEach(el => {
+      el.classList.toggle('done', !!d[el.dataset.page]);
+      el.textContent = d[el.dataset.page] ? '✓' : '';
+    });
+  }
+  function updateCounter() {
+    const d = getC();
+    const total = document.querySelectorAll('.chapter-checkmark').length;
+    const done = Object.keys(d).filter(k => d[k]).length;
+    const el = document.getElementById('progressCounter');
+    if (el) el.textContent = '📊 ' + done + '/' + total + ' chapters complete';
+  }
+  setTimeout(function() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    sidebar.querySelectorAll('.nav-item[href*=".html"]').forEach(function(link) {
+      const href = link.getAttribute('href');
+      if (!href || href.startsWith('http') || href === 'index.html') return;
+      const pageKey = href.split('#')[0].replace('.html', '');
+      const check = document.createElement('span');
+      check.className = 'chapter-checkmark';
+      check.dataset.page = pageKey;
+      check.onclick = function(e) { e.preventDefault(); e.stopPropagation(); toggleC(pageKey); };
+      link.insertBefore(check, link.firstChild);
+    });
+    updateChecks();
+  }, 100);
+})();
+
+// ─── Search input handler ─────────────────────────────
+document.addEventListener('input', function(e) {
+  if (e.target && e.target.id === 'globalSearchInput') filterSearch(e.target.value);
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'globalSearchInput') {
+    const first = document.querySelector('.search-modal-result');
+    if (first) first.click();
+  }
+});
+</script>
+</body>
+</html>

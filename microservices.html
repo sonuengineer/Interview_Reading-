@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microservices · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item active"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Microservices</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-purple">Chapter 9</div>
+  <h1>Microservices <span class="grad">Architecture</span></h1>
+  <p class="page-intro">Microservices enable Netflix to deploy 100+ times a day. But they also introduce distributed system complexity. Master service decomposition, API gateways, service mesh, and the real cost of microservices.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 70 min read</span>
+    <span class="meta-pill">🎯 Senior → Staff</span>
+    <span class="meta-pill">🧩 Decomposition strategies</span>
+  </div>
+</div>
+
+<h2 id="mono-vs-micro">Monolith vs Microservices</h2>
+<div class="callout warning">
+  <strong>⚠️ Start with a monolith.</strong> Martin Fowler's Microservices Premium: microservices add operational complexity. You need container orchestration, distributed tracing, service discovery, and more. Only move to microservices when a monolith genuinely hurts you — usually at 50+ engineers or when deployment coupling blocks teams.
+</div>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Monolith</div>
+    <ul>
+      <li>✅ Simple to develop, test, and deploy initially</li>
+      <li>✅ Easy to reason about data consistency (one DB)</li>
+      <li>✅ Low latency (in-process calls, no network)</li>
+      <li>✅ Easier debugging (one log stream)</li>
+      <li>❌ Single team bottleneck as org grows</li>
+      <li>❌ Deploy entire app for any change</li>
+      <li>❌ Can't scale individual components</li>
+      <li>❌ Tech stack locked for entire app</li>
+    </ul>
+    <p style="margin-top:8px"><span class="company-tag">Shopify</span> <span class="company-tag">Basecamp</span> — successful large-scale monoliths</p>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Microservices</div>
+    <ul>
+      <li>✅ Independent deployments (team autonomy)</li>
+      <li>✅ Scale individual services independently</li>
+      <li>✅ Technology diversity (right tool per service)</li>
+      <li>✅ Fault isolation (one service fails, others continue)</li>
+      <li>❌ Network calls add latency + failure modes</li>
+      <li>❌ Distributed transactions are complex</li>
+      <li>❌ Observability requires tooling investment</li>
+      <li>❌ Significant ops overhead (k8s, service mesh)</li>
+    </ul>
+    <p style="margin-top:8px"><span class="company-tag">Netflix</span> <span class="company-tag">Uber</span> <span class="company-tag">Amazon</span></p>
+  </div>
+</div>
+
+<h2 id="decomposition">Service Decomposition Strategies</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Strategy</th><th>How</th><th>Good For</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><strong>By Business Domain</strong></td><td>Align services with bounded contexts from Domain-Driven Design</td><td>Most greenfield microservices</td><td>UserService, OrderService, PaymentService, ShippingService</td></tr>
+<tr><td><strong>By Team</strong></td><td>Conway's Law — structure matches your org chart</td><td>Large orgs needing team autonomy</td><td>Each team owns 2-3 services they can deploy independently</td></tr>
+<tr><td><strong>By Data Volatility</strong></td><td>Separate frequently-changed from stable data</td><td>Read-heavy systems</td><td>ProductCatalog (stable) vs InventoryService (high-write)</td></tr>
+<tr><td><strong>By Scalability</strong></td><td>Extract services that need different scaling profiles</td><td>High-traffic subsystems</td><td>ImageResizeService, SearchService scale independently</td></tr>
+<tr><td><strong>Strangler Fig</strong></td><td>Gradually extract from monolith, one feature at a time</td><td>Migrating existing monolith</td><td>Route /payments to new PaymentService while keeping rest in monolith</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="api-gateway">API Gateway</h2>
+<p>The API Gateway is the entry point for all client traffic. It handles cross-cutting concerns so individual services don't have to.</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">API Gateway Responsibilities</div>
+    <ul>
+      <li><strong>Routing:</strong> /users → UserService, /orders → OrderService</li>
+      <li><strong>Authentication:</strong> validate JWT once at gateway, not per-service</li>
+      <li><strong>Rate limiting:</strong> protect backends from abuse</li>
+      <li><strong>SSL termination:</strong> decrypt TLS once at gateway</li>
+      <li><strong>Request aggregation:</strong> combine multiple service calls</li>
+      <li><strong>Protocol translation:</strong> REST to gRPC internally</li>
+      <li><strong>Load balancing:</strong> distribute across service instances</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Popular API Gateways</div>
+    <ul>
+      <li><strong>Kong:</strong> open-source, plugin-based, high performance</li>
+      <li><strong>AWS API Gateway:</strong> serverless, native Lambda integration</li>
+      <li><strong>Nginx / Traefik:</strong> lightweight reverse proxy + gateway</li>
+      <li><strong>Istio Ingress:</strong> service mesh gateway with full observability</li>
+      <li><strong>GraphQL Gateway:</strong> Apollo Federation for schema stitching</li>
+    </ul>
+    <p style="margin-top:12px;color:var(--text2)">Netflix uses Zuul/Spring Cloud Gateway. Airbnb uses SmartStack. Lyft built Envoy (now used everywhere).</p>
+  </div>
+</div>
+
+<h2 id="service-mesh">Service Mesh</h2>
+<p>A service mesh handles service-to-service communication: mutual TLS, retries, circuit breaking, observability — all without application code changes.</p>
+
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Sidecar Proxy</strong> — Each service pod gets an Envoy/Linkerd proxy sidecar. All traffic flows through the sidecar, not directly between services</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Control Plane</strong> — Istio's control plane pushes config to all sidecars: routing rules, TLS certificates, retry policies, circuit breaker settings</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>mTLS</strong> — Mutual TLS between all services, automatically. No certificate management in application code</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Observability</strong> — Every request automatically traced. Latency, error rates, and traffic flows visible in Grafana/Jaeger without instrumentation</div></div>
+</div>
+
+<h2 id="service-design">Designing Good Microservices</h2>
+<div class="callout info">
+  <strong>💡 The Rule of Two Pizzas:</strong> A microservice should be small enough for two pizzas to feed the team that owns it. But don't make services TOO small — nanoservices add network overhead and operational complexity without benefit.
+</div>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header" style="border-color:var(--accent2)">✅ Good Microservice Design</div>
+    <ul>
+      <li>Single responsibility — one bounded context</li>
+      <li>Own its own data (no shared databases)</li>
+      <li>Communicate via APIs or events, not direct DB access</li>
+      <li>Can be deployed independently without coordinating with other teams</li>
+      <li>Stateless: state in DB/Redis, not in-memory</li>
+      <li>Graceful degradation: works (degraded) if dependencies fail</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header" style="border-color:var(--accent4)">❌ Anti-patterns</div>
+    <ul>
+      <li>Shared database — tight coupling, defeats the purpose</li>
+      <li>Synchronous chains — ServiceA → B → C → D: single failure cascades</li>
+      <li>Chatty services — 50 calls to render one page: latency disaster</li>
+      <li>Versioning neglect — breaking API changes affect all consumers</li>
+      <li>No circuit breakers — one slow service hangs all callers</li>
+      <li>Distributed monolith — services that must be deployed together</li>
+    </ul>
+  </div>
+</div>
+
+<pre><code><span class="cmt"># Service-to-service communication with retry + circuit breaker</span>
+<span class="cmt"># Using tenacity (Python) + httpx</span>
+<span class="kw">import</span> httpx
+<span class="kw">from</span> tenacity <span class="kw">import</span> retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+
+<span class="kw">@retry</span>(
+    stop=stop_after_attempt(<span class="num">3</span>),
+    wait=wait_exponential(multiplier=<span class="num">1</span>, min=<span class="num">1</span>, max=<span class="num">10</span>),  <span class="cmt"># 1s, 2s, 4s backoff</span>
+    retry=retry_if_exception_type((httpx.TransportError, httpx.TimeoutException)),
+)
+<span class="kw">async def</span> <span class="fn">get_user_profile</span>(user_id: str) -> dict:
+    <span class="kw">async with</span> httpx.AsyncClient(timeout=<span class="num">2.0</span>) <span class="kw">as</span> client:
+        response = <span class="kw">await</span> client.get(
+            <span class="str">f"http://user-service/users/{user_id}"</span>,
+            headers={<span class="str">"X-Request-ID"</span>: get_trace_id()}  <span class="cmt"># propagate trace</span>
+        )
+        response.raise_for_status()
+        <span class="kw">return</span> response.json()
+
+<span class="cmt"># Fallback on circuit open</span>
+<span class="kw">async def</span> <span class="fn">get_user_profile_safe</span>(user_id: str) -> dict:
+    <span class="kw">try</span>:
+        <span class="kw">return await</span> get_user_profile(user_id)
+    <span class="kw">except</span> Exception:
+        <span class="kw">return</span> {<span class="str">"id"</span>: user_id, <span class="str">"name"</span>: <span class="str">"Unknown"</span>, <span class="str">"degraded"</span>: <span class="kw">True</span>}</code></pre>
+
+<div class="page-footer-nav">
+  <a href="distributed-systems.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🌐 Distributed Systems</div>
+  </a>
+  <a href="observability.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">📊 Observability</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#mono-vs-micro">Monolith vs Microservices</a></li>
+    <li><a href="#decomposition">Decomposition Strategies</a></li>
+    <li><a href="#api-gateway">API Gateway</a></li>
+    <li><a href="#service-mesh">Service Mesh</a></li>
+    <li><a href="#service-design">Designing Good Services</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

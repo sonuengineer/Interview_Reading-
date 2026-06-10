@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auth & Security · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item active"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Auth & Security</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-red">Chapter 6</div>
+  <h1>Authentication <span class="grad">& Security</span></h1>
+  <p class="page-intro">Security is not a feature added at the end — it's a property of the entire system. Master JWT, OAuth2, RBAC, and the OWASP Top 10 to build systems that protect user data and resist attacks.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 75 min read</span>
+    <span class="meta-pill">🎯 All Levels</span>
+    <span class="meta-pill">🔐 OWASP + Auth flows</span>
+  </div>
+</div>
+
+<h2 id="authn-authz">Authentication vs Authorization</h2>
+<p><strong>Authentication (AuthN)</strong> — "Who are you?" Verifying identity. <strong>Authorization (AuthZ)</strong> — "What can you do?" Checking permissions. They are separate concerns and should be handled separately.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Concept</th><th>Question</th><th>Example</th><th>Implementation</th></tr></thead>
+<tbody>
+<tr><td><strong>Authentication</strong></td><td>Who are you?</td><td>Validating username + password / JWT / API key</td><td>Middleware that verifies credentials before handler runs</td></tr>
+<tr><td><strong>Authorization</strong></td><td>What can you do?</td><td>User can read but not delete; admin can do everything</td><td>RBAC/ABAC policy check after authentication</td></tr>
+<tr><td><strong>Identification</strong></td><td>Who do you claim to be?</td><td>The userId in the JWT payload</td><td>Extracted from validated token</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="jwt">JWT — JSON Web Tokens</h2>
+<p>JWTs are self-contained tokens. The server encodes claims and signs them. The client stores the token and sends it with every request. No DB lookup needed to verify — just re-verify the signature.</p>
+
+<pre><code><span class="cmt"># JWT structure: header.payload.signature (each base64url-encoded)</span>
+<span class="cmt"># Header: {"alg": "RS256", "typ": "JWT"}</span>
+<span class="cmt"># Payload: {"sub": "1001", "email": "alice@co.com", "role": "admin", "exp": 1735689600, "iat": 1735603200}</span>
+<span class="cmt"># Signature: RSASHA256(base64(header) + "." + base64(payload), privateKey)</span>
+
+<span class="cmt"># Python: creating and verifying JWTs with PyJWT</span>
+<span class="kw">import</span> jwt, datetime
+<span class="kw">from</span> cryptography.hazmat.primitives <span class="kw">import</span> serialization
+
+<span class="cmt"># Load RSA keys (use RS256 — NOT HS256 in production)</span>
+<span class="kw">with</span> open(<span class="str">"private.pem"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    PRIVATE_KEY = serialization.load_pem_private_key(f.read(), password=<span class="kw">None</span>)
+<span class="kw">with</span> open(<span class="str">"public.pem"</span>, <span class="str">"rb"</span>) <span class="kw">as</span> f:
+    PUBLIC_KEY = serialization.load_pem_public_key(f.read())
+
+<span class="kw">def</span> <span class="fn">create_access_token</span>(user_id: int, role: str) -> str:
+    payload = {
+        <span class="str">"sub"</span>: str(user_id),
+        <span class="str">"role"</span>: role,
+        <span class="str">"iat"</span>: datetime.datetime.utcnow(),
+        <span class="str">"exp"</span>: datetime.datetime.utcnow() + datetime.timedelta(minutes=<span class="num">15</span>),
+        <span class="str">"jti"</span>: str(uuid.uuid4()),  <span class="cmt"># unique token ID for revocation</span>
+    }
+    <span class="kw">return</span> jwt.encode(payload, PRIVATE_KEY, algorithm=<span class="str">"RS256"</span>)
+
+<span class="kw">def</span> <span class="fn">verify_token</span>(token: str) -> dict:
+    <span class="kw">try</span>:
+        payload = jwt.decode(token, PUBLIC_KEY, algorithms=[<span class="str">"RS256"</span>])
+        <span class="kw">return</span> payload
+    <span class="kw">except</span> jwt.ExpiredSignatureError:
+        <span class="kw">raise</span> HTTPException(<span class="num">401</span>, <span class="str">"Token expired"</span>)
+    <span class="kw">except</span> jwt.InvalidTokenError:
+        <span class="kw">raise</span> HTTPException(<span class="num">401</span>, <span class="str">"Invalid token"</span>)</code></pre>
+
+<div class="callout danger">
+  <strong>🚨 JWT Security Anti-patterns:</strong> Never use <code>alg: none</code>. Never use HS256 with a weak secret. Never store sensitive data (passwords, PII) in the payload — it's only base64-encoded, not encrypted. Always validate <code>exp</code>, <code>iss</code>, and <code>aud</code> claims. Short expiry (15 min) + refresh tokens &gt; long-lived access tokens.
+</div>
+
+<h2 id="oauth2">OAuth2 & OpenID Connect</h2>
+<p>OAuth2 is an <em>authorization</em> framework. OpenID Connect (OIDC) adds an <em>authentication</em> layer on top. Together they power "Login with Google/GitHub/Apple".</p>
+
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>User clicks "Login with Google"</strong> → Your app redirects to Google's auth endpoint with <code>client_id</code>, <code>redirect_uri</code>, <code>scope=openid email</code>, and a random <code>state</code> parameter</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>User approves</strong> → Google redirects back to your <code>redirect_uri</code> with an <code>authorization code</code> and the <code>state</code> you sent (verify it!)</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Server exchanges code</strong> → Your backend calls Google's token endpoint with the code + <code>client_secret</code>. Returns <code>access_token</code>, <code>refresh_token</code>, and <code>id_token</code></div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Get user info</strong> → Decode the <code>id_token</code> (OIDC JWT) or call <code>/userinfo</code> endpoint to get user's email, name, and profile</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Create session</strong> → Look up or create user in your DB. Issue your own JWT/session token. The Google tokens are now disposable</div></div>
+</div>
+
+<h2 id="rbac">RBAC & ABAC</h2>
+<pre><code><span class="cmt">// RBAC: Role-Based Access Control (most common)</span>
+<span class="cmt">// Roles: admin, editor, viewer. Permissions assigned to roles.</span>
+
+<span class="kw">const</span> PERMISSIONS = {
+  admin:  [<span class="str">'read'</span>, <span class="str">'write'</span>, <span class="str">'delete'</span>, <span class="str">'manage_users'</span>],
+  editor: [<span class="str">'read'</span>, <span class="str">'write'</span>],
+  viewer: [<span class="str">'read'</span>],
+};
+
+<span class="kw">function</span> <span class="fn">requirePermission</span>(permission: string) {
+  <span class="kw">return</span> (req, res, next) => {
+    <span class="kw">const</span> { role } = req.user;
+    <span class="kw">if</span> (!PERMISSIONS[role]?.includes(permission)) {
+      <span class="kw">return</span> res.status(<span class="num">403</span>).json({ error: <span class="str">'Forbidden'</span> });
+    }
+    next();
+  };
+}
+
+<span class="cmt">// Usage:</span>
+router.delete(<span class="str">'/posts/:id'</span>, requirePermission(<span class="str">'delete'</span>), deletePost);
+
+<span class="cmt">// ABAC: Attribute-Based — more granular, checks context</span>
+<span class="cmt">// "User can edit post ONLY IF they are the author AND post.status !== 'published'"</span>
+<span class="kw">function</span> <span class="fn">canEditPost</span>(user, post): boolean {
+  <span class="kw">return</span> user.id === post.authorId
+    && post.status !== <span class="str">'published'</span>
+    && !user.isBanned;
+}</code></pre>
+
+<h2 id="attacks">OWASP Top 10 & Defenses</h2>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Attack</th><th>How it works</th><th>Defense</th></tr></thead>
+<tbody>
+<tr><td><strong>SQL Injection</strong></td><td><code>'; DROP TABLE users; --</code> — unsanitized input in SQL query</td><td>Parameterized queries / prepared statements. Never concatenate user input into SQL</td></tr>
+<tr><td><strong>XSS (Cross-Site Scripting)</strong></td><td>Injecting JS into page that runs in victim's browser, stealing cookies/tokens</td><td>CSP headers, output encoding, HttpOnly cookies, DOMPurify for user content</td></tr>
+<tr><td><strong>CSRF</strong></td><td>Tricking user's browser into making authenticated requests to your API</td><td>CSRF tokens, SameSite=Strict cookies, check Origin/Referer headers</td></tr>
+<tr><td><strong>Broken Auth</strong></td><td>Weak passwords, no rate limiting, exposed tokens in URLs</td><td>MFA, bcrypt/argon2 hashing, rate limit login, never put tokens in URLs</td></tr>
+<tr><td><strong>Broken Access Control</strong></td><td>User A accesses User B's data by changing IDs in requests</td><td>RBAC/ABAC server-side checks, never trust client-provided user IDs for ownership</td></tr>
+<tr><td><strong>Security Misconfiguration</strong></td><td>Default credentials, debug endpoints in prod, verbose error messages</td><td>Security hardening checklists, remove debug routes, generic error messages</td></tr>
+<tr><td><strong>Sensitive Data Exposure</strong></td><td>PII in logs, unencrypted DB, passwords in error messages</td><td>Encrypt at rest + in transit, scrub logs, hash passwords (never store plaintext)</td></tr>
+</tbody>
+</table>
+</div>
+
+<pre><code><span class="cmt"># Password hashing — ALWAYS use bcrypt or argon2, NEVER md5/sha1</span>
+<span class="kw">from</span> passlib.context <span class="kw">import</span> CryptContext
+
+pwd_context = CryptContext(schemes=[<span class="str">"argon2"</span>], deprecated=<span class="str">"auto"</span>)
+
+<span class="kw">def</span> <span class="fn">hash_password</span>(password: str) -> str:
+    <span class="kw">return</span> pwd_context.hash(password)
+    <span class="cmt"># → "$argon2id$v=19$m=65536,t=3,p=4$..."</span>
+
+<span class="kw">def</span> <span class="fn">verify_password</span>(plain: str, hashed: str) -> bool:
+    <span class="kw">return</span> pwd_context.verify(plain, hashed)
+    <span class="cmt"># Constant-time comparison — no timing attacks</span>
+
+<span class="cmt"># SQL Injection prevention — parameterized queries</span>
+<span class="cmt"># ❌ VULNERABLE:</span>
+query = <span class="str">f"SELECT * FROM users WHERE email = '{email}'"</span>
+
+<span class="cmt"># ✅ SAFE (parameterized):</span>
+user = <span class="kw">await</span> conn.fetchrow(
+    <span class="str">"SELECT * FROM users WHERE email = $1"</span>, email
+)  <span class="cmt"># Driver handles escaping; injection is impossible</span></code></pre>
+
+<h2 id="secrets">Secrets Management</h2>
+<div class="callout danger">
+  <strong>🚨 Never hardcode secrets.</strong> Don't put DB passwords, API keys, or JWT secrets in code, config files, or environment variables in Docker images. Use a secrets manager.
+</div>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Secrets Managers</div>
+    <ul>
+      <li><strong>AWS Secrets Manager:</strong> auto-rotation, IAM integration, RDS secrets</li>
+      <li><strong>HashiCorp Vault:</strong> open-source, dynamic secrets, audit logging</li>
+      <li><strong>GCP Secret Manager:</strong> versioned, IAM-controlled</li>
+      <li><strong>Azure Key Vault:</strong> HSM-backed, certificate management</li>
+      <li><strong>Doppler / Infisical:</strong> developer-friendly secret sync across environments</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Defense in Depth</div>
+    <ul>
+      <li>TLS everywhere (HTTPS, mTLS between services)</li>
+      <li>Rotate credentials regularly (90-day max for API keys)</li>
+      <li>Principle of least privilege — services get only the permissions they need</li>
+      <li>Audit logs for all secret access</li>
+      <li>Network segmentation — DB not accessible from public internet</li>
+      <li>WAF (Web Application Firewall) in front of APIs</li>
+    </ul>
+  </div>
+</div>
+
+<div class="page-footer-nav">
+  <a href="caching-guide.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">💾 Caching Guide</div>
+  </a>
+  <a href="message-queues.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">📬 Message Queues</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#authn-authz">AuthN vs AuthZ</a></li>
+    <li><a href="#jwt">JWT Tokens</a></li>
+    <li><a href="#oauth2">OAuth2 & OIDC</a></li>
+    <li><a href="#rbac">RBAC & ABAC</a></li>
+    <li><a href="#attacks">OWASP Top 10</a></li>
+    <li><a href="#secrets">Secrets Management</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distributed Systems · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item active"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Distributed Systems</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-green">Chapter 8</div>
+  <h1>Distributed Systems <span class="grad">Masterclass</span></h1>
+  <p class="page-intro">The hardest problems in software engineering are distributed problems. CAP theorem, consensus, eventual consistency, SAGA patterns — understand the tradeoffs that define every large-scale system.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 80 min read</span>
+    <span class="meta-pill">🎯 Senior → Principal</span>
+    <span class="meta-pill">🌐 CAP, SAGA, CQRS</span>
+  </div>
+</div>
+
+<h2 id="cap">CAP Theorem</h2>
+<p>In a distributed system, you can only guarantee 2 of 3 properties simultaneously. This is not a choice you make at design time — it's a physical constraint of networks.</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">C — Consistency</div>
+    <p>Every read returns the most recent write (or an error). All nodes see the same data at the same time.</p>
+    <p style="margin-top:8px;color:var(--text2)">Example: After writing <code>balance=500</code>, any subsequent read on any node returns 500, not an old value.</p>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">A — Availability</div>
+    <p>Every request receives a response (not necessarily the latest data). System never refuses.</p>
+    <p style="margin-top:8px;color:var(--text2)">Example: Even if some nodes are down, the system responds — possibly with stale data.</p>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">P — Partition Tolerance</div>
+    <p>System continues operating even when network partitions occur (some nodes can't communicate).</p>
+    <p style="margin-top:8px;color:var(--text2)">In practice, P is always required — networks do partition. So the real choice is C vs A during partitions.</p>
+  </div>
+</div>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>System</th><th>Type</th><th>Tradeoff</th><th>Example DBs</th></tr></thead>
+<tbody>
+<tr><td><strong>CP</strong></td><td>Consistent + Partition Tolerant</td><td>May become unavailable during partitions. Refuses stale reads</td><td>HBase, Zookeeper, etcd, MongoDB (strong), Redis (cluster)</td></tr>
+<tr><td><strong>AP</strong></td><td>Available + Partition Tolerant</td><td>Returns potentially stale data. Never refuses requests</td><td>Cassandra, DynamoDB (eventual), CouchDB</td></tr>
+<tr><td><strong>CA</strong></td><td>Consistent + Available</td><td>Cannot tolerate network partitions — not practical at scale</td><td>Single-node RDBMS (PostgreSQL on one machine)</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout info">
+  <strong>💡 PACELC:</strong> CAP only describes behavior during partitions. PACELC extends this: even when the system is running normally (no partition), there's a tradeoff between Latency and Consistency. DynamoDB chose A over C during partitions, and L over C during normal operation — that's how it achieves single-digit ms latency.
+</div>
+
+<h2 id="consistency-models">Consistency Models</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Model</th><th>Guarantee</th><th>Performance</th><th>Used By</th></tr></thead>
+<tbody>
+<tr><td><strong>Linearizability</strong></td><td>Strongest. Operations appear instantaneous and globally ordered</td><td>Slowest (consensus required)</td><td>Spanner, etcd, Zookeeper</td></tr>
+<tr><td><strong>Sequential</strong></td><td>All operations appear in the same order to all nodes, but may lag</td><td>Moderate</td><td>Multi-primary replication</td></tr>
+<tr><td><strong>Causal</strong></td><td>Causally related operations are ordered. Unrelated may be concurrent</td><td>Good</td><td>MongoDB sessions, CockroachDB</td></tr>
+<tr><td><strong>Eventual</strong></td><td>All replicas converge to same value eventually. No ordering guarantees</td><td>Fastest</td><td>DynamoDB, Cassandra, DNS</td></tr>
+</tbody>
+</table>
+</div>
+
+<h2 id="consensus">Consensus & Leader Election</h2>
+<p>Consensus algorithms allow distributed nodes to agree on a single value even when nodes fail. This is how distributed DBs elect a primary and Kubernetes elects a controller.</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Raft Consensus</div>
+    <p>The most understandable consensus algorithm. Used by etcd, CockroachDB, TiKV.</p>
+    <ul>
+      <li>One <strong>Leader</strong>, multiple <strong>Followers</strong></li>
+      <li>Leader handles all writes; replicates to followers</li>
+      <li>If leader fails, followers hold election</li>
+      <li>Candidate with most up-to-date log wins</li>
+      <li>Requires quorum (n/2 + 1 nodes) to commit</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Paxos (Brief)</div>
+    <p>The original consensus algorithm. Notoriously hard to understand and implement. Used by Google Chubby, Spanner.</p>
+    <ul>
+      <li>Two phases: Prepare and Accept</li>
+      <li>More flexible than Raft but much harder to reason about</li>
+      <li>Multi-Paxos adds leader optimization</li>
+      <li>Most real-world systems use Raft or Paxos variants</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="saga">SAGA Pattern</h2>
+<p>Distributed transactions are hard — 2PC (two-phase commit) blocks resources and fails in high-latency environments. SAGA is the modern alternative: a sequence of local transactions, each publishing events that trigger the next step.</p>
+
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Order Service:</strong> Create order (status=PENDING) → publish <code>OrderCreated</code> event</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Payment Service:</strong> Process payment → publish <code>PaymentProcessed</code> or <code>PaymentFailed</code></div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Inventory Service:</strong> Reserve stock → publish <code>StockReserved</code> or <code>StockInsufficient</code></div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Shipping Service:</strong> Create shipment → publish <code>ShipmentCreated</code></div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-body"><strong>On any failure:</strong> Run compensating transactions backwards — refund payment, release stock, cancel order</div></div>
+</div>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Choreography SAGA</div>
+    <p>Services communicate via events. No central coordinator. Each service knows what events to react to.</p>
+    <ul>
+      <li>✅ Loose coupling, no single point of failure</li>
+      <li>✅ Each service is fully autonomous</li>
+      <li>❌ Hard to track global state (where did the saga fail?)</li>
+      <li>❌ Complex to debug across multiple event streams</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Orchestration SAGA</div>
+    <p>A central Saga Orchestrator coordinates all steps and handles compensations. Used by Netflix Conductor, Temporal.</p>
+    <ul>
+      <li>✅ Clear visibility into saga state and progress</li>
+      <li>✅ Easy to add/modify steps centrally</li>
+      <li>❌ Orchestrator becomes a coupling point</li>
+      <li>❌ Single component to maintain and scale</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="resilience">Resilience Patterns</h2>
+
+<pre><code><span class="cmt">// Circuit Breaker pattern (TypeScript)</span>
+<span class="kw">enum</span> <span class="cls">State</span> { CLOSED, OPEN, HALF_OPEN }
+
+<span class="kw">class</span> <span class="cls">CircuitBreaker</span> {
+  <span class="kw">private</span> state = State.CLOSED;
+  <span class="kw">private</span> failureCount = <span class="num">0</span>;
+  <span class="kw">private</span> lastFailureTime = <span class="num">0</span>;
+  <span class="kw">private readonly</span> threshold = <span class="num">5</span>;   <span class="cmt">// open after 5 failures</span>
+  <span class="kw">private readonly</span> timeout = <span class="num">60000</span>;  <span class="cmt">// retry after 60s</span>
+
+  <span class="kw">async</span> call&lt;T&gt;(fn: () => Promise&lt;T&gt;): Promise&lt;T&gt; {
+    <span class="kw">if</span> (this.state === State.OPEN) {
+      <span class="kw">if</span> (Date.now() - this.lastFailureTime > this.timeout) {
+        this.state = State.HALF_OPEN;  <span class="cmt">// try one request</span>
+      } <span class="kw">else</span> {
+        <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">'Circuit breaker OPEN — fast fail'</span>);
+      }
+    }
+    <span class="kw">try</span> {
+      <span class="kw">const</span> result = <span class="kw">await</span> fn();
+      this.onSuccess();
+      <span class="kw">return</span> result;
+    } <span class="kw">catch</span> (err) {
+      this.onFailure();
+      <span class="kw">throw</span> err;
+    }
+  }
+  <span class="kw">private</span> onSuccess() {
+    this.failureCount = <span class="num">0</span>;
+    this.state = State.CLOSED;
+  }
+  <span class="kw">private</span> onFailure() {
+    this.failureCount++;
+    this.lastFailureTime = Date.now();
+    <span class="kw">if</span> (this.failureCount >= this.threshold) this.state = State.OPEN;
+  }
+}</code></pre>
+
+<h2 id="cqrs">CQRS & Event Sourcing</h2>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">CQRS</div>
+    <p><strong>Command Query Responsibility Segregation</strong> — separate read and write models. Writes go to a normalized write DB; reads use a denormalized read DB optimized for queries.</p>
+    <p>Used by: Airbnb (search separate from booking), LinkedIn (feed separate from social graph)</p>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Event Sourcing</div>
+    <p>Instead of storing current state, store a <em>log of events</em>. Current state is derived by replaying events. Complete audit trail, time travel, and easy event replay.</p>
+    <p>Used by: Banks (transaction ledger), Git (commits as events), Kafka-based systems</p>
+  </div>
+</div>
+
+<div class="page-footer-nav">
+  <a href="message-queues.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">📬 Message Queues</div>
+  </a>
+  <a href="microservices.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🧩 Microservices</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#cap">CAP Theorem</a></li>
+    <li><a href="#consistency-models">Consistency Models</a></li>
+    <li><a href="#consensus">Consensus & Leader Election</a></li>
+    <li><a href="#saga">SAGA Pattern</a></li>
+    <li><a href="#resilience">Resilience Patterns</a></li>
+    <li><a href="#cqrs">CQRS & Event Sourcing</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

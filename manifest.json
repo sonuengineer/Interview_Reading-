@@ -1,0 +1,30 @@
+{
+  "name": "Backend Engineering Handbook",
+  "short_name": "Backend Handbook",
+  "description": "A comprehensive, production-grade backend engineering handbook covering everything from request lifecycles to distributed systems.",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#161b22",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' rx='16' fill='%2358a6ff'/%3E%3Ctext x='48' y='62' font-size='48' text-anchor='middle' fill='white'%3E%E2%9A%99%3C/text%3E%3C/svg%3E",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='32' fill='%2358a6ff'/%3E%3Ctext x='96' y='128' font-size='96' text-anchor='middle' fill='white'%3E%E2%9A%99%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='64' fill='%2358a6ff'/%3E%3Ctext x='256' y='340' font-size='240' text-anchor='middle' fill='white'%3E%E2%9A%99%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

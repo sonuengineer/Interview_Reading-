@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Engineering · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search topics...">
+    </div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item active"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Performance Engineering</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-orange">Chapter 4</div>
+  <h1>Backend <span class="grad">Performance Engineering</span></h1>
+  <p class="page-intro">Performance is a feature. Learn how to measure, profile, and optimize backend systems — from understanding latency percentiles to eliminating bottlenecks under production load.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 70 min read</span>
+    <span class="meta-pill">🎯 Intermediate → Staff</span>
+    <span class="meta-pill">📊 Metrics & Profiling</span>
+  </div>
+</div>
+
+<h2 id="latency">Latency vs Throughput</h2>
+<p><strong>Latency</strong> is the time to process one request. <strong>Throughput</strong> is how many requests per second your system handles. They are related but not the same — and optimizing for one can hurt the other.</p>
+
+<div class="fiveW">
+  <div class="fiveW-card"><div class="fiveW-label">WHY</div><div class="fiveW-title">Why it matters</div><div class="fiveW-text">Amazon found every 100ms of latency costs 1% in revenue. Google's studies show users abandon pages after 3 seconds</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHAT</div><div class="fiveW-title">What to measure</div><div class="fiveW-text">P50, P95, P99 latency; requests/sec; error rate; CPU/memory utilization; DB query time; external call time</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHERE</div><div class="fiveW-title">Where issues hide</div><div class="fiveW-text">Database queries (most common), N+1 problems, synchronous external calls, serialization, GC pauses, thread starvation</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHO</div><div class="fiveW-title">Who owns it</div><div class="fiveW-text">Backend engineers own app-level perf; SREs own infra-level; DBAs own query perf; the team owns the SLOs collectively</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHEN</div><div class="fiveW-title">When to optimize</div><div class="fiveW-text">After you have metrics showing a real problem. Never optimize speculatively. Measure → identify → fix → re-measure</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">HOW</div><div class="fiveW-title">How to improve</div><div class="fiveW-text">Profile first. Add caching. Optimize DB queries. Parallelize I/O. Use async. Reduce payload size. CDN for static assets</div></div>
+</div>
+
+<h2 id="percentiles">Percentile Metrics: P50, P95, P99</h2>
+<p>Averages lie. A single slow request can be hidden in the average. Percentiles show the real experience across your users.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Metric</th><th>Meaning</th><th>Example</th><th>When to alert</th></tr></thead>
+<tbody>
+<tr><td><strong>P50</strong></td><td>Median — 50% of requests are faster than this</td><td>50ms</td><td>Rarely; it's your "normal"</td></tr>
+<tr><td><strong>P75</strong></td><td>75% of requests complete within this time</td><td>120ms</td><td>If it drifts significantly</td></tr>
+<tr><td><strong>P95</strong></td><td>95% complete within; the power-user experience</td><td>350ms</td><td>P95 &gt; SLO threshold</td></tr>
+<tr><td><strong>P99</strong></td><td>Worst-case for 99% of users; tail latency</td><td>1200ms</td><td>P99 &gt; 3× P95 = hot spots</td></tr>
+<tr><td><strong>P99.9</strong></td><td>The "long tail" — rare but impactful at scale</td><td>5000ms</td><td>High-volume or financial APIs</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout info">
+  <strong>💡 Google SRE Rule:</strong> Define SLOs based on P99, not averages. At 1M requests/day, P99 means 10,000 users see bad performance. That's not edge-case — that's your most engaged users.
+</div>
+
+<pre><code><span class="cmt"># Prometheus: measure response time histograms</span>
+<span class="kw">from</span> prometheus_client <span class="kw">import</span> Histogram, start_http_server
+<span class="kw">import</span> time, functools
+
+REQUEST_TIME = Histogram(
+    <span class="str">'request_duration_seconds'</span>,
+    <span class="str">'HTTP request latency'</span>,
+    [<span class="str">'method'</span>, <span class="str">'endpoint'</span>, <span class="str">'status'</span>],
+    buckets=[<span class="num">.005</span>, <span class="num">.01</span>, <span class="num">.025</span>, <span class="num">.05</span>, <span class="num">.1</span>, <span class="num">.25</span>, <span class="num">.5</span>, <span class="num">1</span>, <span class="num">2.5</span>, <span class="num">5</span>]
+)
+
+<span class="kw">def</span> <span class="fn">track_latency</span>(func):
+    @functools.wraps(func)
+    <span class="kw">async def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        start = time.time()
+        status = <span class="str">"200"</span>
+        <span class="kw">try</span>:
+            result = <span class="kw">await</span> func(*args, **kwargs)
+            <span class="kw">return</span> result
+        <span class="kw">except</span> Exception <span class="kw">as</span> e:
+            status = <span class="str">"500"</span>
+            <span class="kw">raise</span>
+        <span class="kw">finally</span>:
+            REQUEST_TIME.labels(
+                method=<span class="str">"GET"</span>, endpoint=func.__name__, status=status
+            ).observe(time.time() - start)
+    <span class="kw">return</span> wrapper
+
+<span class="cmt"># Query P99 in PromQL:</span>
+<span class="cmt"># histogram_quantile(0.99, rate(request_duration_seconds_bucket[5m]))</span></code></pre>
+
+<h2 id="profiling">CPU & Memory Profiling</h2>
+<p>When latency is high, profiling tells you exactly which function is the bottleneck. Never guess — always profile.</p>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">CPU Profiling</div>
+    <p>Identifies which functions consume the most CPU time. Hot paths = candidates for optimization.</p>
+    <ul>
+      <li><strong>Python:</strong> cProfile, py-spy (low overhead, production-safe)</li>
+      <li><strong>Node.js:</strong> --prof flag, 0x flame graphs</li>
+      <li><strong>Go:</strong> pprof built-in, <code>go tool pprof</code></li>
+      <li><strong>JVM:</strong> async-profiler, JFR, YourKit</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Memory Profiling</div>
+    <p>Finds memory leaks, excessive allocations, GC pressure. Critical for long-running services.</p>
+    <ul>
+      <li><strong>Python:</strong> memory_profiler, tracemalloc, objgraph</li>
+      <li><strong>Node.js:</strong> --heap-snapshot, clinic.js</li>
+      <li><strong>Go:</strong> pprof heap profile, runtime.MemStats</li>
+      <li><strong>JVM:</strong> Eclipse MAT, heap dumps + jmap</li>
+    </ul>
+  </div>
+</div>
+
+<pre><code><span class="cmt"># Go: built-in pprof profiling endpoint</span>
+<span class="kw">import</span> (
+    <span class="str">"net/http"</span>
+    _ <span class="str">"net/http/pprof"</span>  <span class="cmt">// registers /debug/pprof endpoints</span>
+    <span class="str">"runtime"</span>
+)
+
+<span class="kw">func</span> <span class="fn">main</span>() {
+    <span class="cmt">// Enable mutex and block profiling</span>
+    runtime.SetMutexProfileFraction(<span class="num">1</span>)
+    runtime.SetBlockProfileRate(<span class="num">1</span>)
+
+    <span class="cmt">// Start pprof server on separate port</span>
+    go http.ListenAndServe(<span class="str">":6060"</span>, nil)
+
+    <span class="cmt">// Your main app...</span>
+}
+
+<span class="cmt"># Then from terminal:</span>
+<span class="cmt"># go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30</span>
+<span class="cmt"># go tool pprof http://localhost:6060/debug/pprof/heap</span>
+<span class="cmt"># go tool pprof -http=:8080 cpu.prof  → opens flame graph in browser</span></code></pre>
+
+<h2 id="gc">Garbage Collection Tuning</h2>
+<p>GC pauses cause latency spikes. Understanding GC behavior is critical for P99 latency optimization.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Runtime</th><th>GC Type</th><th>Tuning Lever</th><th>Key Metric</th></tr></thead>
+<tbody>
+<tr><td><strong>JVM (Java/Kotlin)</strong></td><td>G1GC, ZGC, Shenandoah</td><td>-Xmx, -Xms, GC flags</td><td>GC pause time, GC frequency</td></tr>
+<tr><td><strong>Go</strong></td><td>Concurrent, tri-color mark-sweep</td><td>GOGC env var (default 100)</td><td>GC STW pause, heap size</td></tr>
+<tr><td><strong>Node.js (V8)</strong></td><td>Generational (Scavenge + Mark-Compact)</td><td>--max-old-space-size</td><td>Heap used, GC time %</td></tr>
+<tr><td><strong>Python (CPython)</strong></td><td>Reference counting + cyclic GC</td><td>gc.set_threshold()</td><td>Cyclic GC runs, object count</td></tr>
+<tr><td><strong>.NET</strong></td><td>Server GC, Workstation GC</td><td>GCHeapHardLimit, Server mode</td><td>Gen0/Gen1/Gen2 collections</td></tr>
+</tbody>
+</table>
+</div>
+
+<pre><code><span class="cmt">// JVM: G1GC tuning for low-latency APIs (recommended for most services)</span>
+java -server \
+  -Xms4g -Xmx4g \                    <span class="cmt">// Set min = max to avoid heap resize pauses</span>
+  -XX:+UseG1GC \                      <span class="cmt">// G1GC: good balance for most workloads</span>
+  -XX:MaxGCPauseMillis=100 \          <span class="cmt">// Target pause goal (not a hard limit)</span>
+  -XX:G1HeapRegionSize=16m \          <span class="cmt">// Larger regions for large objects</span>
+  -XX:+ParallelRefProcEnabled \       <span class="cmt">// Parallel reference processing</span>
+  -XX:+DisableExplicitGC \            <span class="cmt">// Prevent System.gc() calls</span>
+  -XX:+PrintGCDetails \               <span class="cmt">// Log GC events for analysis</span>
+  -Xlog:gc*:file=/var/log/gc.log \
+  -jar app.jar
+
+<span class="cmt">// For ultra-low latency (&lt;10ms pauses): use ZGC (Java 15+)</span>
+<span class="cmt">// -XX:+UseZGC  → sub-millisecond pauses, scales to TB heaps</span></code></pre>
+
+<h2 id="load-testing">Load Testing</h2>
+<p>You cannot know how your system behaves under load until you test it. Load testing before production — not after.</p>
+
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Baseline Test</strong> — establish current performance: P50/P95/P99 at normal load (e.g., 100 RPS)</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Load Test</strong> — ramp up to expected peak load (e.g., 1000 RPS). Find where errors start</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Stress Test</strong> — push to breaking point. Find the system's maximum capacity before failure</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Soak Test</strong> — run at 70% capacity for 24+ hours. Catch memory leaks and connection pool exhaustion</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Spike Test</strong> — sudden 10× load increase. Tests autoscaling and connection pooling behavior</div></div>
+</div>
+
+<pre><code><span class="cmt"># k6: modern, developer-friendly load testing (JavaScript)</span>
+<span class="kw">import</span> http <span class="kw">from</span> <span class="str">'k6/http'</span>;
+<span class="kw">import</span> { check, sleep } <span class="kw">from</span> <span class="str">'k6'</span>;
+<span class="kw">import</span> { Rate, Trend } <span class="kw">from</span> <span class="str">'k6/metrics'</span>;
+
+<span class="kw">const</span> errorRate = <span class="kw">new</span> <span class="cls">Rate</span>(<span class="str">'errors'</span>);
+<span class="kw">const</span> apiLatency = <span class="kw">new</span> <span class="cls">Trend</span>(<span class="str">'api_latency'</span>);
+
+<span class="kw">export const</span> options = {
+  stages: [
+    { duration: <span class="str">'2m'</span>, target: <span class="num">100</span> },   <span class="cmt">// ramp up</span>
+    { duration: <span class="str">'5m'</span>, target: <span class="num">1000</span> },  <span class="cmt">// peak load</span>
+    { duration: <span class="str">'2m'</span>, target: <span class="num">0</span> },     <span class="cmt">// ramp down</span>
+  ],
+  thresholds: {
+    <span class="str">'http_req_duration'</span>: [<span class="str">'p(95)&lt;500'</span>],  <span class="cmt">// P95 must be &lt;500ms</span>
+    <span class="str">'http_req_failed'</span>: [<span class="str">'rate&lt;0.01'</span>],    <span class="cmt">// Error rate &lt;1%</span>
+    <span class="str">'errors'</span>: [<span class="str">'rate&lt;0.05'</span>],
+  },
+};
+
+<span class="kw">export default function</span>() {
+  <span class="kw">const</span> start = Date.now();
+  <span class="kw">const</span> res = http.get(<span class="str">'https://api.example.com/users'</span>, {
+    headers: { Authorization: <span class="str">'Bearer token123'</span> }
+  });
+  apiLatency.add(Date.now() - start);
+  errorRate.add(res.status !== <span class="num">200</span>);
+
+  check(res, {
+    <span class="str">'status is 200'</span>: r => r.status === <span class="num">200</span>,
+    <span class="str">'response &lt;500ms'</span>: r => r.timings.duration &lt; <span class="num">500</span>,
+  });
+  sleep(<span class="num">1</span>);
+}</code></pre>
+
+<h2 id="optimization">Performance Optimization Patterns</h2>
+
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header" style="border-color:var(--accent4)">❌ Common Bottlenecks</div>
+    <ul>
+      <li><strong>Synchronous external calls</strong> — blocking the event loop waiting for HTTP/DB</li>
+      <li><strong>N+1 queries</strong> — loading related entities one by one in a loop</li>
+      <li><strong>No connection pooling</strong> — opening a new DB connection per request</li>
+      <li><strong>Serializing large objects</strong> — JSON.stringify on 10MB objects per request</li>
+      <li><strong>Missing indexes</strong> — full table scans on frequently queried columns</li>
+      <li><strong>Unbounded queries</strong> — SELECT * without LIMIT on large tables</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header" style="border-color:var(--accent2)">✅ Optimization Techniques</div>
+    <ul>
+      <li><strong>Parallelize I/O</strong> — Promise.all / goroutines / asyncio.gather for concurrent calls</li>
+      <li><strong>Batch queries</strong> — DataLoader, batch inserts, bulk operations</li>
+      <li><strong>Connection pooling</strong> — PgBouncer, HikariCP, sqlalchemy pool</li>
+      <li><strong>Response compression</strong> — gzip/brotli reduces payload 60-90%</li>
+      <li><strong>Pagination</strong> — cursor-based pagination for large result sets</li>
+      <li><strong>Read replicas</strong> — offload reads to replica, writes to primary</li>
+    </ul>
+  </div>
+</div>
+
+<pre><code><span class="cmt">// Node.js: parallelize independent async operations</span>
+
+<span class="cmt">// ❌ BAD: sequential — total time = t1 + t2 + t3</span>
+<span class="kw">const</span> user = <span class="kw">await</span> getUser(userId);
+<span class="kw">const</span> orders = <span class="kw">await</span> getOrders(userId);
+<span class="kw">const</span> preferences = <span class="kw">await</span> getPreferences(userId);
+
+<span class="cmt">// ✅ GOOD: parallel — total time = max(t1, t2, t3)</span>
+<span class="kw">const</span> [user, orders, preferences] = <span class="kw">await</span> Promise.all([
+  getUser(userId),
+  getOrders(userId),
+  getPreferences(userId),
+]);
+
+<span class="cmt">// ✅ BETTER: also handle partial failures gracefully</span>
+<span class="kw">const</span> results = <span class="kw">await</span> Promise.allSettled([
+  getUser(userId),
+  getOrders(userId),
+  getPreferences(userId),
+]);
+<span class="kw">const</span> [userResult, ordersResult, prefsResult] = results;
+<span class="kw">const</span> user = userResult.status === <span class="str">'fulfilled'</span> ? userResult.value : null;</code></pre>
+
+<h2 id="connection-pooling">Connection Pool Sizing</h2>
+<p>The "right" pool size is not "as large as possible." Too many connections overwhelm the database. The formula: <code>pool_size = (core_count * 2) + disk_spindles</code> (HikariCP / PgBouncer guidance).</p>
+
+<pre><code><span class="cmt"># PostgreSQL connection pool with asyncpg (Python)</span>
+<span class="kw">import</span> asyncpg
+<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">create_pool</span>():
+    <span class="kw">return await</span> asyncpg.create_pool(
+        dsn=<span class="str">"postgresql://user:pass@localhost/mydb"</span>,
+        min_size=<span class="num">5</span>,           <span class="cmt"># minimum connections to keep alive</span>
+        max_size=<span class="num">20</span>,          <span class="cmt"># max concurrent connections</span>
+        max_inactive_connection_lifetime=<span class="num">300</span>,  <span class="cmt"># recycle idle connections</span>
+        command_timeout=<span class="num">60</span>,   <span class="cmt"># kill queries that take &gt;60s</span>
+    )
+
+pool = <span class="kw">await</span> create_pool()
+
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: int):
+    <span class="kw">async with</span> pool.acquire() <span class="kw">as</span> conn:  <span class="cmt"># acquire from pool</span>
+        <span class="kw">return await</span> conn.fetchrow(
+            <span class="str">"SELECT * FROM users WHERE id = $1"</span>, user_id
+        )
+    <span class="cmt"># connection automatically returned to pool on exit</span></code></pre>
+
+<div class="callout warning">
+  <strong>⚠️ Pool Exhaustion:</strong> When all pool connections are in use, new requests queue or fail. Monitor <code>pool.size</code>, <code>pool.checkedout</code>, and <code>pool.overflow</code>. Alert when utilization exceeds 80%. Netflix found that connection pool exhaustion — not DB slowness — caused most of their database-related incidents.
+</div>
+
+<div class="page-footer-nav">
+  <a href="database-engineering.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🗄 Database Engineering</div>
+  </a>
+  <a href="caching-guide.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">💾 Caching Guide</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#latency">Latency vs Throughput</a></li>
+    <li><a href="#percentiles">P50 / P95 / P99</a></li>
+    <li><a href="#profiling">CPU & Memory Profiling</a></li>
+    <li><a href="#gc">GC Tuning</a></li>
+    <li><a href="#load-testing">Load Testing</a></li>
+    <li><a href="#optimization">Optimization Patterns</a></li>
+    <li><a href="#connection-pooling">Connection Pool Sizing</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Backend Fundamentals · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search topics...">
+    </div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item active"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Backend Fundamentals</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-blue">Chapter 1</div>
+  <h1>Backend <span class="grad">Fundamentals</span></h1>
+  <p class="page-intro">The foundation every backend engineer must master. Understand how requests flow, how servers process them, and how the layers of a backend system work together — from the wire to the database and back.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 60 min read</span>
+    <span class="meta-pill">🎯 Beginner → Senior</span>
+    <span class="meta-pill">💻 Code examples included</span>
+  </div>
+</div>
+
+<h2 id="what-is-backend">What is Backend Engineering?</h2>
+<p>Backend engineering is the discipline of designing, building, and maintaining the server-side systems that power applications — the invisible infrastructure that handles data, business logic, authentication, and communication between systems.</p>
+
+<div class="fiveW">
+  <div class="fiveW-card"><div class="fiveW-label">WHY</div><div class="fiveW-title">Why it exists</div><div class="fiveW-text">Frontend can't store data permanently, enforce security, or handle complex business logic safely on the client side</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHAT</div><div class="fiveW-title">What it is</div><div class="fiveW-text">Server-side code, databases, APIs, caching, queues, and infrastructure that process, store, and serve data</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHERE</div><div class="fiveW-title">Where it runs</div><div class="fiveW-text">Data centers, cloud servers (AWS, GCP, Azure), containers (Docker/Kubernetes), edge networks</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHO</div><div class="fiveW-title">Who owns it</div><div class="fiveW-text">Backend engineers, platform engineers, SREs, DBAs, and cloud architects depending on the company size</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHEN</div><div class="fiveW-title">When you need it</div><div class="fiveW-text">Any time you need persistence, security, multi-user interaction, or integration with third-party services</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">HOW</div><div class="fiveW-title">How it works</div><div class="fiveW-text">Client sends HTTP request → server routes it → processes business logic → queries DB → returns response</div></div>
+</div>
+
+<h2 id="request-lifecycle">The Request Lifecycle</h2>
+<p>Understanding the complete lifecycle of an HTTP request is the single most important concept in backend engineering. Everything — latency, debugging, optimization — traces back to understanding this flow.</p>
+
+<div class="diagram">
+<pre>
+ CLIENT                DNS            LOAD         SERVER        APPLICATION    DATABASE
+ (Browser/App)         RESOLVER       BALANCER     PROCESS       LAYER
+     │                    │               │            │              │              │
+     │──GET /api/users──▶ │               │            │              │              │
+     │                    │               │            │              │              │
+     │◀── IP: 10.0.1.5 ── │               │            │              │              │
+     │                                    │            │              │              │
+     │──── TCP Handshake ────────────────▶│            │              │              │
+     │──── TLS Handshake ────────────────▶│            │              │              │
+     │                                    │            │              │              │
+     │─── HTTP GET /api/users ───────────▶│            │              │              │
+     │                                    │            │              │              │
+     │                       Route to least│────────── │──────────────│              │
+     │                       loaded server │            │              │              │
+     │                                    │            │── Parse req─▶│              │
+     │                                    │            │              │── Auth check │
+     │                                    │            │              │── Rate limit │
+     │                                    │            │              │── Validate   │
+     │                                    │            │              │              │
+     │                                    │            │              │──SELECT──────▶
+     │                                    │            │              │◀── rows ─────│
+     │                                    │            │              │              │
+     │                                    │            │              │── Serialize  │
+     │                                    │            │◀─ 200 JSON ──│              │
+     │◀──── HTTP 200 JSON ───────────────│            │              │              │
+     │                                    │            │              │              │
+   ~5-100ms total across all these steps
+</pre>
+</div>
+
+<h3>The 7 Stages Explained</h3>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h4>DNS Resolution</h4>
+      <p>Client looks up <code>api.example.com</code> → DNS returns IP. Cached locally for TTL duration. First request pays DNS lookup latency (~20-100ms uncached). Companies use Anycast DNS (Cloudflare, Route 53) to route users to nearest data center. <strong>Failure mode:</strong> DNS poisoning, TTL storms during IP changes.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h4>TCP Connection & TLS Handshake</h4>
+      <p>TCP: 3-way handshake (SYN → SYN-ACK → ACK) adds 1 round-trip (~10-50ms on fast networks). TLS 1.3 adds ~1 RTT on top. <strong>HTTP/2</strong> multiplexes multiple requests over one TCP connection. <strong>HTTP/3 (QUIC)</strong> eliminates TCP head-of-line blocking. Companies like Google, Cloudflare run HTTP/3 at scale.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h4>Load Balancer</h4>
+      <p>Routes request to a healthy server instance. Algorithms: Round Robin, Least Connections, IP Hash (sticky sessions), Weighted Round Robin. L4 (TCP level) vs L7 (HTTP level). L7 LBs can route by path, headers, cookies. AWS ALB, NGINX, HAProxy are common choices.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h4>Server Process & Framework Routing</h4>
+      <p>OS accepts connection, hands to server process (Node.js, Go, Python, Java). Framework parses HTTP, matches route (e.g., <code>GET /api/users/:id</code> → UsersController#show). Middleware runs in order: logging, auth, rate limiting, request parsing.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <h4>Application Layer Processing</h4>
+      <p>Business logic runs: validate input, check authorization, apply business rules. This is where most bugs and performance issues live. Typical issues: N+1 queries, missing cache lookups, blocking I/O on event loops.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <h4>Database Query</h4>
+      <p>Most expensive step. Connection pool leases a connection, query executes, connection returned. Slow queries add latency directly to response time. <strong>Rule of thumb:</strong> If a request hits the DB, it costs at least 1-5ms. Most API SLA targets of 100ms are spent here.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <h4>Response Serialization & Return</h4>
+      <p>Data serialized to JSON (or Protobuf for gRPC). Response headers added (Content-Type, CORS, Cache-Control). Gzip compression applied. Response travels back through load balancer to client. Total: typically 10-500ms depending on network and workload.</p>
+    </div>
+  </div>
+</div>
+
+<h2 id="client-server">Client-Server Architecture</h2>
+<p>The foundational architecture of the web. A client (browser, mobile app, service) sends requests to a server that processes them and returns responses.</p>
+
+<div class="compare-grid">
+  <div class="compare-card pro">
+    <h4>✅ Advantages</h4>
+    <ul>
+      <li>Centralized logic and data</li>
+      <li>Security enforced server-side</li>
+      <li>Single source of truth</li>
+      <li>Simpler client (thin clients)</li>
+      <li>Easier updates — deploy once</li>
+    </ul>
+  </div>
+  <div class="compare-card con">
+    <h4>❌ Disadvantages</h4>
+    <ul>
+      <li>Single point of failure</li>
+      <li>Network latency on every op</li>
+      <li>Server is the bottleneck</li>
+      <li>Scaling requires infrastructure</li>
+      <li>Offline capability is hard</li>
+    </ul>
+  </div>
+</div>
+
+<h3>Architectural Variants</h3>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Architecture</th><th>Description</th><th>When to Use</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Monolith</strong></td><td>Single deployable unit, all code together</td><td>Early stage, small teams, simple domain</td><td>Rails apps, Django apps</td></tr>
+      <tr><td><strong>N-Tier</strong></td><td>Presentation, application, data tiers separated</td><td>Medium complexity, separate scaling</td><td>Traditional enterprise apps</td></tr>
+      <tr><td><strong>Microservices</strong></td><td>Many small services, each owning its data</td><td>Large teams, complex domains, scale</td><td>Netflix, Amazon, Uber</td></tr>
+      <tr><td><strong>Serverless</strong></td><td>Functions-as-a-service, no server management</td><td>Event-driven, variable load, low ops</td><td>AWS Lambda, Vercel functions</td></tr>
+      <tr><td><strong>Event-Driven</strong></td><td>Services communicate via events/messages</td><td>Decoupled systems, async processing</td><td>Kafka-based architectures</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="layers">Application Layers</h2>
+<p>A well-designed backend separates concerns into distinct layers. Each layer has a single responsibility and communicates only with adjacent layers.</p>
+
+<div class="diagram">
+<pre>
+  ┌─────────────────────────────────────────┐
+  │           PRESENTATION LAYER            │
+  │   HTTP Controllers · Route Handlers     │
+  │   Request Parsing · Response Formatting │
+  ├─────────────────────────────────────────┤
+  │            SERVICE LAYER                │
+  │   Business Logic · Use Cases            │
+  │   Orchestration · Validation            │
+  ├─────────────────────────────────────────┤
+  │           REPOSITORY LAYER              │
+  │   Data Access · Query Abstraction       │
+  │   Caching · Connection Pooling          │
+  ├─────────────────────────────────────────┤
+  │           DATA LAYER                    │
+  │   PostgreSQL · Redis · Elasticsearch    │
+  │   Object Storage · Message Queues       │
+  └─────────────────────────────────────────┘
+</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">TypeScript — Layered Architecture Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">// ─── PRESENTATION LAYER: HTTP Controller ───────────────</span>
+<span class="kw">class</span> <span class="cls">UserController</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> userService: <span class="cls">UserService</span>) {}
+
+  <span class="kw">async</span> <span class="fn">getUser</span>(req: <span class="cls">Request</span>, res: <span class="cls">Response</span>) {
+    <span class="kw">const</span> { id } = req.params;
+    <span class="kw">if</span> (!<span class="fn">isValidUUID</span>(id)) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ error: <span class="str">'Invalid ID'</span> });
+
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.userService.<span class="fn">getById</span>(id);
+    <span class="kw">if</span> (!user) <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ error: <span class="str">'User not found'</span> });
+
+    res.<span class="fn">json</span>({ data: user });
+  }
+}
+
+<span class="cmt">// ─── SERVICE LAYER: Business Logic ─────────────────────</span>
+<span class="kw">class</span> <span class="cls">UserService</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> userRepo: <span class="cls">UserRepository</span>, <span class="kw">private</span> cache: <span class="cls">CacheService</span>) {}
+
+  <span class="kw">async</span> <span class="fn">getById</span>(id: <span class="kw">string</span>): <span class="cls">Promise</span>&lt;<span class="cls">User</span> | <span class="kw">null</span>&gt; {
+    <span class="cmt">// Check cache first</span>
+    <span class="kw">const</span> cached = <span class="kw">await</span> <span class="kw">this</span>.cache.<span class="fn">get</span>(<span class="str">`user:</span>${id}<span class="str">`</span>);
+    <span class="kw">if</span> (cached) <span class="kw">return</span> <span class="fn">JSON.parse</span>(cached);
+
+    <span class="cmt">// Fetch from DB</span>
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="kw">this</span>.userRepo.<span class="fn">findById</span>(id);
+    <span class="kw">if</span> (user) <span class="kw">await</span> <span class="kw">this</span>.cache.<span class="fn">set</span>(<span class="str">`user:</span>${id}<span class="str">`</span>, <span class="fn">JSON.stringify</span>(user), <span class="num">3600</span>);
+
+    <span class="kw">return</span> user;
+  }
+}
+
+<span class="cmt">// ─── REPOSITORY LAYER: Data Access ─────────────────────</span>
+<span class="kw">class</span> <span class="cls">UserRepository</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> db: <span class="cls">Database</span>) {}
+
+  <span class="kw">async</span> <span class="fn">findById</span>(id: <span class="kw">string</span>): <span class="cls">Promise</span>&lt;<span class="cls">User</span> | <span class="kw">null</span>&gt; {
+    <span class="kw">const</span> result = <span class="kw">await</span> <span class="kw">this</span>.db.<span class="fn">query</span>(
+      <span class="str">'SELECT id, name, email, created_at FROM users WHERE id = $1'</span>,
+      [id]
+    );
+    <span class="kw">return</span> result.rows[<span class="num">0</span>] ?? <span class="kw">null</span>;
+  }
+}</code></pre>
+</div>
+
+<h2 id="concurrency">Concurrency Models</h2>
+<p>One of the most fundamental choices in backend engineering: how does your server handle multiple requests simultaneously? This determines scalability, performance, and complexity.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Model</th><th>How It Works</th><th>Good For</th><th>Used By</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Multi-Thread</strong></td>
+        <td>One thread per request. Thread pool. Blocking I/O is fine.</td>
+        <td>CPU-bound work, simple code</td>
+        <td>Java Spring, .NET, Python Django</td>
+      </tr>
+      <tr>
+        <td><strong>Event Loop</strong></td>
+        <td>Single thread, non-blocking I/O, callbacks/promises</td>
+        <td>I/O-bound, high concurrency</td>
+        <td>Node.js, Nginx, Redis</td>
+      </tr>
+      <tr>
+        <td><strong>Async/Await</strong></td>
+        <td>Cooperative multitasking within single/few threads</td>
+        <td>I/O-bound, readable async code</td>
+        <td>Python FastAPI, Rust Tokio, Go</td>
+      </tr>
+      <tr>
+        <td><strong>Actor Model</strong></td>
+        <td>Isolated actors communicate via messages, no shared state</td>
+        <td>Distributed, fault-tolerant</td>
+        <td>Erlang, Akka (JVM), Elixir</td>
+      </tr>
+      <tr>
+        <td><strong>Goroutines</strong></td>
+        <td>Lightweight M:N threads, scheduled by Go runtime</td>
+        <td>High concurrency, low overhead</td>
+        <td>Go (Kubernetes, Docker, Cloudflare)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout warning">
+  <div class="callout-icon">⚠️</div>
+  <div class="callout-body">
+    <div class="callout-title">The Node.js Trap</div>
+    <p>Node.js runs on a single-threaded event loop. <strong>Never run CPU-intensive code</strong> (image processing, crypto, complex calculations) on the main thread — it blocks ALL incoming requests. Use worker threads or offload to a separate service.</p>
+  </div>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Go — Goroutines for High Concurrency</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">package</span> main
+
+<span class="kw">import</span> (
+    <span class="str">"net/http"</span>
+    <span class="str">"sync"</span>
+    <span class="str">"encoding/json"</span>
+)
+
+<span class="cmt">// Go handles 100k+ concurrent connections easily</span>
+<span class="cmt">// Each HTTP request gets its own goroutine (~8KB stack)</span>
+<span class="cmt">// vs Java threads (~1MB stack) = 100x more concurrency</span>
+
+<span class="kw">func</span> <span class="fn">fetchUserData</span>(userID <span class="kw">string</span>) <span class="cls">UserData</span> {
+    <span class="kw">var</span> wg sync.<span class="cls">WaitGroup</span>
+    <span class="kw">var</span> profile <span class="cls">Profile</span>
+    <span class="kw">var</span> orders []<span class="cls">Order</span>
+    <span class="kw">var</span> notifications []<span class="cls">Notification</span>
+
+    <span class="cmt">// Fetch all three in parallel — not sequentially!</span>
+    wg.<span class="fn">Add</span>(<span class="num">3</span>)
+
+    <span class="kw">go func</span>() {
+        <span class="kw">defer</span> wg.<span class="fn">Done</span>()
+        profile = <span class="fn">getProfile</span>(userID)
+    }()
+
+    <span class="kw">go func</span>() {
+        <span class="kw">defer</span> wg.<span class="fn">Done</span>()
+        orders = <span class="fn">getOrders</span>(userID)
+    }()
+
+    <span class="kw">go func</span>() {
+        <span class="kw">defer</span> wg.<span class="fn">Done</span>()
+        notifications = <span class="fn">getNotifications</span>(userID)
+    }()
+
+    wg.<span class="fn">Wait</span>() <span class="cmt">// Block until all 3 complete</span>
+
+    <span class="kw">return</span> <span class="cls">UserData</span>{Profile: profile, Orders: orders, Notifications: notifications}
+    <span class="cmt">// Total time = max(t1, t2, t3) instead of t1 + t2 + t3</span>
+}</code></pre>
+</div>
+
+<h2 id="http">HTTP Deep Dive</h2>
+<p>HTTP is the backbone of web APIs. Senior engineers understand it at a protocol level, not just the surface API.</p>
+
+<h3>HTTP/1.1 vs HTTP/2 vs HTTP/3</h3>
+
+<div class="diagram">
+<pre>
+  HTTP/1.1          HTTP/2                HTTP/3 (QUIC)
+  ─────────────     ─────────────         ─────────────
+  req1 ─────▶       req1 ─┐               req1 ─┐
+  ◀──── res1        req2 ─┤ multiplexed   req2 ─┤ over UDP
+  req2 ─────▶       req3 ─┤ on 1 TCP      req3 ─┤ (QUIC)
+  ◀──── res2        ◀──── res1,2,3        ◀──── res1,2,3
+
+  Sequential         Parallel             Parallel + No
+  requests           (but TCP             head-of-line
+  = HOL blocking     HOL blocking)        blocking ever
+</pre>
+</div>
+
+<h3>HTTP Headers That Matter</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">HTTP Headers Reference</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt"># Request headers</span>
+Authorization: Bearer eyJhbGc...     <span class="cmt"># Auth token</span>
+Content-Type: application/json        <span class="cmt"># Request body type</span>
+Accept: application/json              <span class="cmt"># Expected response type</span>
+X-Request-ID: abc-123                 <span class="cmt"># Tracing ID</span>
+Idempotency-Key: unique-key-123       <span class="cmt"># Prevent duplicate operations</span>
+If-None-Match: "etag-value"           <span class="cmt"># Conditional request (caching)</span>
+
+<span class="cmt"># Response headers</span>
+Cache-Control: max-age=3600           <span class="cmt"># How long to cache</span>
+ETag: "abc123def"                     <span class="cmt"># Resource version fingerprint</span>
+X-RateLimit-Remaining: 47             <span class="cmt"># Requests remaining in window</span>
+X-RateLimit-Reset: 1609459200         <span class="cmt"># When limit resets (Unix ts)</span>
+Retry-After: 30                       <span class="cmt"># When to retry (rate limited)</span>
+X-Correlation-ID: req-abc-123         <span class="cmt"># For distributed tracing</span>
+Strict-Transport-Security: max-age=31536000  <span class="cmt"># Force HTTPS</span></code></pre>
+</div>
+
+<h2 id="processes">Process, Threads, and Memory</h2>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Concept</th><th>Description</th><th>Memory</th><th>Context Switch</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Process</strong></td><td>Isolated OS execution unit with its own memory space</td><td>~50-500MB</td><td>~1000ns (expensive)</td></tr>
+      <tr><td><strong>OS Thread</strong></td><td>Lightweight process, shares memory with parent</td><td>~1-8MB stack</td><td>~100ns</td></tr>
+      <tr><td><strong>Goroutine</strong></td><td>Go's user-space thread, multiplexed onto OS threads</td><td>~8KB initial</td><td>~10ns</td></tr>
+      <tr><td><strong>Coroutine</strong></td><td>Cooperative, async/await tasks</td><td>~4KB</td><td>~1ns (user space)</td></tr>
+      <tr><td><strong>Event Loop Tick</strong></td><td>Node.js callback execution unit</td><td>N/A</td><td>Near zero</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Connection Pooling</h3>
+<p>Opening a new DB connection is expensive (~20-100ms). Connection pools maintain a set of open connections that are reused across requests.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Node.js — PostgreSQL Connection Pool</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">import</span> { Pool } <span class="kw">from</span> <span class="str">'pg'</span>;
+
+<span class="cmt">// Configure pool — these numbers matter!</span>
+<span class="kw">const</span> pool = <span class="kw">new</span> <span class="cls">Pool</span>({
+  connectionString: process.env.<span class="cls">DATABASE_URL</span>,
+  max: <span class="num">20</span>,          <span class="cmt">// Max connections in pool</span>
+  min: <span class="num">5</span>,           <span class="cmt">// Keep this many connections warm</span>
+  idleTimeoutMillis: <span class="num">30000</span>,  <span class="cmt">// Close idle connections after 30s</span>
+  connectionTimeoutMillis: <span class="num">2000</span>, <span class="cmt">// Fail fast: timeout after 2s</span>
+});
+
+<span class="cmt">// Good: always release connections</span>
+<span class="kw">async function</span> <span class="fn">getUser</span>(id) {
+  <span class="kw">const</span> client = <span class="kw">await</span> pool.<span class="fn">connect</span>();
+  <span class="kw">try</span> {
+    <span class="kw">const</span> result = <span class="kw">await</span> client.<span class="fn">query</span>(<span class="str">'SELECT * FROM users WHERE id = $1'</span>, [id]);
+    <span class="kw">return</span> result.rows[<span class="num">0</span>];
+  } <span class="kw">finally</span> {
+    client.<span class="fn">release</span>(); <span class="cmt">// CRITICAL: always release, even on error</span>
+  }
+}
+
+<span class="cmt">// Better: pool.query handles acquire/release automatically</span>
+<span class="kw">async function</span> <span class="fn">getUserBetter</span>(id) {
+  <span class="kw">const</span> { rows } = <span class="kw">await</span> pool.<span class="fn">query</span>(<span class="str">'SELECT * FROM users WHERE id = $1'</span>, [id]);
+  <span class="kw">return</span> rows[<span class="num">0</span>];
+}
+
+<span class="cmt">// SIZING RULE: pool_size = (core_count * 2) + effective_spindle_count</span>
+<span class="cmt">// For 8-core server: 2*8 + 1 = 17 connections per app instance</span>
+<span class="cmt">// For PostgreSQL: max_connections / num_app_instances = pool_size</span></code></pre>
+</div>
+
+<div class="callout danger">
+  <div class="callout-icon">🔴</div>
+  <div class="callout-body">
+    <div class="callout-title">Connection Pool Exhaustion</div>
+    <p>If your pool of 20 connections is fully leased and a 21st request comes in, it waits (or times out). This cascades into all requests waiting → timeout storm → service appears down. <strong>Always set connectionTimeoutMillis</strong> and never hold connections across unrelated operations.</p>
+  </div>
+</div>
+
+<h2 id="load-balancers">Load Balancers</h2>
+<p>A load balancer distributes incoming traffic across multiple server instances to achieve scalability and high availability.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Algorithm</th><th>How It Works</th><th>Best For</th><th>Pitfall</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Round Robin</strong></td><td>Requests distributed in order: s1, s2, s3, s1...</td><td>Homogeneous servers, similar request cost</td><td>Hot servers if requests vary in cost</td></tr>
+      <tr><td><strong>Least Connections</strong></td><td>Route to server with fewest active connections</td><td>Variable processing time per request</td><td>State tracking overhead</td></tr>
+      <tr><td><strong>IP Hash</strong></td><td>Same client IP always hits same server</td><td>Stateful apps needing sticky sessions</td><td>Uneven distribution, hot servers</td></tr>
+      <tr><td><strong>Weighted RR</strong></td><td>Servers get requests proportional to their weight</td><td>Heterogeneous server capacity</td><td>Requires manual tuning</td></tr>
+      <tr><td><strong>Random</strong></td><td>Pick a random server</td><td>Stateless, simple, fast</td><td>Statistical variance at low request counts</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h3>Health Checks</h3>
+<p>Load balancers continuously probe server health. If a server fails N consecutive checks, it's removed from rotation. This is how you achieve zero-downtime deployments and automatic failure recovery.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Python (FastAPI) — Health Check Endpoint</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, status
+<span class="kw">from</span> fastapi.responses <span class="kw">import</span> JSONResponse
+<span class="kw">import</span> asyncpg, redis.asyncio <span class="kw">as</span> aioredis
+
+app = <span class="fn">FastAPI</span>()
+
+<span class="dec">@app.get</span>(<span class="str">"/health"</span>)
+<span class="kw">async def</span> <span class="fn">health_check</span>():
+    <span class="str">"""
+    Load balancer hits this every 5s.
+    Must respond in &lt;500ms or server is marked unhealthy.
+    """</span>
+    checks = {}
+    overall_healthy = <span class="kw">True</span>
+
+    <span class="cmt"># Check database</span>
+    <span class="kw">try</span>:
+        <span class="kw">await</span> db_pool.<span class="fn">fetchval</span>(<span class="str">"SELECT 1"</span>)
+        checks[<span class="str">"database"</span>] = <span class="str">"ok"</span>
+    <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> e:
+        checks[<span class="str">"database"</span>] = <span class="kw">str</span>(e)
+        overall_healthy = <span class="kw">False</span>
+
+    <span class="cmt"># Check Redis</span>
+    <span class="kw">try</span>:
+        <span class="kw">await</span> redis_client.<span class="fn">ping</span>()
+        checks[<span class="str">"redis"</span>] = <span class="str">"ok"</span>
+    <span class="kw">except</span> <span class="cls">Exception</span> <span class="kw">as</span> e:
+        checks[<span class="str">"redis"</span>] = <span class="kw">str</span>(e)
+        <span class="cmt"># Redis unhealthy might be OK — depends on criticality</span>
+
+    http_status = status.<span class="cls">HTTP_200_OK</span> <span class="kw">if</span> overall_healthy <span class="kw">else</span> status.<span class="cls">HTTP_503_SERVICE_UNAVAILABLE</span>
+
+    <span class="kw">return</span> <span class="fn">JSONResponse</span>(
+        status_code=http_status,
+        content={<span class="str">"status"</span>: <span class="str">"healthy"</span> <span class="kw">if</span> overall_healthy <span class="kw">else</span> <span class="str">"unhealthy"</span>, <span class="str">"checks"</span>: checks}
+    )</code></pre>
+</div>
+
+<h2 id="scalability">Scalability Fundamentals</h2>
+
+<div class="compare-grid">
+  <div class="compare-card" style="border-top:2px solid var(--accent)">
+    <h4 style="color:var(--accent)">🔼 Vertical Scaling (Scale Up)</h4>
+    <ul>
+      <li>Bigger machine (more CPU, RAM)</li>
+      <li>Simple — no code changes</li>
+      <li>Hard limit: biggest server available</li>
+      <li>Single point of failure remains</li>
+      <li>Cost: expensive at high end</li>
+      <li><strong>Use when:</strong> DB primary, legacy apps</li>
+    </ul>
+  </div>
+  <div class="compare-card" style="border-top:2px solid var(--accent5)">
+    <h4 style="color:var(--accent5)">↔ Horizontal Scaling (Scale Out)</h4>
+    <ul>
+      <li>More machines, distribute load</li>
+      <li>Requires stateless app design</li>
+      <li>Theoretically unlimited scale</li>
+      <li>No single point of failure</li>
+      <li>Cost: linear with load</li>
+      <li><strong>Use when:</strong> API servers, stateless workers</li>
+    </ul>
+  </div>
+</div>
+
+<div class="callout info">
+  <div class="callout-icon">🎯</div>
+  <div class="callout-body">
+    <div class="callout-title">How Google Thinks About Scale</div>
+    <p>Google's SRE book defines reliability targets using <strong>error budgets</strong>: if your SLO is 99.9% uptime, you have 8.7 hours/year of allowed downtime. This budget is shared across development velocity and operations stability. When you spend your budget, you stop new features and focus on reliability.</p>
+  </div>
+</div>
+
+<div class="page-footer-nav">
+  <a href="index.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🏠 Home</div>
+  </a>
+  <a href="api-design.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🔌 API Design</div>
+  </a>
+</div>
+
+</article>
+
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#what-is-backend">What is Backend Engineering</a></li>
+    <li><a href="#request-lifecycle">Request Lifecycle</a></li>
+    <li><a href="#client-server">Client-Server Architecture</a></li>
+    <li><a href="#layers">Application Layers</a></li>
+    <li><a href="#concurrency">Concurrency Models</a></li>
+    <li><a href="#http">HTTP Deep Dive</a></li>
+    <li><a href="#processes">Processes, Threads, Memory</a></li>
+    <li><a href="#load-balancers">Load Balancers</a></li>
+    <li><a href="#scalability">Scalability Fundamentals</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

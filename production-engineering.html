@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Engineering · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item active"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Production Engineering</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-green">Chapter 11</div>
+  <h1>Production <span class="grad">Engineering</span></h1>
+  <p class="page-intro">Shipping code is the start, not the end. Production engineering covers deployments, incident management, disaster recovery, and the practices that separate companies with 99.99% uptime from those with weekly outages.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 65 min read</span>
+    <span class="meta-pill">🎯 All Levels</span>
+    <span class="meta-pill">🚀 Deploy & SRE practices</span>
+  </div>
+</div>
+
+<h2 id="deployment-strategies">Deployment Strategies</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Strategy</th><th>How</th><th>Rollback Speed</th><th>Risk</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td><strong>Rolling Update</strong></td><td>Replace instances one by one, new version gradually takes over</td><td>Moderate (re-roll)</td><td>Low-Medium</td><td>Kubernetes default, stateless services</td></tr>
+<tr><td><strong>Blue-Green</strong></td><td>Two identical environments. Switch load balancer from blue (old) to green (new)</td><td>Instant (flip LB back)</td><td>Low (instant rollback)</td><td>Critical services, zero-downtime requirement</td></tr>
+<tr><td><strong>Canary Release</strong></td><td>Send 1-5% of traffic to new version. Monitor. Gradually increase to 100%</td><td>Fast (reroute traffic)</td><td>Very Low (small blast radius)</td><td>High-risk changes, large user base</td></tr>
+<tr><td><strong>A/B Testing</strong></td><td>Route specific users to different versions based on rules</td><td>Fast</td><td>Low</td><td>Feature experiments, product validation</td></tr>
+<tr><td><strong>Recreate</strong></td><td>Kill all old instances, deploy all new. Brief downtime</td><td>N/A — requires redeploy</td><td>High</td><td>Dev/staging, low-traffic services</td></tr>
+</tbody>
+</table>
+</div>
+
+<pre><code><span class="cmt"># Kubernetes: canary deployment with traffic splitting</span>
+<span class="cmt">---</span>
+<span class="cmt"># Stable deployment (95% traffic)</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-stable
+spec:
+  replicas: <span class="num">19</span>   <span class="cmt"># 19 pods = 95% of traffic (assuming equal distribution)</span>
+  selector:
+    matchLabels:
+      app: api
+      track: stable
+  template:
+    metadata:
+      labels: { app: api, track: stable }
+    spec:
+      containers:
+      - name: api
+        image: myapp:<span class="num">1.2</span>
+<span class="cmt">---</span>
+<span class="cmt"># Canary deployment (5% traffic)</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-canary
+spec:
+  replicas: <span class="num">1</span>   <span class="cmt"># 1 pod = ~5% of traffic</span>
+  selector:
+    matchLabels:
+      app: api
+      track: canary
+  template:
+    metadata:
+      labels: { app: api, track: canary }
+    spec:
+      containers:
+      - name: api
+        image: myapp:<span class="num">1.3</span>  <span class="cmt"># new version</span>
+<span class="cmt">---</span>
+<span class="cmt"># Single Service routes to BOTH (label selector matches both)</span>
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  selector:
+    app: api   <span class="cmt"># matches both stable AND canary pods</span></code></pre>
+
+<h2 id="feature-flags">Feature Flags</h2>
+<p>Feature flags decouple deployment from release. Deploy code anytime; turn features on/off without redeploy. Used by every major tech company.</p>
+
+<pre><code><span class="cmt">// Feature flags with LaunchDarkly (or open-source Unleash/Flagsmith)</span>
+<span class="kw">import</span> LaunchDarkly <span class="kw">from</span> <span class="str">'launchdarkly-node-server-sdk'</span>;
+
+<span class="kw">const</span> ldClient = LaunchDarkly.init(process.env.LD_SDK_KEY);
+
+<span class="kw">async function</span> <span class="fn">handleCheckout</span>(user: User, cart: Cart) {
+  <span class="kw">const</span> userContext = {
+    kind: <span class="str">'user'</span>,
+    key: user.id,
+    email: user.email,
+    country: user.country,
+    isPremium: user.isPremium,
+  };
+
+  <span class="cmt">// Gradual rollout: returns true for X% of users</span>
+  <span class="kw">const</span> useNewCheckout = <span class="kw">await</span> ldClient.variation(
+    <span class="str">'new-checkout-flow'</span>, userContext, <span class="kw">false</span>  <span class="cmt">// false = default if flag missing</span>
+  );
+
+  <span class="kw">if</span> (useNewCheckout) {
+    <span class="kw">return</span> newCheckoutFlow(user, cart);
+  }
+  <span class="kw">return</span> legacyCheckoutFlow(user, cart);
+}
+
+<span class="cmt">// Types of flags:</span>
+<span class="cmt">// Kill switch:   instantly disable a broken feature without redeploy</span>
+<span class="cmt">// % rollout:     1% → 5% → 25% → 100% gradual release</span>
+<span class="cmt">// User segment:  only for beta users, employees, specific countries</span>
+<span class="cmt">// A/B test:      50/50 split to measure impact</span></code></pre>
+
+<h2 id="health-checks">Health Checks & Readiness</h2>
+<pre><code><span class="cmt"># Kubernetes health probes — critical for zero-downtime deploys</span>
+apiVersion: apps/v1
+kind: Deployment
+spec:
+  template:
+    spec:
+      containers:
+      - name: api
+        livenessProbe:        <span class="cmt"># if fails → restart container</span>
+          httpGet:
+            path: /health/live
+            port: <span class="num">8080</span>
+          initialDelaySeconds: <span class="num">15</span>
+          periodSeconds: <span class="num">10</span>
+          failureThreshold: <span class="num">3</span>
+        readinessProbe:       <span class="cmt"># if fails → remove from load balancer (no traffic)</span>
+          httpGet:
+            path: /health/ready
+            port: <span class="num">8080</span>
+          initialDelaySeconds: <span class="num">5</span>
+          periodSeconds: <span class="num">5</span>
+
+<span class="cmt">---</span>
+<span class="cmt"># Health endpoint implementation</span>
+<span class="kw">@app.get</span>(<span class="str">"/health/live"</span>)
+<span class="kw">async def</span> <span class="fn">liveness</span>():
+    <span class="cmt"># Simple: is the process alive?</span>
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>}
+
+<span class="kw">@app.get</span>(<span class="str">"/health/ready"</span>)
+<span class="kw">async def</span> <span class="fn">readiness</span>():
+    <span class="cmt"># Check all dependencies</span>
+    checks = {
+        <span class="str">"db"</span>: <span class="kw">await</span> check_db_connection(),
+        <span class="str">"redis"</span>: <span class="kw">await</span> check_redis_connection(),
+        <span class="str">"kafka"</span>: check_kafka_connection(),
+    }
+    all_healthy = all(checks.values())
+    status_code = <span class="num">200</span> <span class="kw">if</span> all_healthy <span class="kw">else</span> <span class="num">503</span>
+    <span class="kw">return</span> JSONResponse({<span class="str">"status"</span>: <span class="str">"ready"</span> <span class="kw">if</span> all_healthy <span class="kw">else</span> <span class="str">"not ready"</span>, <span class="str">"checks"</span>: checks}, status_code)</code></pre>
+
+<h2 id="incident-management">Incident Management</h2>
+<div class="steps">
+  <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Detect</strong> — Alert fires (PagerDuty/OpsGenie). On-call engineer acknowledges within SLA. Incident declared if P1/P2 severity</div></div>
+  <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Communicate</strong> — Create incident channel (#incident-2025-01-15). Notify stakeholders. Update status page (customers)</div></div>
+  <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Mitigate</strong> — Roll back bad deploy, disable feature flag, scale up capacity, failover to DR region. Restore service first, investigate second</div></div>
+  <div class="step"><div class="step-num">4</div><div class="step-body"><strong>Resolve</strong> — Service restored. Document timeline in incident record. Assign follow-up action items</div></div>
+  <div class="step"><div class="step-num">5</div><div class="step-body"><strong>Postmortem</strong> — Blameless RCA. 5 Whys analysis. Preventive action items tracked to completion. Share learnings across org</div></div>
+</div>
+
+<div class="callout info">
+  <strong>💡 Blameless Postmortems:</strong> Google's SRE culture: postmortems focus on system and process failures, not human errors. People are trying to do their best. The goal is to learn and prevent recurrence — not to assign blame. This creates psychological safety which leads to more honest incident reports.
+</div>
+
+<h2 id="disaster-recovery">Disaster Recovery</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Metric</th><th>Meaning</th><th>Target</th></tr></thead>
+<tbody>
+<tr><td><strong>RTO</strong> (Recovery Time Objective)</td><td>Max acceptable downtime after a disaster</td><td>Critical systems: &lt;1hr. Most: &lt;4hr</td></tr>
+<tr><td><strong>RPO</strong> (Recovery Point Objective)</td><td>Max acceptable data loss (how old can restored data be?)</td><td>Financial: 0 (synchronous replication). Most: &lt;15min</td></tr>
+<tr><td><strong>MTTR</strong> (Mean Time To Recovery)</td><td>Average time to restore service after an incident</td><td>Best-in-class: &lt;30min for P1</td></tr>
+<tr><td><strong>MTBF</strong> (Mean Time Between Failures)</td><td>Average time between failures</td><td>Higher is better. Measure and trend over time</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="page-footer-nav">
+  <a href="observability.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">📊 Observability</div>
+  </a>
+  <a href="system-design.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🏗 System Design</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#deployment-strategies">Deployment Strategies</a></li>
+    <li><a href="#feature-flags">Feature Flags</a></li>
+    <li><a href="#health-checks">Health Checks</a></li>
+    <li><a href="#incident-management">Incident Management</a></li>
+    <li><a href="#disaster-recovery">Disaster Recovery</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

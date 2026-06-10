@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database Engineering · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo"><div class="logo-icon">⚙</div><div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025</div></div></a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section"><div class="nav-section-title">Core Chapters</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item active"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Database Engineering</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-yellow">Chapter 3</div>
+  <h1>Database <span class="grad">Engineering</span></h1>
+  <p class="page-intro">Databases are where data lives and where most performance problems originate. Master SQL, indexes, transactions, replication, and sharding — the skills that separate good engineers from great ones.</p>
+  <div class="meta-pills"><span class="meta-pill">⏱ 90 min read</span><span class="meta-pill">🎯 All levels</span><span class="meta-pill">🗄 SQL · NoSQL · Indexing</span></div>
+</div>
+
+<h2 id="sql">SQL & Relational Databases</h2>
+<p>Relational databases have been the backbone of data storage since the 1970s. PostgreSQL and MySQL power the majority of production systems at companies of all sizes.</p>
+
+<div class="callout info">
+  <div class="callout-icon">💡</div>
+  <div class="callout-body">
+    <div class="callout-title">Instagram's Database</div>
+    <p>Instagram served 1 billion users on PostgreSQL for years before adding sharding. Their advice: <strong>don't over-engineer early</strong>. A well-tuned PostgreSQL on good hardware can handle enormous load before you need to shard.</p>
+  </div>
+</div>
+
+<h3>Essential SQL Patterns</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">SQL — Common Query Patterns</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Efficient: fetch users with their order counts</span>
+<span class="kw">SELECT</span>
+  u.id,
+  u.name,
+  u.email,
+  <span class="fn">COUNT</span>(o.id) <span class="kw">AS</span> order_count,
+  <span class="fn">SUM</span>(o.total) <span class="kw">AS</span> total_spent
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id
+<span class="kw">WHERE</span> u.created_at &gt;= NOW() - <span class="cls">INTERVAL</span> <span class="str">'30 days'</span>
+<span class="kw">GROUP BY</span> u.id, u.name, u.email
+<span class="kw">HAVING COUNT</span>(o.id) &gt; <span class="num">0</span>
+<span class="kw">ORDER BY</span> total_spent <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">100</span>;
+
+<span class="cmt">-- Window functions: rank orders within each user</span>
+<span class="kw">SELECT</span>
+  user_id,
+  id <span class="kw">AS</span> order_id,
+  total,
+  <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> user_id <span class="kw">ORDER BY</span> created_at <span class="kw">DESC</span>) <span class="kw">AS</span> rank
+<span class="kw">FROM</span> orders;
+<span class="cmt">-- rank=1 is most recent order per user</span>
+
+<span class="cmt">-- CTE: readable complex queries</span>
+<span class="kw">WITH</span> recent_orders <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> user_id, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> cnt
+  <span class="kw">FROM</span> orders
+  <span class="kw">WHERE</span> created_at &gt; NOW() - <span class="cls">INTERVAL</span> <span class="str">'7 days'</span>
+  <span class="kw">GROUP BY</span> user_id
+),
+active_users <span class="kw">AS</span> (
+  <span class="kw">SELECT</span> user_id <span class="kw">FROM</span> recent_orders <span class="kw">WHERE</span> cnt &gt;= <span class="num">3</span>
+)
+<span class="kw">SELECT</span> u.* <span class="kw">FROM</span> users u
+<span class="kw">JOIN</span> active_users au <span class="kw">ON</span> au.user_id = u.id;
+
+<span class="cmt">-- Upsert (INSERT or UPDATE atomically)</span>
+<span class="kw">INSERT INTO</span> user_stats (user_id, login_count, last_login)
+<span class="kw">VALUES</span> (<span class="num">123</span>, <span class="num">1</span>, NOW())
+<span class="kw">ON CONFLICT</span> (user_id) <span class="kw">DO UPDATE SET</span>
+  login_count = user_stats.login_count + <span class="num">1</span>,
+  last_login = NOW();</code></pre>
+</div>
+
+<h2 id="indexes">Indexes Deep Dive</h2>
+<p>An index is a data structure that makes queries faster at the cost of storage and write speed. Understanding indexes is the single biggest lever for database performance.</p>
+
+<div class="diagram">
+<pre>
+Without Index (Full Table Scan):
+  users table: 10,000,000 rows
+  Query: SELECT * FROM users WHERE email = 'jane@example.com'
+  PostgreSQL reads ALL 10M rows → ~2000ms
+
+With B-Tree Index on email:
+  Index tree → O(log n) lookups
+  3 disk seeks → found! → ~1ms
+
+  Index structure:
+              [m...z]
+             /       \
+      [a...l]         [n...z]
+     /       \       /       \
+  [a-d]   [e-l]  [n-q]   [r-z]
+    │                │
+  alice@..        jane@.. ← found in ~3 hops
+</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">SQL — Index Strategies</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- B-Tree index (default): equality, range, sort</span>
+<span class="kw">CREATE INDEX</span> idx_users_email <span class="kw">ON</span> users(email);
+<span class="kw">CREATE INDEX</span> idx_orders_created <span class="kw">ON</span> orders(created_at <span class="kw">DESC</span>);
+
+<span class="cmt">-- Composite index: order matters! leftmost prefix rule</span>
+<span class="kw">CREATE INDEX</span> idx_orders_user_date <span class="kw">ON</span> orders(user_id, created_at <span class="kw">DESC</span>);
+<span class="cmt">-- Supports: WHERE user_id = 1</span>
+<span class="cmt">-- Supports: WHERE user_id = 1 AND created_at > '2024-01-01'</span>
+<span class="cmt">-- Does NOT support: WHERE created_at > '2024-01-01' (alone)</span>
+
+<span class="cmt">-- Partial index: index only a subset of rows</span>
+<span class="kw">CREATE INDEX</span> idx_orders_pending <span class="kw">ON</span> orders(created_at)
+  <span class="kw">WHERE</span> status = <span class="str">'pending'</span>;
+<span class="cmt">-- Much smaller index, faster for this specific query pattern</span>
+
+<span class="cmt">-- Covering index: index includes all columns needed</span>
+<span class="kw">CREATE INDEX</span> idx_users_covering <span class="kw">ON</span> users(email) <span class="kw">INCLUDE</span> (id, name);
+<span class="cmt">-- Query can be satisfied entirely from index, no table lookup!</span>
+
+<span class="cmt">-- EXPLAIN ANALYZE: understand query execution</span>
+<span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id = <span class="num">123</span> <span class="kw">AND</span> status = <span class="str">'pending'</span>;
+
+<span class="cmt">-- Bad output: Seq Scan on orders (cost=0..50000 rows=...)  ← no index used</span>
+<span class="cmt">-- Good output: Index Scan using idx_orders on orders ← index hit</span>
+<span class="cmt">-- Best output: Index Only Scan ← covering index, no heap fetch</span></code></pre>
+</div>
+
+<h2 id="transactions">Transactions & ACID</h2>
+<p>Transactions ensure that a group of operations either all succeed or all fail together. ACID properties define correctness guarantees.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Property</th><th>Meaning</th><th>Example</th><th>Without It</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Atomicity</strong></td><td>All operations succeed or all fail</td><td>Transfer $100: debit A AND credit B</td><td>Money disappears if crash mid-transfer</td></tr>
+      <tr><td><strong>Consistency</strong></td><td>DB moves from one valid state to another</td><td>Account balance can't go below -$1000</td><td>Constraint violations persist</td></tr>
+      <tr><td><strong>Isolation</strong></td><td>Concurrent transactions don't interfere</td><td>Two users buying last item simultaneously</td><td>Race conditions, overselling inventory</td></tr>
+      <tr><td><strong>Durability</strong></td><td>Committed data survives crashes</td><td>Payment confirmed = actually saved</td><td>Confirmed payments lost on server restart</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">SQL — Transaction & Locking Patterns</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- ✅ Bank transfer with proper transaction</span>
+<span class="kw">BEGIN</span>;
+
+<span class="kw">UPDATE</span> accounts
+<span class="kw">SET</span> balance = balance - <span class="num">100.00</span>
+<span class="kw">WHERE</span> id = <span class="num">1</span> <span class="kw">AND</span> balance &gt;= <span class="num">100.00</span>;  <span class="cmt">-- Check insufficient funds</span>
+
+<span class="kw">IF</span> <span class="fn">ROW_COUNT</span>() = <span class="num">0</span> <span class="kw">THEN</span>
+  <span class="kw">ROLLBACK</span>;
+  <span class="kw">RAISE EXCEPTION</span> <span class="str">'Insufficient funds'</span>;
+<span class="kw">END IF</span>;
+
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance + <span class="num">100.00</span> <span class="kw">WHERE</span> id = <span class="num">2</span>;
+
+<span class="kw">INSERT INTO</span> transactions (from_id, to_id, amount, created_at)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">2</span>, <span class="num">100.00</span>, NOW());
+
+<span class="kw">COMMIT</span>;
+
+<span class="cmt">-- Pessimistic locking: lock row for update (prevents races)</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">SELECT</span> quantity <span class="kw">FROM</span> inventory <span class="kw">WHERE</span> product_id = <span class="num">42</span> <span class="kw">FOR UPDATE</span>;
+<span class="cmt">-- Row is locked! Other transactions wait here</span>
+<span class="kw">UPDATE</span> inventory <span class="kw">SET</span> quantity = quantity - <span class="num">1</span> <span class="kw">WHERE</span> product_id = <span class="num">42</span>;
+<span class="kw">COMMIT</span>;
+
+<span class="cmt">-- Optimistic locking: use version column, no DB lock</span>
+<span class="kw">SELECT</span> id, quantity, version <span class="kw">FROM</span> inventory <span class="kw">WHERE</span> product_id = <span class="num">42</span>;
+<span class="cmt">-- version = 5, quantity = 10</span>
+
+<span class="kw">UPDATE</span> inventory
+<span class="kw">SET</span> quantity = quantity - <span class="num">1</span>, version = version + <span class="num">1</span>
+<span class="kw">WHERE</span> product_id = <span class="num">42</span> <span class="kw">AND</span> version = <span class="num">5</span>;  <span class="cmt">-- Fails if version changed</span>
+<span class="cmt">-- If 0 rows updated → conflict! Retry with fresh read</span></code></pre>
+</div>
+
+<h2 id="replication">Replication</h2>
+<div class="diagram">
+<pre>
+  PRIMARY (Write)              REPLICAS (Read)
+  ┌─────────────────┐         ┌──────────────────┐
+  │ Accepts writes  │──WAL──▶│ Replica 1 (sync) │ ← strong consistency
+  │ Replication log │         └──────────────────┘
+  │ (WAL stream)    │──WAL──▶┌──────────────────┐
+  └─────────────────┘   async│ Replica 2        │ ← eventual consistency
+                              └──────────────────┘
+                         async▶┌──────────────────┐
+                              │ Replica 3 (RR)   │ ← read replica
+                              └──────────────────┘
+
+  Sync replication: write confirmed only after replica acks
+  → Zero data loss, but higher write latency
+
+  Async replication: write confirmed immediately
+  → Lower latency, potential data loss on primary crash
+</pre>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Node.js — Read/Write Splitting</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">const</span> writePool = <span class="kw">new</span> <span class="cls">Pool</span>({ host: <span class="str">'primary.db'</span>, max: <span class="num">10</span> });
+<span class="kw">const</span> readPool = <span class="kw">new</span> <span class="cls">Pool</span>({ host: <span class="str">'replica.db'</span>, max: <span class="num">30</span> });
+
+<span class="kw">class</span> <span class="cls">UserRepository</span> {
+  <span class="kw">async</span> <span class="fn">findById</span>(id) {
+    <span class="cmt">// Read → replica (can handle eventual consistency)</span>
+    <span class="kw">return</span> readPool.<span class="fn">query</span>(<span class="str">'SELECT * FROM users WHERE id = $1'</span>, [id]);
+  }
+
+  <span class="kw">async</span> <span class="fn">create</span>(data) {
+    <span class="cmt">// Write → primary (must be consistent)</span>
+    <span class="kw">return</span> writePool.<span class="fn">query</span>(<span class="str">'INSERT INTO users ... RETURNING *'</span>, data);
+  }
+
+  <span class="kw">async</span> <span class="fn">findAfterCreate</span>(id) {
+    <span class="cmt">// ⚠️ Replication lag! Just created user may not be in replica yet</span>
+    <span class="cmt">// Solution 1: read from primary for this specific query</span>
+    <span class="cmt">// Solution 2: read-your-writes sticky routing to primary for 1s</span>
+    <span class="cmt">// Solution 3: wait for replication (sync replication)</span>
+    <span class="kw">return</span> writePool.<span class="fn">query</span>(<span class="str">'SELECT * FROM users WHERE id = $1'</span>, [id]);
+  }
+}</code></pre>
+</div>
+
+<h2 id="sharding">Sharding</h2>
+<p>Sharding is horizontal partitioning — splitting data across multiple database servers. Use it when a single server can no longer handle your data volume or write load.</p>
+
+<div class="diagram">
+<pre>
+  Application
+      │
+      ▼
+  Shard Router (consistent hashing / range-based)
+  ├── user_id % 4 == 0 → Shard 0 (users 0,4,8,12...)
+  ├── user_id % 4 == 1 → Shard 1 (users 1,5,9,13...)
+  ├── user_id % 4 == 2 → Shard 2 (users 2,6,10,14...)
+  └── user_id % 4 == 3 → Shard 3 (users 3,7,11,15...)
+
+  Each shard is a full PostgreSQL instance
+  with its own replicas, backups, etc.
+</pre>
+</div>
+
+<div class="callout warning">
+  <div class="callout-icon">⚠️</div>
+  <div class="callout-body">
+    <div class="callout-title">Sharding is Hard — Delay as Long as Possible</div>
+    <p>Sharding breaks cross-shard JOINs, transactions, and foreign keys. You can't do <code>SELECT * FROM users JOIN orders</code> if users and orders are on different shards. Uber runs thousands of PostgreSQL shards — but it took years and dedicated infrastructure teams to get there. <strong>First: optimize queries, add indexes, scale vertically, add read replicas.</strong> Shard as a last resort.</p>
+  </div>
+</div>
+
+<h2 id="nosql">NoSQL Databases</h2>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Type</th><th>Database</th><th>Data Model</th><th>Best For</th><th>Company Examples</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Document</strong></td><td>MongoDB</td><td>JSON documents</td><td>Flexible schema, hierarchical data, rapid iteration</td><td>Expedia, eBay, Forbes</td></tr>
+      <tr><td><strong>Key-Value</strong></td><td>Redis, DynamoDB</td><td>Key → Value</td><td>Cache, sessions, counters, leaderboards</td><td>Twitter, Pinterest, Netflix</td></tr>
+      <tr><td><strong>Wide-Column</strong></td><td>Cassandra, HBase</td><td>Row + dynamic columns</td><td>Time series, IoT, write-heavy, massive scale</td><td>Netflix, Instagram, Uber</td></tr>
+      <tr><td><strong>Graph</strong></td><td>Neo4j, Neptune</td><td>Nodes + edges</td><td>Social networks, recommendations, fraud detection</td><td>LinkedIn, Airbnb</td></tr>
+      <tr><td><strong>Search</strong></td><td>Elasticsearch</td><td>Inverted index</td><td>Full-text search, analytics, logs</td><td>GitHub, Stack Overflow, Uber</td></tr>
+      <tr><td><strong>Time Series</strong></td><td>InfluxDB, TimescaleDB</td><td>Timestamped metrics</td><td>Metrics, monitoring, IoT sensor data</td><td>Grafana Cloud, PayPal</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2 id="connection-pools">Connection Pools & N+1</h2>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">SQL — N+1 Query Problem & Fix</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- ❌ N+1 Problem: 1 query to get users, then N queries for orders</span>
+<span class="cmt">-- Code: users.forEach(u => db.query('SELECT * FROM orders WHERE user_id = $1', u.id))</span>
+<span class="cmt">-- For 100 users = 101 queries!</span>
+
+<span class="cmt">-- ✅ Fix 1: JOIN (when you need all data together)</span>
+<span class="kw">SELECT</span>
+  u.id, u.name,
+  o.id <span class="kw">AS</span> order_id, o.total, o.status
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> o.user_id = u.id
+<span class="kw">WHERE</span> u.id = <span class="fn">ANY</span>(ARRAY[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>...<span class="num">100</span>]);
+<span class="cmt">-- 1 query for all users and their orders</span>
+
+<span class="cmt">-- ✅ Fix 2: Separate query with IN (when JOIN creates too many rows)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> id <span class="kw">IN</span> (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>...<span class="num">100</span>);  <span class="cmt">-- 1 query</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id <span class="kw">IN</span> (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>...<span class="num">100</span>);  <span class="cmt">-- 1 query</span>
+<span class="cmt">-- Total: 2 queries instead of 101</span></code></pre>
+</div>
+
+<div class="page-footer-nav">
+  <a href="api-design.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🔌 API Design</div>
+  </a>
+  <a href="backend-performance.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">📈 Performance Engineering</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#sql">SQL & Relational DBs</a></li>
+    <li><a href="#indexes">Indexes Deep Dive</a></li>
+    <li><a href="#transactions">Transactions & ACID</a></li>
+    <li><a href="#replication">Replication</a></li>
+    <li><a href="#sharding">Sharding</a></li>
+    <li><a href="#nosql">NoSQL Databases</a></li>
+    <li><a href="#connection-pools">N+1 & Connection Pools</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

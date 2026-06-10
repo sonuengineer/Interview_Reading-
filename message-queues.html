@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message Queues · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item active"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Message Queues</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-blue">Chapter 7</div>
+  <h1>Message Queues <span class="grad">& Event Streaming</span></h1>
+  <p class="page-intro">Queues decouple producers from consumers, enabling async processing, load leveling, and fault tolerance. From SQS to Kafka — master the full spectrum of async messaging patterns.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 65 min read</span>
+    <span class="meta-pill">🎯 Intermediate → Staff</span>
+    <span class="meta-pill">📬 Kafka deep dive</span>
+  </div>
+</div>
+
+<h2 id="why-queues">Why Message Queues?</h2>
+<div class="fiveW">
+  <div class="fiveW-card"><div class="fiveW-label">WHY</div><div class="fiveW-title">Why queues exist</div><div class="fiveW-text">Synchronous calls fail if the downstream service is down. Queues absorb spikes, retry failures, and decouple services so they can fail independently</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHAT</div><div class="fiveW-title">What they do</div><div class="fiveW-text">Buffer messages between services. Producer writes to queue; consumer reads at its own pace. Messages persist if consumer is down</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHERE</div><div class="fiveW-title">Use cases</div><div class="fiveW-text">Email/notification sending, order processing, video transcoding, fraud detection, event pipelines, log aggregation, microservice communication</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHO</div><div class="fiveW-title">Who uses it</div><div class="fiveW-text">Netflix uses Kafka for 2+ trillion events/day. Uber uses Kafka for trip events. LinkedIn invented Kafka. Stripe uses SQS for payment events</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHEN</div><div class="fiveW-title">When to use</div><div class="fiveW-text">Response time doesn't need to be immediate; work can be retried; downstream services have different scaling needs; fire-and-forget is acceptable</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">HOW</div><div class="fiveW-title">How it works</div><div class="fiveW-text">Producer sends message to queue/topic → Broker persists it → Consumer polls or is pushed → Consumer processes → Acknowledges → Broker removes</div></div>
+</div>
+
+<h2 id="kafka">Apache Kafka Deep Dive</h2>
+<p>Kafka is a distributed, fault-tolerant, high-throughput event streaming platform. It's not a traditional queue — it's a log. Messages are retained and can be replayed.</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>Concept</th><th>Description</th><th>Analogy</th></tr></thead>
+<tbody>
+<tr><td><strong>Topic</strong></td><td>A named category of messages (like a table in a DB)</td><td>A TV channel</td></tr>
+<tr><td><strong>Partition</strong></td><td>A topic is split into N partitions for parallelism. Each partition is an ordered log</td><td>Multiple lanes on a highway</td></tr>
+<tr><td><strong>Offset</strong></td><td>Sequential ID for each message within a partition. Consumers track their offset</td><td>Page number in a book</td></tr>
+<tr><td><strong>Consumer Group</strong></td><td>A group of consumers that divide partition work between them. Each partition goes to exactly one consumer in the group</td><td>A team dividing chapters to read</td></tr>
+<tr><td><strong>Broker</strong></td><td>A Kafka server node. Cluster = multiple brokers for fault tolerance</td><td>Post office branch</td></tr>
+<tr><td><strong>Producer</strong></td><td>Writes messages to topics. Can choose partition via key hashing</td><td>Letter writer</td></tr>
+<tr><td><strong>Replication Factor</strong></td><td>Each partition is replicated across N brokers. RF=3 means 2 broker failures tolerated</td><td>Making 3 copies of a document</td></tr>
+</tbody>
+</table>
+</div>
+
+<pre><code><span class="cmt"># Kafka producer (Python confluent-kafka)</span>
+<span class="kw">from</span> confluent_kafka <span class="kw">import</span> Producer
+<span class="kw">import</span> json
+
+producer = Producer({<span class="str">'bootstrap.servers'</span>: <span class="str">'kafka:9092'</span>})
+
+<span class="kw">def</span> <span class="fn">publish_order_event</span>(order_id: str, event_type: str, data: dict):
+    message = {
+        <span class="str">"eventType"</span>: event_type,  <span class="cmt"># "ORDER_PLACED", "ORDER_SHIPPED"</span>
+        <span class="str">"orderId"</span>: order_id,
+        <span class="str">"timestamp"</span>: datetime.utcnow().isoformat(),
+        <span class="str">"data"</span>: data
+    }
+    producer.produce(
+        topic=<span class="str">'orders'</span>,
+        key=order_id.encode(),       <span class="cmt"># same order → same partition (ordering)</span>
+        value=json.dumps(message).encode(),
+        callback=<span class="kw">lambda</span> err, msg: print(<span class="str">f"Delivered: {msg.offset()}"</span>) <span class="kw">if not</span> err <span class="kw">else</span> print(err)
+    )
+    producer.flush()
+
+<span class="cmt"># Kafka consumer (Python)</span>
+<span class="kw">from</span> confluent_kafka <span class="kw">import</span> Consumer
+
+consumer = Consumer({
+    <span class="str">'bootstrap.servers'</span>: <span class="str">'kafka:9092'</span>,
+    <span class="str">'group.id'</span>: <span class="str">'order-processing-service'</span>,  <span class="cmt"># consumer group</span>
+    <span class="str">'auto.offset.reset'</span>: <span class="str">'earliest'</span>,           <span class="cmt"># start from beginning if new group</span>
+    <span class="str">'enable.auto.commit'</span>: <span class="kw">False</span>,                <span class="cmt"># manual commit for exactly-once</span>
+})
+consumer.subscribe([<span class="str">'orders'</span>])
+
+<span class="kw">while True</span>:
+    msg = consumer.poll(timeout=<span class="num">1.0</span>)
+    <span class="kw">if</span> msg <span class="kw">is None</span>: <span class="kw">continue</span>
+    <span class="kw">if</span> msg.error(): handle_error(msg.error()); <span class="kw">continue</span>
+
+    event = json.loads(msg.value())
+    <span class="kw">try</span>:
+        process_order_event(event)
+        consumer.commit(message=msg)  <span class="cmt"># only commit on success</span>
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        send_to_dlq(event, str(e))    <span class="cmt"># dead letter queue on failure</span>
+        consumer.commit(message=msg)  <span class="cmt"># commit to move on</span></code></pre>
+
+<h2 id="delivery-semantics">Delivery Semantics</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Semantic</th><th>Meaning</th><th>Risk</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td><strong>At Most Once</strong></td><td>Message delivered 0 or 1 times. Fire-and-forget, no retry</td><td>Message loss on failure</td><td>Metrics, logging, non-critical notifications</td></tr>
+<tr><td><strong>At Least Once</strong></td><td>Message delivered 1+ times. Retry on failure. May duplicate</td><td>Duplicate processing</td><td>Most use cases with idempotent consumers</td></tr>
+<tr><td><strong>Exactly Once</strong></td><td>Message delivered exactly 1 time. No loss, no duplicates</td><td>Complex, lower throughput</td><td>Financial transactions, inventory updates</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout info">
+  <strong>💡 At Least Once + Idempotent Consumers</strong> is the industry standard. Design your consumer to be idempotent — processing the same message twice has no additional effect. Store <code>message_id</code> in a processed-set (Redis or DB). Check before processing. This is simpler and more reliable than true exactly-once.
+</div>
+
+<h2 id="patterns">Messaging Patterns</h2>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">Queue (Point-to-Point)</div>
+    <p>One producer, one consumer. Message removed after consumption. Used in SQS, RabbitMQ.</p>
+    <ul>
+      <li>Load leveling: buffer bursts of work</li>
+      <li>Task distribution: divide work across workers</li>
+      <li>Retry with backoff + DLQ for poison messages</li>
+      <li>Example: order processing, email sending</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">Pub/Sub (Fan-Out)</div>
+    <p>One producer, many consumers. All subscribers get the message. Used in Kafka, SNS, Redis Pub/Sub.</p>
+    <ul>
+      <li>Event broadcasting: "order placed" → inventory, email, analytics all receive it</li>
+      <li>Event sourcing: all services react to the same event</li>
+      <li>Example: Stripe webhook → your listeners</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="dlq">Dead Letter Queues</h2>
+<p>A DLQ captures messages that failed processing after N retries. Without a DLQ, a poison message can block the entire queue forever (head-of-line blocking).</p>
+
+<pre><code><span class="cmt"># AWS SQS with Dead Letter Queue (Python boto3)</span>
+<span class="kw">import</span> boto3, json
+sqs = boto3.client(<span class="str">'sqs'</span>, region_name=<span class="str">'us-east-1'</span>)
+
+<span class="cmt"># Create main queue with DLQ configured</span>
+dlq_url = sqs.create_queue(QueueName=<span class="str">'orders-dlq'</span>)[<span class="str">'QueueUrl'</span>]
+dlq_arn = sqs.get_queue_attributes(QueueUrl=dlq_url, AttributeNames=[<span class="str">'QueueArn'</span>])[<span class="str">'Attributes'</span>][<span class="str">'QueueArn'</span>]
+
+main_queue = sqs.create_queue(
+    QueueName=<span class="str">'orders'</span>,
+    Attributes={
+        <span class="str">'RedrivePolicy'</span>: json.dumps({
+            <span class="str">'deadLetterTargetArn'</span>: dlq_arn,
+            <span class="str">'maxReceiveCount'</span>: <span class="str">'3'</span>  <span class="cmt"># after 3 failures → send to DLQ</span>
+        }),
+        <span class="str">'VisibilityTimeout'</span>: <span class="str">'30'</span>  <span class="cmt"># 30s processing window</span>
+    }
+)
+
+<span class="cmt"># Consumer with error handling</span>
+<span class="kw">def</span> <span class="fn">process_messages</span>():
+    <span class="kw">while True</span>:
+        response = sqs.receive_message(
+            QueueUrl=main_queue[<span class="str">'QueueUrl'</span>],
+            MaxNumberOfMessages=<span class="num">10</span>,
+            WaitTimeSeconds=<span class="num">20</span>  <span class="cmt"># long polling — reduces empty receives</span>
+        )
+        <span class="kw">for</span> msg <span class="kw">in</span> response.get(<span class="str">'Messages'</span>, []):
+            <span class="kw">try</span>:
+                process_order(json.loads(msg[<span class="str">'Body'</span>]))
+                sqs.delete_message(  <span class="cmt"># ACK: remove from queue</span>
+                    QueueUrl=main_queue[<span class="str">'QueueUrl'</span>],
+                    ReceiptHandle=msg[<span class="str">'ReceiptHandle'</span>]
+                )
+            <span class="kw">except Exception</span>:
+                <span class="kw">pass</span>  <span class="cmt"># visibility timeout expires → SQS retries → after 3x → DLQ</span></code></pre>
+
+<h2 id="comparison">Kafka vs RabbitMQ vs SQS</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Feature</th><th>Kafka</th><th>RabbitMQ</th><th>AWS SQS</th></tr></thead>
+<tbody>
+<tr><td>Type</td><td>Event log / streaming</td><td>Traditional message broker</td><td>Managed simple queue</td></tr>
+<tr><td>Message retention</td><td>Configurable (days/forever)</td><td>Until consumed</td><td>Up to 14 days</td></tr>
+<tr><td>Throughput</td><td>Millions/sec</td><td>~50k/sec</td><td>~3000/sec per queue</td></tr>
+<tr><td>Replay</td><td>Yes — consumers can rewind</td><td>No</td><td>No</td></tr>
+<tr><td>Ordering</td><td>Per partition (with key)</td><td>Per queue</td><td>FIFO queues only</td></tr>
+<tr><td>Routing</td><td>Topic + partition key</td><td>Rich: exchanges, bindings</td><td>Simple</td></tr>
+<tr><td>Ops complexity</td><td>High (cluster management)</td><td>Medium</td><td>None (managed)</td></tr>
+<tr><td>Best for</td><td>Event streaming, audit logs, large scale</td><td>Task queues, routing, pub/sub</td><td>Simple async tasks, serverless</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="page-footer-nav">
+  <a href="authentication-security.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🔐 Auth & Security</div>
+  </a>
+  <a href="distributed-systems.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🌐 Distributed Systems</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#why-queues">Why Queues?</a></li>
+    <li><a href="#kafka">Kafka Deep Dive</a></li>
+    <li><a href="#delivery-semantics">Delivery Semantics</a></li>
+    <li><a href="#patterns">Messaging Patterns</a></li>
+    <li><a href="#dlq">Dead Letter Queues</a></li>
+    <li><a href="#comparison">Kafka vs RabbitMQ vs SQS</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

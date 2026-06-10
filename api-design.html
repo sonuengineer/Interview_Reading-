@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Design · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item active"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> API Design</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-green">Chapter 2</div>
+  <h1>API <span class="grad">Design</span> Masterclass</h1>
+  <p class="page-intro">APIs are the contracts between systems. A well-designed API is a joy to use; a poorly designed one haunts engineers for years. Learn REST, GraphQL, gRPC, and the principles used by Stripe, Twilio, and GitHub — APIs celebrated by developers worldwide.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 75 min read</span>
+    <span class="meta-pill">🎯 All levels</span>
+    <span class="meta-pill">🔌 REST · GraphQL · gRPC</span>
+  </div>
+</div>
+
+<h2 id="rest">REST APIs</h2>
+<p><strong>REST</strong> (Representational State Transfer) is an architectural style defined by Roy Fielding in 2000. It's the dominant API style for web services — when in doubt, build REST.</p>
+
+<div class="fiveW">
+  <div class="fiveW-card"><div class="fiveW-label">WHY</div><div class="fiveW-title">Why REST</div><div class="fiveW-text">Simple, ubiquitous, works everywhere HTTP works, excellent tooling, easily cacheable</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHAT</div><div class="fiveW-title">What REST is</div><div class="fiveW-text">Stateless client-server architecture using HTTP methods (GET/POST/PUT/DELETE) on resources (nouns)</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHERE</div><div class="fiveW-title">Where to use REST</div><div class="fiveW-text">Public APIs, mobile backends, browser-accessible APIs, simple CRUD services</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHEN</div><div class="fiveW-title">When to choose REST</div><div class="fiveW-text">External-facing APIs, diverse clients, HTTP caching needed, simple request-response pattern</div></div>
+</div>
+
+<h3>Resource Design — The Heart of REST</h3>
+<p>REST is about resources (nouns), not actions (verbs). The HTTP method IS the verb.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">REST — Resource URL Design</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt"># ✅ CORRECT — Nouns, hierarchy, plural</span>
+GET    /api/v1/users              <span class="cmt"># List users</span>
+POST   /api/v1/users              <span class="cmt"># Create user</span>
+GET    /api/v1/users/{id}         <span class="cmt"># Get specific user</span>
+PUT    /api/v1/users/{id}         <span class="cmt"># Replace user</span>
+PATCH  /api/v1/users/{id}         <span class="cmt"># Update fields</span>
+DELETE /api/v1/users/{id}         <span class="cmt"># Delete user</span>
+
+<span class="cmt"># Nested resources — express ownership</span>
+GET    /api/v1/users/{id}/orders  <span class="cmt"># Orders belonging to user</span>
+POST   /api/v1/users/{id}/orders  <span class="cmt"># Create order for user</span>
+GET    /api/v1/orders/{id}/items  <span class="cmt"># Items in an order</span>
+
+<span class="cmt"># ❌ WRONG — Verbs in URL (RPC style, not REST)</span>
+POST   /api/createUser            <span class="cmt"># Anti-pattern</span>
+GET    /api/getUser?id=123        <span class="cmt"># Anti-pattern</span>
+POST   /api/deleteUser            <span class="cmt"># Anti-pattern</span>
+GET    /api/users/fetch-all       <span class="cmt"># Anti-pattern</span>
+
+<span class="cmt"># ✅ Actions as sub-resources (when needed)</span>
+POST   /api/v1/orders/{id}/cancel     <span class="cmt"># Action on resource</span>
+POST   /api/v1/payments/{id}/refund   <span class="cmt"># Action on resource</span>
+POST   /api/v1/users/{id}/verify      <span class="cmt"># Trigger verification</span></code></pre>
+</div>
+
+<h3>Request & Response Design</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">JSON — API Response Format (Stripe-inspired)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">// ✅ Consistent success response</span>
+{
+  <span class="str">"data"</span>: {
+    <span class="str">"id"</span>: <span class="str">"usr_2abc123"</span>,
+    <span class="str">"object"</span>: <span class="str">"user"</span>,
+    <span class="str">"email"</span>: <span class="str">"jane@example.com"</span>,
+    <span class="str">"name"</span>: <span class="str">"Jane Doe"</span>,
+    <span class="str">"created_at"</span>: <span class="str">"2024-01-15T10:30:00Z"</span>,
+    <span class="str">"updated_at"</span>: <span class="str">"2024-01-20T14:22:00Z"</span>
+  },
+  <span class="str">"meta"</span>: {
+    <span class="str">"request_id"</span>: <span class="str">"req_xYz789"</span>   <span class="cmt">// For tracing/debugging</span>
+  }
+}
+
+<span class="cmt">// ✅ Consistent error response</span>
+{
+  <span class="str">"error"</span>: {
+    <span class="str">"code"</span>: <span class="str">"validation_error"</span>,     <span class="cmt">// Machine-readable code</span>
+    <span class="str">"message"</span>: <span class="str">"Email is invalid"</span>,   <span class="cmt">// Human-readable message</span>
+    <span class="str">"param"</span>: <span class="str">"email"</span>,               <span class="cmt">// Which field failed</span>
+    <span class="str">"doc_url"</span>: <span class="str">"https://docs.api.com/errors#validation_error"</span>
+  },
+  <span class="str">"meta"</span>: {
+    <span class="str">"request_id"</span>: <span class="str">"req_xYz789"</span>
+  }
+}
+
+<span class="cmt">// ✅ List response with pagination</span>
+{
+  <span class="str">"data"</span>: [...],
+  <span class="str">"pagination"</span>: {
+    <span class="str">"total"</span>: <span class="num">1024</span>,
+    <span class="str">"page"</span>: <span class="num">1</span>,
+    <span class="str">"per_page"</span>: <span class="num">20</span>,
+    <span class="str">"next_cursor"</span>: <span class="str">"eyJpZCI6IjEwMCJ9"</span>  <span class="cmt">// Cursor-based</span>
+  }
+}</code></pre>
+</div>
+
+<h2 id="pagination">Pagination Strategies</h2>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Strategy</th><th>How It Works</th><th>Pros</th><th>Cons</th><th>Use When</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Offset/Limit</strong></td>
+        <td><code>?offset=20&limit=10</code></td>
+        <td>Simple, random access, easy UI</td>
+        <td>Slow at high offset, drift on mutations</td>
+        <td>Admin UIs, small datasets</td>
+      </tr>
+      <tr>
+        <td><strong>Page/Size</strong></td>
+        <td><code>?page=3&size=20</code></td>
+        <td>Intuitive, page numbers</td>
+        <td>Same offset problems</td>
+        <td>User-facing paginated lists</td>
+      </tr>
+      <tr>
+        <td><strong>Cursor-Based</strong></td>
+        <td><code>?after=cursor&limit=20</code></td>
+        <td>Stable, consistent, no drift</td>
+        <td>No random access, opaque cursors</td>
+        <td>Feeds, infinite scroll, large datasets</td>
+      </tr>
+      <tr>
+        <td><strong>Keyset</strong></td>
+        <td><code>?last_id=100&limit=20</code></td>
+        <td>Uses index efficiently</td>
+        <td>Tied to sort order, complex multi-column</td>
+        <td>High-volume feeds, sorted by ID/timestamp</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">SQL — Cursor Pagination Implementation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">-- Cursor pagination: encode cursor as base64(id)</span>
+<span class="cmt">-- Client sends: GET /users?after=eyJpZCI6IjUwIn0&limit=20</span>
+<span class="cmt">-- Server decodes cursor → {id: "50"}</span>
+
+<span class="cmt">-- ✅ Efficient: uses index on id</span>
+<span class="kw">SELECT</span> id, name, email, created_at
+<span class="kw">FROM</span> users
+<span class="kw">WHERE</span> id &gt; <span class="num">50</span>    <span class="cmt">-- decoded from cursor</span>
+<span class="kw">ORDER BY</span> id <span class="kw">ASC</span>
+<span class="kw">LIMIT</span> <span class="num">21</span>;          <span class="cmt">-- fetch one extra to detect hasNextPage</span>
+
+<span class="cmt">-- If 21 rows returned → hasNextPage = true, return first 20</span>
+<span class="cmt">-- Next cursor = encode(last_item.id)</span>
+
+<span class="cmt">-- ❌ Inefficient at scale: full table scan then skip</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">ORDER BY</span> id <span class="kw">LIMIT</span> <span class="num">20</span> <span class="kw">OFFSET</span> <span class="num">1000000</span>;
+<span class="cmt">-- PostgreSQL reads 1,000,020 rows just to return 20!</span></code></pre>
+</div>
+
+<h2 id="rate-limiting">Rate Limiting</h2>
+<p>Rate limiting protects your API from abuse, ensures fair usage, and prevents accidental DDoS by misbehaving clients.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Algorithm</th><th>How It Works</th><th>Burst Handling</th><th>Memory</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Fixed Window</strong></td><td>100 req/min — counter resets every minute</td><td>Poor — 200 req at window boundary</td><td>O(1)</td></tr>
+      <tr><td><strong>Sliding Window Log</strong></td><td>Store timestamp of each request, count in window</td><td>Excellent</td><td>O(requests)</td></tr>
+      <tr><td><strong>Sliding Window Counter</strong></td><td>Weighted count from previous window + current</td><td>Good approximation</td><td>O(1)</td></tr>
+      <tr><td><strong>Token Bucket</strong></td><td>Tokens refill at rate r, consumed per request</td><td>Excellent — allows bursts up to bucket size</td><td>O(1)</td></tr>
+      <tr><td><strong>Leaky Bucket</strong></td><td>Queue requests, process at fixed rate</td><td>None — smooths traffic</td><td>O(queue size)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">JavaScript — Token Bucket Rate Limiter (Redis)</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">// Redis Lua script for atomic token bucket</span>
+<span class="cmt">// Stripe uses token bucket: 100 req/s, burst up to 500</span>
+<span class="kw">const</span> TOKEN_BUCKET_SCRIPT = <span class="str">`
+local key = KEYS[1]
+local rate = tonumber(ARGV[1])      -- tokens per second
+local capacity = tonumber(ARGV[2])  -- max burst size
+local now = tonumber(ARGV[3])       -- current timestamp ms
+local cost = tonumber(ARGV[4])      -- tokens this request costs
+
+local bucket = redis.call('HMGET', key, 'tokens', 'last_refill')
+local tokens = tonumber(bucket[1]) or capacity
+local last_refill = tonumber(bucket[2]) or now
+
+-- Calculate tokens to add since last refill
+local elapsed = (now - last_refill) / 1000
+local new_tokens = math.min(capacity, tokens + (elapsed * rate))
+
+if new_tokens &lt; cost then
+  return {0, math.ceil((cost - new_tokens) / rate * 1000)}
+end
+
+new_tokens = new_tokens - cost
+redis.call('HMSET', key, 'tokens', new_tokens, 'last_refill', now)
+redis.call('PEXPIRE', key, math.ceil(capacity / rate * 1000))
+return {1, 0}
+`</span>;
+
+<span class="kw">async function</span> <span class="fn">checkRateLimit</span>(userId, endpoint) {
+  <span class="kw">const</span> key = <span class="str">`ratelimit:</span>${userId}<span class="str">:</span>${endpoint}<span class="str">`</span>;
+  <span class="kw">const</span> [allowed, retryAfterMs] = <span class="kw">await</span> redis.<span class="fn">eval</span>(
+    TOKEN_BUCKET_SCRIPT, <span class="num">1</span>, key,
+    <span class="num">100</span>,       <span class="cmt">// rate: 100 tokens/second</span>
+    <span class="num">500</span>,       <span class="cmt">// capacity: burst up to 500</span>
+    Date.<span class="fn">now</span>(), <span class="cmt">// now</span>
+    <span class="num">1</span>          <span class="cmt">// cost: 1 token per request</span>
+  );
+
+  <span class="kw">if</span> (!allowed) {
+    <span class="kw">throw new</span> <span class="cls">RateLimitError</span>({
+      retryAfter: Math.<span class="fn">ceil</span>(retryAfterMs / <span class="num">1000</span>),
+      message: <span class="str">`Rate limit exceeded. Retry after </span>${retryAfterMs}<span class="str">ms`</span>
+    });
+  }
+}</code></pre>
+</div>
+
+<h2 id="versioning">API Versioning</h2>
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Strategy</th><th>Example</th><th>Pros</th><th>Cons</th><th>Used By</th></tr></thead>
+    <tbody>
+      <tr><td><strong>URL Path</strong></td><td><code>/api/v1/users</code></td><td>Explicit, easy routing, bookmarkable</td><td>URL proliferation, breaks REST purism</td><td>Stripe, Twitter, GitHub</td></tr>
+      <tr><td><strong>Query Param</strong></td><td><code>/api/users?version=1</code></td><td>Optional, backwards compatible</td><td>Easy to forget, cache pollution</td><td>Amazon AWS</td></tr>
+      <tr><td><strong>Header</strong></td><td><code>API-Version: 2024-01-01</code></td><td>Clean URLs, flexible</td><td>Hard to test in browser, hidden complexity</td><td>Stripe (also), Shopify</td></tr>
+      <tr><td><strong>Content-Type</strong></td><td><code>Accept: application/vnd.api.v2+json</code></td><td>REST-pure, semantic</td><td>Complex, rarely implemented correctly</td><td>GitHub (v3 → v4)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="callout info">
+  <div class="callout-icon">💡</div>
+  <div class="callout-body">
+    <div class="callout-title">Stripe's Versioning Strategy</div>
+    <p>Stripe uses date-based API versions (<code>Stripe-Version: 2024-06-20</code>). Each API key is locked to the version at account creation. Breaking changes create new versions. Old versions are maintained for years. This gives clients stability while letting Stripe evolve the API. <strong>This is the gold standard for API versioning.</strong></p>
+  </div>
+</div>
+
+<h2 id="idempotency">Idempotency</h2>
+<p>An operation is <strong>idempotent</strong> if calling it multiple times has the same effect as calling it once. Critical for payment APIs, order creation, and anything where retries could cause duplicate actions.</p>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Node.js — Idempotency Key Implementation</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">// Client sends unique key; server uses it to deduplicate</span>
+<span class="cmt">// POST /payments</span>
+<span class="cmt">// Idempotency-Key: payment-order-123-attempt-1</span>
+
+<span class="kw">async function</span> <span class="fn">createPaymentIdempotent</span>(req, res) {
+  <span class="kw">const</span> idempotencyKey = req.headers[<span class="str">'idempotency-key'</span>];
+
+  <span class="kw">if</span> (!idempotencyKey) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ error: <span class="str">'Idempotency-Key header required'</span> });
+  }
+
+  <span class="cmt">// Check if we've seen this key before</span>
+  <span class="kw">const</span> cacheKey = <span class="str">`idempotency:</span>${req.userId}<span class="str">:</span>${idempotencyKey}<span class="str">`</span>;
+  <span class="kw">const</span> cached = <span class="kw">await</span> redis.<span class="fn">get</span>(cacheKey);
+
+  <span class="kw">if</span> (cached) {
+    <span class="cmt">// Return original response — DO NOT process again</span>
+    <span class="kw">const</span> originalResponse = <span class="fn">JSON.parse</span>(cached);
+    res.<span class="fn">set</span>(<span class="str">'Idempotent-Replayed'</span>, <span class="str">'true'</span>);
+    <span class="kw">return</span> res.<span class="fn">status</span>(originalResponse.statusCode).<span class="fn">json</span>(originalResponse.body);
+  }
+
+  <span class="cmt">// Process the payment</span>
+  <span class="kw">const</span> payment = <span class="kw">await</span> paymentService.<span class="fn">charge</span>(req.body);
+
+  <span class="cmt">// Cache the response for 24 hours (typical idempotency window)</span>
+  <span class="kw">await</span> redis.<span class="fn">setex</span>(cacheKey, <span class="num">86400</span>, <span class="fn">JSON.stringify</span>({
+    statusCode: <span class="num">201</span>,
+    body: payment
+  }));
+
+  res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>(payment);
+}</code></pre>
+</div>
+
+<h2 id="graphql">GraphQL</h2>
+<p>GraphQL is a query language and runtime for APIs created by Facebook (2015). It solves the over-fetching and under-fetching problems of REST by letting clients request exactly the data they need.</p>
+
+<div class="fiveW">
+  <div class="fiveW-card"><div class="fiveW-label">WHY</div><div class="fiveW-title">Why GraphQL</div><div class="fiveW-text">REST returns fixed shapes. Mobile clients need different data than desktop. Multiple round trips waste bandwidth.</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHAT</div><div class="fiveW-title">What it is</div><div class="fiveW-text">Schema-first query language. Single endpoint (/graphql). Client specifies exact fields. Strong typing.</div></div>
+  <div class="fiveW-card"><div class="fiveW-label">WHEN</div><div class="fiveW-title">When to use</div><div class="fiveW-text">Multiple client types (web, mobile, TV), rapidly evolving APIs, complex nested data, teams owning different pieces</div></div>
+</div>
+
+<div class="compare-grid">
+  <div class="compare-card pro">
+    <h4>✅ GraphQL Strengths</h4>
+    <ul>
+      <li>Client gets exactly what it asks for</li>
+      <li>Single request for nested data</li>
+      <li>Strong schema = self-documentation</li>
+      <li>Real-time with subscriptions</li>
+      <li>Great for complex/nested domains</li>
+      <li>Used by: GitHub, Shopify, Twitter</li>
+    </ul>
+  </div>
+  <div class="compare-card con">
+    <h4>❌ GraphQL Weaknesses</h4>
+    <ul>
+      <li>HTTP caching doesn't work (POST)</li>
+      <li>N+1 query problem (use DataLoader)</li>
+      <li>Complex queries can be expensive</li>
+      <li>Learning curve for teams</li>
+      <li>Overkill for simple CRUD APIs</li>
+      <li>File uploads are awkward</li>
+    </ul>
+  </div>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">GraphQL — Schema & Query Example</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt"># Schema definition</span>
+<span class="kw">type</span> <span class="cls">User</span> {
+  id: <span class="cls">ID</span>!
+  name: <span class="cls">String</span>!
+  email: <span class="cls">String</span>!
+  orders: [<span class="cls">Order</span>!]!
+  createdAt: <span class="cls">DateTime</span>!
+}
+
+<span class="kw">type</span> <span class="cls">Order</span> {
+  id: <span class="cls">ID</span>!
+  total: <span class="cls">Float</span>!
+  status: <span class="cls">OrderStatus</span>!
+  items: [<span class="cls">OrderItem</span>!]!
+}
+
+<span class="kw">type</span> <span class="cls">Query</span> {
+  user(id: <span class="cls">ID</span>!): <span class="cls">User</span>
+  users(first: <span class="cls">Int</span>, after: <span class="cls">String</span>): <span class="cls">UserConnection</span>!
+}
+
+<span class="kw">type</span> <span class="cls">Mutation</span> {
+  createUser(input: <span class="cls">CreateUserInput</span>!): <span class="cls">User</span>!
+  updateUser(id: <span class="cls">ID</span>!, input: <span class="cls">UpdateUserInput</span>!): <span class="cls">User</span>!
+}
+
+<span class="kw">type</span> <span class="cls">Subscription</span> {
+  orderStatusChanged(orderId: <span class="cls">ID</span>!): <span class="cls">Order</span>!
+}
+
+<span class="cmt"># Client query — gets exactly these fields, nothing more</span>
+<span class="kw">query</span> <span class="fn">GetUserWithOrders</span>($userId: <span class="cls">ID</span>!) {
+  user(id: $userId) {
+    id
+    name
+    orders {
+      id
+      total
+      status
+    }
+  }
+}
+
+<span class="cmt"># Mobile app query — wants less data</span>
+<span class="kw">query</span> <span class="fn">GetUserNameOnly</span>($userId: <span class="cls">ID</span>!) {
+  user(id: $userId) {
+    id
+    name
+  }
+}</code></pre>
+</div>
+
+<h3>The N+1 Problem in GraphQL</h3>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">JavaScript — DataLoader for N+1 Prevention</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="kw">import</span> DataLoader <span class="kw">from</span> <span class="str">'dataloader'</span>;
+
+<span class="cmt">// ❌ N+1 Problem:</span>
+<span class="cmt">// Query 10 users → 1 query</span>
+<span class="cmt">// Each user.orders resolver → 10 queries</span>
+<span class="cmt">// Total: 11 queries!</span>
+
+<span class="cmt">// ✅ DataLoader batches and caches:</span>
+<span class="cmt">// Collects all userIds requested in same tick</span>
+<span class="cmt">// Fires ONE query: SELECT * FROM orders WHERE user_id IN (1,2,3,...)</span>
+<span class="cmt">// Returns results to each individual resolver</span>
+
+<span class="kw">const</span> orderLoader = <span class="kw">new</span> <span class="cls">DataLoader</span>(<span class="kw">async</span> (userIds) =&gt; {
+  <span class="cmt">// Called once with ALL accumulated ids</span>
+  <span class="kw">const</span> orders = <span class="kw">await</span> db.<span class="fn">query</span>(
+    <span class="str">`SELECT * FROM orders WHERE user_id = ANY($1)`</span>,
+    [userIds]
+  );
+
+  <span class="cmt">// Must return results in same order as input ids</span>
+  <span class="kw">const</span> ordersByUserId = <span class="fn">groupBy</span>(orders, <span class="str">'user_id'</span>);
+  <span class="kw">return</span> userIds.<span class="fn">map</span>(id =&gt; ordersByUserId[id] || []);
+});
+
+<span class="cmt">// Resolver — DataLoader deduplicates across resolver invocations</span>
+<span class="kw">const</span> resolvers = {
+  <span class="cls">User</span>: {
+    orders: (user) =&gt; orderLoader.<span class="fn">load</span>(user.id)
+  }
+};</code></pre>
+</div>
+
+<h2 id="grpc">gRPC</h2>
+<p>gRPC is Google's Remote Procedure Call framework built on HTTP/2 and Protocol Buffers. It's used for service-to-service communication in microservices where performance matters.</p>
+
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>Feature</th><th>REST/JSON</th><th>GraphQL</th><th>gRPC</th></tr></thead>
+    <tbody>
+      <tr><td>Protocol</td><td>HTTP/1.1+</td><td>HTTP/1.1+</td><td>HTTP/2</td></tr>
+      <tr><td>Format</td><td>JSON (text)</td><td>JSON (text)</td><td>Protobuf (binary)</td></tr>
+      <tr><td>Performance</td><td>Moderate</td><td>Moderate</td><td>🚀 Excellent (5-10x faster)</td></tr>
+      <tr><td>Streaming</td><td>Limited (SSE)</td><td>Subscriptions</td><td>Native bidirectional</td></tr>
+      <tr><td>Type Safety</td><td>None (manual)</td><td>Schema (JS)</td><td>Strong (compiled)</td></tr>
+      <tr><td>Browser Support</td><td>✅ Native</td><td>✅ Native</td><td>⚠ Needs grpc-web proxy</td></tr>
+      <tr><td>Best For</td><td>Public APIs</td><td>Complex client needs</td><td>Internal microservices</td></tr>
+      <tr><td>Used By</td><td>Everyone</td><td>GitHub, Shopify</td><td>Google, Netflix, Uber, Lyft</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">Protobuf — gRPC Service Definition</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code><span class="cmt">// user_service.proto</span>
+syntax = <span class="str">"proto3"</span>;
+package user;
+
+service <span class="cls">UserService</span> {
+  <span class="cmt">// Unary RPC — one request, one response</span>
+  rpc <span class="fn">GetUser</span>(<span class="cls">GetUserRequest</span>) <span class="kw">returns</span> (<span class="cls">User</span>);
+
+  <span class="cmt">// Server streaming — one request, stream of responses</span>
+  rpc <span class="fn">ListUsers</span>(<span class="cls">ListUsersRequest</span>) <span class="kw">returns</span> (stream <span class="cls">User</span>);
+
+  <span class="cmt">// Client streaming — stream of requests, one response</span>
+  rpc <span class="fn">BulkCreateUsers</span>(stream <span class="cls">CreateUserRequest</span>) <span class="kw">returns</span> (<span class="cls">BulkCreateResponse</span>);
+
+  <span class="cmt">// Bidirectional streaming — both sides stream</span>
+  rpc <span class="fn">Chat</span>(stream <span class="cls">ChatMessage</span>) <span class="kw">returns</span> (stream <span class="cls">ChatMessage</span>);
+}
+
+message <span class="cls">User</span> {
+  string id = <span class="num">1</span>;
+  string name = <span class="num">2</span>;
+  string email = <span class="num">3</span>;
+  int64 created_at = <span class="num">4</span>;
+}
+
+message <span class="cls">GetUserRequest</span> {
+  string id = <span class="num">1</span>;
+}
+
+<span class="cmt">// Why Protobuf is faster than JSON:</span>
+<span class="cmt">// JSON: {"id":"abc","name":"Jane","email":"j@e.com"} = 43 bytes</span>
+<span class="cmt">// Proto: binary encoding ≈ 15 bytes (3x smaller)</span>
+<span class="cmt">// Parsing: proto ~5x faster (no string parsing)</span></code></pre>
+</div>
+
+<h2 id="when-to-use">When to Use Which API Style</h2>
+<div class="decision-tree">
+  <p style="font-weight:600;margin-bottom:16px">Decision: REST vs GraphQL vs gRPC</p>
+  <p>Is this an <strong>external/public API</strong>?</p>
+  <div style="margin-left:20px;border-left:2px solid var(--border);padding-left:16px;margin-top:8px">
+    <p><span class="dt-yes">→ YES</span>: Do clients need very different data shapes?</p>
+    <div style="margin-left:20px;border-left:2px solid var(--border);padding-left:16px">
+      <p><span class="dt-yes">→ YES</span>: Multiple client types, complex domain → <strong style="color:var(--accent3)">GraphQL</strong></p>
+      <p><span class="dt-no">→ NO</span>: Simple CRUD, diverse clients → <strong style="color:var(--accent2)">REST</strong></p>
+    </div>
+    <p><span class="dt-no">→ NO</span>: Internal service-to-service?</p>
+    <div style="margin-left:20px;border-left:2px solid var(--border);padding-left:16px">
+      <p><span class="dt-yes">→ YES</span>: Performance critical, polyglot services → <strong style="color:var(--accent5)">gRPC</strong></p>
+      <p><span class="dt-no">→ NO</span>: Internal, less critical → <strong style="color:var(--accent2)">REST</strong> (simpler)</p>
+    </div>
+  </div>
+</div>
+
+<div class="callout success">
+  <div class="callout-icon">🎯</div>
+  <div class="callout-body">
+    <div class="callout-title">Netflix's API Architecture</div>
+    <p>Netflix uses all three: <strong>REST</strong> for their developer APIs, <strong>GraphQL</strong> (Falcor-inspired, then actual GraphQL) for their client-facing API gateway that serves iOS, Android, Smart TV, and web with different data shapes, and <strong>gRPC</strong> for internal microservice communication. This is the hybrid approach most large companies end up at.</p>
+  </div>
+</div>
+
+<h2 id="openapi">OpenAPI & Documentation</h2>
+<div class="code-block">
+  <div class="code-header"><span class="code-lang">YAML — OpenAPI 3.1 Specification</span><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+  <pre><code>openapi: <span class="str">"3.1.0"</span>
+info:
+  title: <span class="cls">User API</span>
+  version: <span class="str">"1.0.0"</span>
+  description: <span class="str">"Manage users in the platform"</span>
+
+paths:
+  /users/{id}:
+    get:
+      summary: <span class="cls">Get a user</span>
+      operationId: <span class="fn">getUser</span>
+      parameters:
+        - name: id
+          in: path
+          required: <span class="kw">true</span>
+          schema:
+            type: string
+            format: uuid
+      responses:
+        <span class="str">"200"</span>:
+          description: <span class="cls">User found</span>
+          content:
+            application/json:
+              schema:
+                <span class="kw">$ref</span>: <span class="str">"#/components/schemas/User"</span>
+        <span class="str">"404"</span>:
+          description: <span class="cls">User not found</span>
+          content:
+            application/json:
+              schema:
+                <span class="kw">$ref</span>: <span class="str">"#/components/schemas/Error"</span>
+
+components:
+  schemas:
+    User:
+      type: object
+      required: [id, name, email]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: <span class="num">1</span>
+          maxLength: <span class="num">100</span>
+        email:
+          type: string
+          format: email
+        created_at:
+          type: string
+          format: date-time</code></pre>
+</div>
+
+<div class="page-footer-nav">
+  <a href="backend-fundamentals.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">⚡ Backend Fundamentals</div>
+  </a>
+  <a href="database-engineering.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🗄 Database Engineering</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#rest">REST APIs</a></li>
+    <li><a href="#pagination">Pagination Strategies</a></li>
+    <li><a href="#rate-limiting">Rate Limiting</a></li>
+    <li><a href="#versioning">API Versioning</a></li>
+    <li><a href="#idempotency">Idempotency</a></li>
+    <li><a href="#graphql">GraphQL</a></li>
+    <li><a href="#grpc">gRPC</a></li>
+    <li><a href="#when-to-use">When to Use Which</a></li>
+    <li><a href="#openapi">OpenAPI Docs</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>

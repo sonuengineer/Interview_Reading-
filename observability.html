@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observability · Backend Engineering Handbook</title>
+<link rel="stylesheet" href="shared.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">⚙</div>
+      <div><div class="logo-text">Backend Handbook</div><div class="logo-sub">v2.0 · 2025 Edition</div></div>
+    </a>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" placeholder="Search topics..."></div>
+  </div>
+  <nav style="padding:8px 0">
+    <div class="nav-section">
+      <div class="nav-section-title">Overview</div>
+      <a href="index.html" class="nav-item"><span class="icon">🏠</span>Home</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Core Chapters</div>
+      <a href="backend-fundamentals.html" class="nav-item"><span class="icon">⚡</span>Backend Fundamentals</a>
+      <a href="api-design.html" class="nav-item"><span class="icon">🔌</span>API Design</a>
+      <a href="database-engineering.html" class="nav-item"><span class="icon">🗄</span>Database Engineering</a>
+      <a href="backend-performance.html" class="nav-item"><span class="icon">📈</span>Performance</a>
+      <a href="caching-guide.html" class="nav-item"><span class="icon">💾</span>Caching</a>
+      <a href="authentication-security.html" class="nav-item"><span class="icon">🔐</span>Auth & Security</a>
+      <a href="message-queues.html" class="nav-item"><span class="icon">📬</span>Message Queues</a>
+      <a href="distributed-systems.html" class="nav-item"><span class="icon">🌐</span>Distributed Systems</a>
+      <a href="microservices.html" class="nav-item"><span class="icon">🧩</span>Microservices</a>
+      <a href="observability.html" class="nav-item active"><span class="icon">📊</span>Observability</a>
+      <a href="production-engineering.html" class="nav-item"><span class="icon">🚀</span>Production Engineering</a>
+      <a href="system-design.html" class="nav-item"><span class="icon">🏗</span>System Design</a>
+      <a href="senior-engineer-roadmap.html" class="nav-item"><span class="icon">📈</span>Senior Roadmap</a>
+      <a href="interview-guide.html" class="nav-item"><span class="icon">💼</span>Interview Guide</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Notes</div>
+      <a href="#" onclick="goToNotes();return false;" class="nav-item notes-nav-item"><span class="icon">📝</span>My Notes</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Quick Reference</div>
+      <a href="https://roadmap.sh/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🗺</span>Roadmap.sh</a>
+      <a href="https://systemdesign.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🏗</span>System Design Textbook</a>
+      <a href="https://leetcode.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">💻</span>LeetCode</a>
+      <a href="https://bytebytego.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📘</span>ByteByteGo</a>
+      <a href="https://highscalability.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🌍</span>High Scalability</a>
+      <a href="https://newsletter.pragmaticengineer.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📰</span>Pragmatic Engineer</a>
+      <a href="https://www.educative.io/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📗</span>Educative</a>
+      <a href="https://frontendmasters.com/" target="_blank" rel="noopener" class="nav-item"><span class="icon">🎓</span>Frontend Masters</a>
+      <a href="https://arxiv.org/" target="_blank" rel="noopener" class="nav-item"><span class="icon">📄</span>arXiv (CS Papers)</a>
+    </div>
+  </nav>
+</aside>
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="breadcrumb"><a href="index.html" style="color:var(--text2)">Home</a> <span>/</span> Observability</div>
+  </div>
+  <div class="topbar-right">
+    <div class="font-size-group">
+      <button class="font-size-btn" data-size="small" onclick="setFontSize('small')" title="Small">A−</button>
+      <button class="font-size-btn active" data-size="medium" onclick="setFontSize('medium')" title="Medium">A</button>
+      <button class="font-size-btn" data-size="large" onclick="setFontSize('large')" title="Large">A+</button>
+    </div>
+    <button class="reading-mode-btn" id="readingModeBtn" onclick="toggleReadingMode()" title="Focus Mode">📖</button>
+    <button class="bookmark-btn" id="bookmarkBtn" onclick="setBookmark()" title="Bookmark this section">🔖</button>
+    <button class="btn" onclick="openColorPicker()" title="Accent color">🎨</button>
+    <button class="btn" onclick="openPageSearch()" title="Search this page">🔍</button>
+    <button class="btn" onclick="toggleTheme()"><span id="themeIcon">☀</span> <span id="themeText">Light</span></button>
+    <a href="interview-guide.html" class="btn primary">💼 Interview Prep</a>
+  </div>
+</header>
+<div class="main">
+<article class="content">
+
+<div class="page-hero">
+  <div class="page-badge badge-orange">Chapter 10</div>
+  <h1>Observability <span class="grad">& Monitoring</span></h1>
+  <p class="page-intro">You can't fix what you can't see. Observability is the ability to understand your system's internal state from its external outputs. Master the three pillars — metrics, logs, traces — and instrument your systems like a senior SRE.</p>
+  <div class="meta-pills">
+    <span class="meta-pill">⏱ 60 min read</span>
+    <span class="meta-pill">🎯 All Levels</span>
+    <span class="meta-pill">📊 Prometheus, OTel, Jaeger</span>
+  </div>
+</div>
+
+<h2 id="three-pillars">The Three Pillars</h2>
+<div class="compare-grid">
+  <div class="compare-card">
+    <div class="compare-header">📊 Metrics</div>
+    <p><strong>Tell you WHAT happened</strong> — aggregated numerical data over time. High-level system health.</p>
+    <ul>
+      <li>Request rate, error rate, latency (RED pattern)</li>
+      <li>CPU, memory, disk, network (USE pattern)</li>
+      <li>Business KPIs: orders/min, revenue/sec</li>
+      <li>Tools: <strong>Prometheus</strong>, Datadog, CloudWatch</li>
+      <li>Visualization: <strong>Grafana</strong>, Kibana</li>
+    </ul>
+  </div>
+  <div class="compare-card">
+    <div class="compare-header">📋 Logs</div>
+    <p><strong>Tell you WHERE it happened</strong> — detailed event records. Debug individual failures.</p>
+    <ul>
+      <li>Structured JSON logs (queryable, filterable)</li>
+      <li>Include: timestamp, level, service, trace_id, user_id</li>
+      <li>Tools: <strong>ELK Stack</strong> (Elasticsearch + Logstash + Kibana)</li>
+      <li>Alternatives: Loki + Grafana, Datadog Logs, Splunk</li>
+      <li>Log sampling at high volume to reduce costs</li>
+    </ul>
+  </div>
+  <div class="compare-card" style="grid-column: 1/-1;max-width:400px;margin:0 auto">
+    <div class="compare-header">🔍 Traces</div>
+    <p><strong>Tell you HOW it happened</strong> — follow a request across all services. Find the exact span that caused a slowdown.</p>
+    <ul>
+      <li>Distributed tracing: trace_id propagated across services</li>
+      <li>Waterfall view shows each service's contribution to latency</li>
+      <li>Tools: <strong>Jaeger</strong>, Zipkin, Datadog APM, Honeycomb</li>
+      <li>Standard: <strong>OpenTelemetry</strong> (vendor-neutral)</li>
+    </ul>
+  </div>
+</div>
+
+<h2 id="prometheus">Prometheus & Grafana</h2>
+<p>Prometheus scrapes metrics from your services on a schedule. Grafana visualizes them. Together they're the standard for production monitoring.</p>
+
+<pre><code><span class="cmt"># FastAPI + Prometheus instrumentation</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Request
+<span class="kw">from</span> prometheus_client <span class="kw">import</span> Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
+<span class="kw">import</span> time
+
+app = FastAPI()
+
+<span class="cmt"># Define metrics</span>
+REQUEST_COUNT = Counter(
+    <span class="str">'http_requests_total'</span>,
+    <span class="str">'Total HTTP requests'</span>,
+    [<span class="str">'method'</span>, <span class="str">'endpoint'</span>, <span class="str">'status_code'</span>]
+)
+REQUEST_LATENCY = Histogram(
+    <span class="str">'http_request_duration_seconds'</span>,
+    <span class="str">'HTTP request latency'</span>,
+    [<span class="str">'method'</span>, <span class="str">'endpoint'</span>],
+    buckets=[<span class="num">.005</span>, <span class="num">.01</span>, <span class="num">.025</span>, <span class="num">.05</span>, <span class="num">.1</span>, <span class="num">.25</span>, <span class="num">.5</span>, <span class="num">1</span>, <span class="num">2.5</span>, <span class="num">5</span>]
+)
+
+<span class="kw">@app.middleware</span>(<span class="str">"http"</span>)
+<span class="kw">async def</span> <span class="fn">metrics_middleware</span>(request: Request, call_next):
+    start = time.time()
+    response = <span class="kw">await</span> call_next(request)
+    duration = time.time() - start
+
+    REQUEST_COUNT.labels(
+        method=request.method,
+        endpoint=request.url.path,
+        status_code=response.status_code
+    ).inc()
+    REQUEST_LATENCY.labels(
+        method=request.method,
+        endpoint=request.url.path
+    ).observe(duration)
+    <span class="kw">return</span> response
+
+<span class="cmt"># Expose /metrics endpoint for Prometheus to scrape</span>
+<span class="kw">@app.get</span>(<span class="str">"/metrics"</span>)
+<span class="kw">async def</span> <span class="fn">metrics</span>():
+    <span class="kw">from</span> fastapi.responses <span class="kw">import</span> Response
+    <span class="kw">return</span> Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)</code></pre>
+
+<pre><code><span class="cmt"># Prometheus config (prometheus.yml)</span>
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: [<span class="str">'alertmanager:9093'</span>]
+
+rule_files:
+  - <span class="str">"alerts/*.yml"</span>
+
+scrape_configs:
+  - job_name: <span class="str">'api-service'</span>
+    static_configs:
+      - targets: [<span class="str">'api:8080'</span>]
+    metrics_path: <span class="str">/metrics</span>
+
+<span class="cmt">---</span>
+<span class="cmt"># Key PromQL queries:</span>
+<span class="cmt"># Request rate:  rate(http_requests_total[5m])</span>
+<span class="cmt"># Error rate:    rate(http_requests_total{status_code=~"5.."}[5m]) / rate(http_requests_total[5m])</span>
+<span class="cmt"># P99 latency:   histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))</span></code></pre>
+
+<h2 id="opentelemetry">OpenTelemetry</h2>
+<p>OpenTelemetry (OTel) is the CNCF standard for vendor-neutral instrumentation. Instrument once, export to any backend (Jaeger, Datadog, Honeycomb, Grafana Tempo).</p>
+
+<pre><code><span class="cmt"># OpenTelemetry: distributed tracing in Python</span>
+<span class="kw">from</span> opentelemetry <span class="kw">import</span> trace
+<span class="kw">from</span> opentelemetry.sdk.trace <span class="kw">import</span> TracerProvider
+<span class="kw">from</span> opentelemetry.sdk.trace.export <span class="kw">import</span> BatchSpanProcessor
+<span class="kw">from</span> opentelemetry.exporter.jaeger.thrift <span class="kw">import</span> JaegerExporter
+<span class="kw">from</span> opentelemetry.instrumentation.fastapi <span class="kw">import</span> FastAPIInstrumentor
+
+<span class="cmt"># Setup</span>
+jaeger_exporter = JaegerExporter(agent_host_name=<span class="str">"jaeger"</span>, agent_port=<span class="num">6831</span>)
+provider = TracerProvider()
+provider.add_span_processor(BatchSpanProcessor(jaeger_exporter))
+trace.set_tracer_provider(provider)
+
+<span class="cmt"># Auto-instrument FastAPI (all requests automatically traced)</span>
+FastAPIInstrumentor.instrument_app(app)
+
+<span class="cmt"># Manual spans for custom operations</span>
+tracer = trace.get_tracer(__name__)
+
+<span class="kw">async def</span> <span class="fn">process_order</span>(order_id: str):
+    <span class="kw">with</span> tracer.start_as_current_span(<span class="str">"process_order"</span>) <span class="kw">as</span> span:
+        span.set_attribute(<span class="str">"order.id"</span>, order_id)
+        span.set_attribute(<span class="str">"service.name"</span>, <span class="str">"order-service"</span>)
+
+        <span class="kw">with</span> tracer.start_as_current_span(<span class="str">"validate_payment"</span>):
+            result = <span class="kw">await</span> validate_payment(order_id)
+
+        <span class="kw">with</span> tracer.start_as_current_span(<span class="str">"update_inventory"</span>):
+            <span class="kw">await</span> update_inventory(order_id)</code></pre>
+
+<h2 id="logging">Structured Logging Best Practices</h2>
+<pre><code><span class="cmt">// Structured logging with Winston (Node.js)</span>
+<span class="kw">import</span> winston <span class="kw">from</span> <span class="str">'winston'</span>;
+
+<span class="kw">const</span> logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || <span class="str">'info'</span>,
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.errors({ stack: <span class="kw">true</span> }),
+    winston.format.json()  <span class="cmt">// structured JSON — queryable in ELK</span>
+  ),
+  transports: [<span class="kw">new</span> winston.transports.Console()],
+});
+
+<span class="cmt">// Log with context — always include trace_id and user_id</span>
+<span class="kw">function</span> <span class="fn">getLogger</span>(ctx: RequestContext) {
+  <span class="kw">return</span> logger.child({
+    traceId: ctx.traceId,
+    userId: ctx.userId,
+    service: <span class="str">'order-service'</span>,
+    version: process.env.APP_VERSION,
+  });
+}
+
+<span class="cmt">// Usage:</span>
+<span class="kw">const</span> log = getLogger(ctx);
+log.info(<span class="str">'Order created'</span>, { orderId, amount, currency });
+log.error(<span class="str">'Payment failed'</span>, { orderId, error: err.message, stack: err.stack });
+
+<span class="cmt">// Output (one JSON line per event — ELK can index and query any field):</span>
+<span class="cmt">// {"level":"info","message":"Order created","orderId":"ord_123","amount":5999,</span>
+<span class="cmt">//  "traceId":"abc-def","userId":"usr_456","timestamp":"2025-01-15T10:30:00Z"}</span></code></pre>
+
+<h2 id="slo-sla">SLIs, SLOs, and SLAs</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Term</th><th>Definition</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td><strong>SLI</strong> (Service Level Indicator)</td><td>A specific metric that measures service behavior</td><td>P99 latency, availability %, error rate</td></tr>
+<tr><td><strong>SLO</strong> (Service Level Objective)</td><td>Target value for an SLI. Internal engineering goal</td><td>"P99 latency &lt; 200ms measured over 30 days"</td></tr>
+<tr><td><strong>SLA</strong> (Service Level Agreement)</td><td>Contract with customers. Violation = penalty</td><td>"99.9% availability per month or 10% credit"</td></tr>
+<tr><td><strong>Error Budget</strong></td><td>How much you're allowed to fail while meeting SLO</td><td>99.9% SLO = 43.8 min/month downtime budget</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="page-footer-nav">
+  <a href="microservices.html" class="footer-nav-btn prev">
+    <div class="dir">Previous</div>
+    <div class="pg">🧩 Microservices</div>
+  </a>
+  <a href="production-engineering.html" class="footer-nav-btn next">
+    <div class="dir">Next Chapter</div>
+    <div class="pg">🚀 Production Engineering</div>
+  </a>
+</div>
+
+</article>
+<aside class="toc-sidebar">
+  <div class="toc-title">On this page</div>
+  <ul class="toc-list">
+    <li><a href="#three-pillars">Three Pillars</a></li>
+    <li><a href="#prometheus">Prometheus & Grafana</a></li>
+    <li><a href="#opentelemetry">OpenTelemetry</a></li>
+    <li><a href="#logging">Structured Logging</a></li>
+    <li><a href="#slo-sla">SLIs, SLOs & SLAs</a></li>
+  </ul>
+</aside>
+</div>
+<script src="shared.js"></script>
+</body>
+</html>
